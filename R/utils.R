@@ -142,7 +142,7 @@ forum_resource <- function(x) {
 }
 
 #' @export
-get_issues <- function(owner, repo, since = NULL) {
+get_issues <- function(owner, repo, labels_help, labels_first, since = NULL) {
 
   message("owner: ", owner, "; repo: ", repo)
 
@@ -159,10 +159,6 @@ get_issues <- function(owner, repo, since = NULL) {
                 .limit = Inf)
   }
 
-
-  l <- "(help)|(help wanted)|(help-wanted)|(help_wanted)"
-  g <- "(good first issue)|(beginner)"
-
   dplyr::tibble(url = purrr::map_chr(i, "url"),
                 number = purrr::map_chr(i, "number"),
                 labels = purrr::map(i, "labels"),
@@ -171,16 +167,18 @@ get_issues <- function(owner, repo, since = NULL) {
                 update = purrr::map_chr(i, "updated_at"),
                 gh_user_issue = purrr::map_chr(i, ~.[["user"]]$login)) %>%
     dplyr::mutate(labels = purrr::map_depth(.data$labels, 2, "name"),
-                  labels_help = purrr::map_lgl(.data$labels,
-                                               ~any(str_detect(tolower(.), l))),
-                  labels_first = purrr::map_lgl(.data$labels,
-                                                ~any(str_detect(tolower(.), g))),
+                  labels_help = purrr::map_lgl(
+                    .data$labels,
+                    ~any(str_detect(tolower(.), !!labels_help))),
+                  labels_first = purrr::map_lgl(
+                    .data$labels,
+                    ~any(str_detect(tolower(.), !!labels_first))),
                   n_labels = purrr::map_int(.data$labels, length)) %>%
     dplyr::filter(.data$labels_help) %>%
     dplyr::mutate(events = purrr::map(.data$number,
                                       ~get_label_events(owner,
                                                         repo, .,
-                                                        labels = l))) %>%
+                                                        labels = !!labels_help))) %>%
     tidyr::unnest(.data$events)
 }
 
