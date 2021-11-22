@@ -1,11 +1,12 @@
 twitter_lists <- function() {
   dplyr::tribble(
-    ~gh_user,   ~name,              ~twitter_user,
-    "elinw",    "Elin Waring",      "elinwaring",
-    "florianm", "Florian W. Mayer", "fistful_of_bass",
-    "agila5",   "Andrea Gilardi",   "a_gilardi5",
-    "andysouth", "Andy South",      "southmapr",
-    "wlandau",   "William Michael Landau", "wmlandau")
+    ~gh_user,   ~name,                     ~twitter_user,
+    "elinw",    "Elin Waring",             "elinwaring",
+    "florianm", "Florian W. Mayer",        "fistful_of_bass",
+    "agila5",   "Andrea Gilardi",          "a_gilardi5",
+    "andysouth", "Andy South",             "southmapr",
+    "wlandau",   "William Michael Landau", "wmlandau",
+    "HajkD",     "Hajk-Georg Drost",       "@HajkDrost")
 }
 
 #' @export
