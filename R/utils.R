@@ -138,7 +138,7 @@ forum_resource <- function(x) {
     # https://stackoverflow.com/questions/60137188/xpath-picking-div-after-h4-with-specific-text
     rvest::html_elements(css = 'h4:contains(resource) + *') %>%
     rvest::html_text2() %>%
-    stringr::str_split("\\\n") %>%
+    stringr::str_split("\\\n|,( )*|;( )*") %>%
     unlist()
 }
 
