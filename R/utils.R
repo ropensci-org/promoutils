@@ -140,7 +140,8 @@ forum_resource <- function(x) {
     rvest::html_text2() %>%
     stringr::str_split("\\\n|,( )*|;( )*") %>%
     stringr::str_trim() %>%
-    stringr::str_remove_all("(^\\.)|(\\.$)") %>%
+    stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])") %>%
+    stringr::str_trim() %>%
     unlist()
 }
 
