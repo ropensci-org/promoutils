@@ -48,15 +48,24 @@ get_user <- function(name, owner, pkg) {
                          owner = owner, pkg = pkg)
     repo_users <- purrr::map_chr(repo_users, "login")
 
-    u <- dplyr::tibble(name = stringr::str_remove_all(name, "\\.")) %>%
-      dplyr::mutate(gh_user = list(
+    # Try also without initials
+    n <- stringr::str_remove_all(name, "\\.")
+    if(stringr::str_detect(n, "\\b[A-Z]{1} ")) {
+      n <- c(n, stringr::str_remove_all(n, "\\b[A-Z]{1} "))
+    }
+
+    u <- dplyr::tibble(name = n) %>%
+      dplyr::mutate(gh_user = purrr::map(name, ~
         gh::gh(endpoint = "/search/users",
-               q = glue::glue("{.data$name} in:name"))$items),
-        n = purrr::map_dbl(.data$gh_user, length),
-        gh_user = purrr::map2_chr(.data$n, .data$gh_user, ~{if(.x == 0) NA_character_ else .y[[1]]$login})) %>%
+               q = glue::glue("{.x} in:name"))$items)) %>%
+      tidyr::unnest(gh_user, keep_empty = TRUE) %>%
+      dplyr::mutate(gh_user = purrr::map(.data$gh_user, "login")) %>%
+      tidyr::unnest(gh_user, keep_empty = TRUE) %>%
       dplyr::filter(is.na(.data$gh_user) | .data$gh_user %in% !!repo_users) %>%
       dplyr::mutate(twitter_user = purrr::map2_chr(.data$gh_user, .data$name,
                                                    get_twitter)) %>%
+      dplyr::arrange(is.na(gh_user), is.na(twitter_user)) %>%
+      dplyr::slice(1) %>%
       dplyr::select("gh_user", "twitter_user")
   }
   u
