@@ -11,7 +11,11 @@ twitter_lists <- function() {
 
 #' @export
 pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
-                 which = "active") {
+                 which = "active", return = "sub") {
+  if(return == "sub") cols <- c("name", "maintainer", "owner")
+  if(return == "all") cols <- substitute(dplyr::everything())
+
+
   pkgs <- url %>%
     jsonlite::fromJSON(.) %>%
     .[["packages"]]
@@ -26,7 +30,7 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
   pkgs %>%
     dplyr::mutate(owner = stringr::str_remove_all(
       .data$github, glue::glue("(https://github.com/)|(/{name})"))) %>%
-    dplyr::select("name", "maintainer", "owner")
+    dplyr::select(!!cols)
 }
 
 #' @export
