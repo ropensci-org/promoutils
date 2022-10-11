@@ -152,6 +152,7 @@ forum_resource <- function(x) {
     rvest::html_elements(css = 'h4:contains(resource) + *') %>%
     rvest::html_text2() %>%
     stringr::str_split("\\\n|,( )*|;( )*") %>%
+    unlist() %>%
     stringr::str_trim() %>%
     stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])") %>%
     stringr::str_trim() %>%
