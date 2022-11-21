@@ -36,7 +36,7 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
                                          owner),
                   name = dplyr::if_else(name == "frictionless",
                                          "frictionless-r",
-                                         name),
+                                         name))
 
 }
 
