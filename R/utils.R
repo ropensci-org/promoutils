@@ -30,7 +30,14 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
   pkgs %>%
     dplyr::mutate(owner = stringr::str_remove_all(
       .data$github, glue::glue("(https://github.com/)|(/{name})"))) %>%
-    dplyr::select(!!cols)
+    dplyr::select(!!cols) %>%
+    dplyr::mutate(owner = dplyr::if_else(owner == "frictionlessdata-r",
+                                         "frictionlessdata",
+                                         owner),
+                  name = dplyr::if_else(name == "frictionless",
+                                         "frictionless-r",
+                                         name),
+
 }
 
 #' @export
