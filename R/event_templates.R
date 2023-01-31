@@ -30,9 +30,12 @@ event_coworking <- function(date, tz, theme = "THEME", cohost = "COHOST") {
 
   date <- lubridate::ymd_h(paste(date, times[[tz]]), tz = tz)
   date_utc <- lubridate::with_tz(date, "UTC")
+  date_utc_end <- lubridate::format_ISO8601(date_utc + lubridate::hours(2))
 
   date_nice <- glue::glue("{format(date, '%A %B %d, %H:00')} ",
                           "{tz_nice[[tz]]} ({format(date_utc, '%H')}:00 UTC)")
+
+  date_utc <- lubridate::format_ISO8601(date_utc)
 
   slug <- glue::glue("coworking-{format(date, '%Y-%m')}")
 
@@ -43,8 +46,8 @@ event_coworking <- function(date, tz, theme = "THEME", cohost = "COHOST") {
     "---",
     "title: Social Coworking and Office Hours - {theme}",
     "dateStart: {date_utc} # UTC!!",
-    "dateEnd: {date_utc + lubridate::hours(2)} # UTC!!",
-    "date: {date_utc + lubridate::hours(2)} # UTC!! same as dateEnd",
+    "dateEnd: {date_utc_end} # UTC!!",
+    "date: {date_utc_end} # UTC!! same as dateEnd",
     "description: Monthly coworking for productivity, asking questions, socializing",
     "location: 'online' # free text",
     "slug: \"{slug}\"",
