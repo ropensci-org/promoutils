@@ -59,6 +59,8 @@ event_coworking <- function(date, tz, theme = "THEME", cohost = "COHOST") {
     "attendees:",
     "  - {cohost}",
     "  - Steffi LaZerte",
+    "author:",
+    "  - {cohost}",
     "deets: |",
     "    Meeting ID: 913 2825 6625",
     "    Passcode: 512767",
