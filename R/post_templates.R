@@ -37,6 +37,7 @@ post_coworking <- function(date, when = "week", who) {
     dplyr::as_tibble() |>
     dplyr::rename("date_UTC" = "dateStart", "theme" = "title") |>
     dplyr::mutate(
+      who = .env$who,
       author = stringr::str_extract(.data$author, "^[^ ]+"),
       action1 = purrr::map(event$content, ~.x[stringr::str_which(.x, "### Cowork") + 1:2]),
       action1 = purrr::map_chr(.data$action1, ~glue::glue_collapse(.x, sep = "\n")),
