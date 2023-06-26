@@ -18,7 +18,7 @@ post_coworking <- function(date, when = "week", who) {
     dplyr::mutate(content = purrr::map(
       .data$download_url,
       ~{
-        x <- readr::read_lines(.x, n_max = 60)
+        x <- readLines(.x, n = 60)
         x[x != ""]
       }
       ),
