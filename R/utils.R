@@ -266,3 +266,17 @@ get_package_ref <- function(url, pkgs = NULL) {
     tidyr::unnest(.data$author) %>%
     dplyr::mutate(draft = glue::glue("{name} by @{twitter_user}"))
 }
+
+
+nth_day <- function(x) {
+
+  th <- dplyr::case_when(x %in% c(1, 21, 31) ~ "st",
+                         x %in% c(2, 22) ~ "nd",
+                         x %in% c(3, 23) ~ "rd",
+                         TRUE ~ "th")
+
+  paste0(x, th)
+}
+
+
+
