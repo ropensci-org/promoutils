@@ -206,14 +206,14 @@ get_issues <- function(owner, repo,
         labels_first = purrr::map_lgl(
           .data$labels,
           ~any(stringr::str_detect(tolower(.), !!labels_first)))) |>
-      dplyr::filter(i, .data$labels_help)
+      dplyr::filter(i, .data$labels_help) |>
+      dplyr::mutate(events = purrr::map(
+        .data$number, ~get_label_events(owner, repo, .,
+                                        labels = !!labels_help))) %>%
+      tidyr::unnest(.data$events, keep_empty = TRUE)
   }
 
-  i %>%
-    dplyr::mutate(events = purrr::map(
-      .data$number, ~get_label_events(owner, repo, .,
-                                      labels = !!labels_help))) %>%
-    tidyr::unnest(.data$events, keep_empty = TRUE)
+  i
 }
 
 get_label_events <- function(owner, repo, issue, labels) {
