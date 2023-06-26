@@ -1,6 +1,9 @@
-# Post functions
-
-
+#' Create a template post for coworking
+#'
+#' @param date Character/Date. Date of the coworking event (local)
+#' @param who Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)
+#' @param when Character. Is this a "week" before reminder or an "hour" before reminder?
+#' @export
 post_coworking <- function(date, when = "week", who) {
 
   i <- gh::gh("/repos/{owner}/{repo}/contents/content/events",
