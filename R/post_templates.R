@@ -1,10 +1,19 @@
 #' Create a template post for coworking
 #'
 #' @param date Character/Date. Date of the coworking event (local)
-#' @param who Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)
+#' @param who_masto Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)
+#' @param who_slack Character. The full Slack handle for the cohost (i.e. @XXXX)
 #' @param when Character. Is this a "week" before reminder or an "hour" before reminder?
+#' @param posters_tz Character. Timezone of poster. Required for getting the
+#'   time at which to post Slack messages as these are posted in the local
+#'   timezone
 #' @export
-post_coworking <- function(date, when = "week", who) {
+#'
+#' @example
+#'
+#' post_coworking("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "@cohost")
+
+post_coworking <- function(date, who_masto, who_slack, posters_tz = "America/Winnipeg") {
 
   i <- gh::gh("/repos/{owner}/{repo}/contents/content/events",
          owner = "ropensci", repo = "roweb3")
@@ -37,7 +46,8 @@ post_coworking <- function(date, when = "week", who) {
     dplyr::as_tibble() |>
     dplyr::rename("date_UTC" = "dateStart", "theme" = "title") |>
     dplyr::mutate(
-      who = .env$who,
+      who_masto = .env$who_masto,
+      who_slack = .env$who_slack,
       author = stringr::str_extract(.data$author, "^[^ ]+"),
       action1 = purrr::map(event$content, ~.x[stringr::str_which(.x, "### Cowork") + 1:2]),
       action1 = purrr::map_chr(.data$action1, ~glue::glue_collapse(.x, sep = "\n")),
@@ -54,64 +64,109 @@ post_coworking <- function(date, when = "week", who) {
                     format(.data$date_local, "%H:00"),
                     " ", .data$tz_txt,
                     " (", format(.data$date_UTC, "%H:00"), " UTC)"),
-      when_text = dplyr::if_else(
-        .env$when == "week",
-        "Coworking next week!",
-        "rOpenSci coworking and office hours coming up in an hour!"),
-      time_post = date_local - dplyr::if_else(
-        .env$when == "week",
-        lubridate::weeks(1),
-        lubridate::hours(1)))
+      event_url = glue::glue("https://ropensci.org/events/coworking-{format(date_UTC, '%Y-%m')}"))
 
-  if(when == "week") week_before(deets) else hour_before(deets)
+
+  glue::glue(week_before(deets),
+             "\n\n---------\n\n",
+             hour_before(deets),
+             "\n\n---------\n\n",
+             slack_week(deets, posters_tz),
+             "\n\n---------\n\n",
+             slack_hour(deets, posters_tz))
 }
 
 week_before <- function(x) {
-  glue::glue_data(
-    x,
-    "~~~",
-    "time: {time_post}",
-    "tz: {tz}       # Must be valid tz from `OlsonNames()`",
-    "~~~",
-    "",
-    "{when_text}",
-    "",
-    "Theme: {theme}", #Integrating and merging datasets from different sources
-    "",
-    "{time}", #Tues June 6th 9:00 Australia Western (01:00 UTC)
-    "",
-    "Join {who} and @steffilazerte@fosstodon.org",
-    "",
-    "- General coworking",
-    "{action1}",
-    "- Chat with {author} and other attendees and discuss strategies for XXXX",
-    "",
-    "https://ropensci.org/events/coworking-{format(date_UTC, '%Y-%m')}",
-    "",
-    "#RStats",
-    "@rstats@a.gup.pe",
-    .sep = "\n",
-  )
+
+  x |>
+    dplyr::mutate(time_post = .data$date_local - lubridate::weeks(1)) |>
+    glue::glue_data(
+      "[MASTO WEEK BEFORE]",
+      "",
+      "~~~",
+      "time: {time_post}",
+      "tz: {tz}       # Must be valid tz from `OlsonNames()`",
+      "~~~",
+      "",
+      "Coworking next week!",
+      "",
+      "Theme: {theme}", #Integrating and merging datasets from different sources
+      "",
+      "{time}", #Tues June 6th 9:00 Australia Western (01:00 UTC)
+      "",
+      "Join {who_masto} and @steffilazerte@fosstodon.org",
+      "",
+      "- General coworking",
+      "{action1}",
+      "- Chat with {author} and other attendees and discuss strategies for XXXX",
+      "",
+      "{event_url}",
+      "",
+      "#RStats",
+      "@rstats@a.gup.pe",
+      .sep = "\n",
+    )
 }
 
 hour_before <- function(x) {
-  glue::glue_data(
-    x,
-    "~~~",
-    "time: {time_post}",
-    "tz: {tz}       # Must be valid tz from `OlsonNames()`",
-    "~~~",
-    "",
-    "{when_text}",
-    "",
-    "Today's Theme: {theme} with cohost {who}", #Integrating and merging datasets from different sources
-    "",
-    "{time}", #Tues June 6th 9:00 Australia Western (01:00 UTC)
-    "",
-    "https://ropensci.org/events/coworking-{format(date_UTC, '%Y-%m')}",
-    "",
-    "#RStats",
-    "@rstats@a.gup.pe",
-    .sep = "\n",
-  )
+
+  x |>
+    dplyr::mutate(time_post = .data$date_local - lubridate::hours(1)) |>
+    glue::glue_data(
+      "[MASTO HOUR BEFORE]",
+      "",
+      "~~~",
+      "time: {time_post}",
+      "tz: {tz}       # Must be valid tz from `OlsonNames()`",
+      "~~~",
+      "",
+      "rOpenSci coworking and office hours coming up in an hour!",
+      "",
+      "Today's Theme: {theme} with cohost {who_masto}", #Integrating and merging datasets from different sources
+      "",
+      "{time}", #Tues June 6th 9:00 Australia Western (01:00 UTC)
+      "",
+      "{event_url}",
+      "",
+      "#RStats",
+      "@rstats@a.gup.pe",
+      .sep = "\n",
+    )
+}
+
+slack_week <- function(x, posters_tz) {
+  x |>
+    dplyr::mutate(time_post = .data$date_local - lubridate::weeks(1),
+                  time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
+    glue::glue_data(
+      "[SLACK WEEK BEFORE]",
+      "[POST AT: {time_post}]",
+      "\n",
+      "Join us for Social Coworking and office hours next week!",
+      "",
+      ":grey_exclamation: Theme: {theme}",
+      ":hourglass_flowing_sand: When: {time}",
+      ":cookie: Hosted by: @Steffi LaZerte and community host {who_slack}",
+      "",
+      "You can use this time for...",
+      "- General coworking",
+      "{action1}",
+      "- Chat with others for advice/resources",
+      "",
+      "{event_url}",
+      .sep = "\n")
+}
+
+slack_hour <- function(x, posters_tz) {
+  x |>
+    dplyr::mutate(time_post = .data$date_local - lubridate::hours(1),
+                  time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
+    glue::glue_data(
+      "[SLACK HOUR BEFORE]",
+      "[POST AT: {time_post}]",
+      "\n",
+      "See you in an hour :wink:",
+      "",
+      "URL TO ORIGINAL SLACK POST!",
+      .sep = "\n")
 }
