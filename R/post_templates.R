@@ -139,7 +139,7 @@ slack_week <- function(x, posters_tz) {
     dplyr::mutate(time_post = .data$date_local - lubridate::weeks(1),
                   time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
     glue::glue_data(
-      "[SLACK WEEK BEFORE]",
+      "[SLACK WEEK BEFORE: #general & #co-working]",
       "[POST AT: {time_post}]",
       "\n",
       "Join us for Social Coworking and office hours next week!",
@@ -162,7 +162,7 @@ slack_hour <- function(x, posters_tz) {
     dplyr::mutate(time_post = .data$date_local - lubridate::hours(1),
                   time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
     glue::glue_data(
-      "[SLACK HOUR BEFORE]",
+      "[SLACK HOUR BEFORE: #general]",
       "[POST AT: {time_post}]",
       "\n",
       "See you in an hour :wink:",
