@@ -196,15 +196,18 @@ get_issues <- function(owner, repo,
                      body = purrr::map_chr(i, "body"),
                      gh_user_issue = purrr::map_chr(i, ~.[["user"]]$login)) %>%
     dplyr::mutate(labels = purrr::map_depth(.data$labels, 2, "name"),
-                  labels_help = purrr::map_lgl(
-                    .data$labels,
-                    ~any(stringr::str_detect(tolower(.), !!labels_help))),
-                  labels_first = purrr::map_lgl(
-                    .data$labels,
-                    ~any(stringr::str_detect(tolower(.), !!labels_first))),
                   n_labels = purrr::map_int(.data$labels, length))
 
-  if(filter_labels) i <- dplyr::filter(i, .data$labels_help)
+  if(filter_labels && !all(labels_help != "")) {
+    i <- i |>
+      dplyr::mutate(labels_help = purrr::map_lgl(
+        .data$labels,
+        ~any(stringr::str_detect(tolower(.), !!labels_help))),
+        labels_first = purrr::map_lgl(
+          .data$labels,
+          ~any(stringr::str_detect(tolower(.), !!labels_first)))) |>
+      dplyr::filter(i, .data$labels_help)
+  }
 
   i %>%
     dplyr::mutate(events = purrr::map(
