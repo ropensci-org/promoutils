@@ -80,7 +80,7 @@ event_coworking <- function(date, tz, theme = "THEME", cohost = "COHOST") {
   body <- glue::glue(
     .sep = "\n",
     "**Join us for 2 hours {date_nice} for ",
-    "[Social Coworking + Office Hours](/blog/2021/08/17/coworking-sessions/)**",
+    "[Social Coworking + Office Hours](/blog/2023/06/21/coworking/)**",
     "",
     "This month we're focusing on the theme **{theme}** ",
     "with community host **{cohost}**, DESCRIPTION OF HOST.",
@@ -107,7 +107,7 @@ event_coworking <- function(date, tz, theme = "THEME", cohost = "COHOST") {
     "- Answer other coworkers' questions!",
     "",
     "We host ",
-    "[Social Coworking + Office Hours](/blog/2021/08/17/coworking-sessions/) ",
+    "[Social Coworking + Office Hours](/blog/2023/06/21/coworking/) ",
     "on the first Tuesday of each month, alternating among timezones to ",
     "accommodate different parts of the world."
   )
