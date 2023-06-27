@@ -4,14 +4,20 @@
 \alias{post_coworking}
 \title{Create a template post for coworking}
 \usage{
-post_coworking(date, when = "week", who)
+post_coworking(date, who_masto, who_slack, posters_tz = "America/Winnipeg")
 }
 \arguments{
 \item{date}{Character/Date. Date of the coworking event (local)}
 
-\item{when}{Character. Is this a "week" before reminder or an "hour" before reminder?}
+\item{who_masto}{Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)}
 
-\item{who}{Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)}
+\item{who_slack}{Character. The full Slack handle for the cohost (i.e. @XXXX)}
+
+\item{posters_tz}{Character. Timezone of poster. Required for getting the
+time at which to post Slack messages as these are posted in the local
+timezone}
+
+\item{when}{Character. Is this a "week" before reminder or an "hour" before reminder?}
 }
 \description{
 Create a template post for coworking
