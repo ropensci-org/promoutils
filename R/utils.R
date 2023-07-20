@@ -198,7 +198,7 @@ get_issues <- function(owner, repo,
     dplyr::mutate(labels = purrr::map_depth(.data$labels, 2, "name"),
                   n_labels = purrr::map_int(.data$labels, length))
 
-  if(filter_labels && !all(labels_help != "")) {
+  if(filter_labels && !all(labels_help == "")) {
     i <- i |>
       dplyr::mutate(labels_help = purrr::map_lgl(
         .data$labels,
@@ -206,7 +206,7 @@ get_issues <- function(owner, repo,
         labels_first = purrr::map_lgl(
           .data$labels,
           ~any(stringr::str_detect(tolower(.), !!labels_first)))) |>
-      dplyr::filter(i, .data$labels_help) |>
+      dplyr::filter(.data$labels_help) |>
       dplyr::mutate(events = purrr::map(
         .data$number, ~get_label_events(owner, repo, .,
                                         labels = !!labels_help))) %>%
