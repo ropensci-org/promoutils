@@ -193,7 +193,7 @@ get_issues <- function(owner, repo,
                      title = purrr::map_chr(i, "title"),
                      created = purrr::map_chr(i, "created_at"),
                      update = purrr::map_chr(i, "updated_at"),
-                     body = purrr::map_chr(i, "body"),
+                     body = purrr::map_chr(i, "body", .default = ""),
                      gh_user_issue = purrr::map_chr(i, ~.[["user"]]$login)) %>%
     dplyr::mutate(labels = purrr::map_depth(.data$labels, 2, "name"),
                   n_labels = purrr::map_int(.data$labels, length))
