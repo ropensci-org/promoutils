@@ -49,6 +49,7 @@ event_coworking <- function(date, tz, theme = "THEME", cohost = "COHOST") {
     "dateEnd: {date_utc_end} # UTC!!",
     "date: {date_utc_end} # UTC!! same as dateEnd",
     "description: Monthly coworking for productivity, asking questions, socializing",
+    "coworking: true",
     "location: 'online' # free text",
     "slug: \"{slug}\"",
     "country: \"\U0001F310\" # emoji",
