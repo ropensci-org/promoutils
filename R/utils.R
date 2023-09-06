@@ -188,7 +188,7 @@ get_issues <- function(owner, repo,
   }
 
   i <- dplyr::tibble(url = purrr::map_chr(i, "url"),
-                     number = purrr::map_chr(i, "number"),
+                     number = purrr::map_dbl(i, "number"),
                      labels = purrr::map(i, "labels"),
                      title = purrr::map_chr(i, "title"),
                      created = purrr::map_chr(i, "created_at"),
