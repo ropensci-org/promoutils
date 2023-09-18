@@ -57,6 +57,8 @@ post_coworking <- function(date, who_masto, who_slack, posters_tz = "America/Win
                                 .data$tz == "Australia/Perth" ~ "Australian Western"),
       date_UTC = lubridate::as_datetime(.data$date_UTC),
       date_local = lubridate::with_tz(.data$date_UTC, tz = .data$tz),
+      month = lubridate::month(.data$date_local, label = TRUE, abbr = TRUE),
+      year = lubridate::year(.data$date_local),
       theme = stringr::str_remove(.data$theme, "Social Coworking and Office Hours - "),
       nth = nth_day(lubridate::day(.data$date)),
       time = paste0(stringr::str_trim(format(.data$date_local, "%A %B")),
@@ -82,6 +84,8 @@ week_before <- function(x) {
     dplyr::mutate(time_post = .data$date_local - lubridate::weeks(1)) |>
     glue::glue_data(
       "[MASTO WEEK BEFORE]",
+      "",
+      "[POST] - Coworking {month} {year} - week before",
       "",
       "~~~",
       "time: {time_post}",
@@ -114,6 +118,8 @@ hour_before <- function(x) {
     dplyr::mutate(time_post = .data$date_local - lubridate::hours(1)) |>
     glue::glue_data(
       "[MASTO HOUR BEFORE]",
+      "",
+      "[POST] - Coworking {month} {year} - 1-hr before",
       "",
       "~~~",
       "time: {time_post}",
