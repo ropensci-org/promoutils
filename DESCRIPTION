@@ -1,6 +1,6 @@
 Package: promoutils
 Title: Utilities for Promoting rOpenSci on Twitter
-Version: 0.3.2
+Version: 0.4.0
 Authors@R: 
     person(given = "Steffi",
            family = "LaZerte",
@@ -30,3 +30,5 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)
