@@ -1,13 +1,3 @@
-twitter_lists <- function() {
-  dplyr::tribble(
-    ~gh_user,   ~name,                     ~twitter_user,
-    "elinw",    "Elin Waring",             "elinwaring",
-    "florianm", "Florian W. Mayer",        "fistful_of_bass",
-    "agila5",   "Andrea Gilardi",          "a_gilardi5",
-    "andysouth", "Andy South",             "southmapr",
-    "wlandau",   "William Michael Landau", "wmlandau",
-    "HajkD",     "Hajk-Georg Drost",       "@HajkDrost")
-}
 
 #' @export
 pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
@@ -16,9 +6,7 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
   if(return == "all") cols <- substitute(dplyr::everything())
 
 
-  pkgs <- url %>%
-    jsonlite::fromJSON(.) %>%
-    .[["packages"]]
+  pkgs <- jsonlite::fromJSON(url)[["package"]]
 
    if(which == "active") {
      pkgs <- dplyr::filter(pkgs, stringr::str_detect(.data$status, "active"))
@@ -27,10 +15,10 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
                                                      negate = TRUE))
    }
 
-  pkgs %>%
+  pkgs |>
     dplyr::mutate(owner = stringr::str_remove_all(
-      .data$github, glue::glue("(https://github.com/)|(/{name})"))) %>%
-    dplyr::select(!!cols) %>%
+      .data$github, glue::glue("(https://github.com/)|(/{name})"))) |>
+    dplyr::select(!!cols) |>
     dplyr::mutate(owner = dplyr::if_else(owner == "frictionlessdata-r",
                                          "frictionlessdata",
                                          owner),
@@ -41,82 +29,160 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
 }
 
 #' @export
-get_authors <- function(x, pkgs) {
-  a <- dplyr::filter(pkgs, .data$name %in% x) %>%
+pkg_authors <- function(x, pkgs) {
+  a <- dplyr::filter(pkgs, .data$name %in% x) |>
     dplyr::pull(.data$maintainer)
 
   if(length(a) == 0) a <- NA_character_
   a
 }
 
+#' Fetch full name of GitHub user
+#'
+#' @param gh_user Character. GitHub username/handle
+#'
+#' @return Character, full name of the user or NA
+#'
 #' @export
-get_user <- function(name, owner, pkg) {
-  if(name %in% twitter_lists()$name) {
-    u <- dplyr::filter(twitter_lists(), .data$name == !!name) %>%
-      dplyr::select("gh_user", "twitter_user")
-  } else {
-    repo_users <- gh::gh(endpoint = "/repos/:owner/:pkg/contributors",
-                         owner = owner, pkg = pkg)
-    repo_users <- purrr::map_chr(repo_users, "login")
+#'
+#' @examples
+#' gh_name("steffilazerte")
 
-    # Try also without initials
-    n <- stringr::str_remove_all(name, "\\.")
-    if(stringr::str_detect(n, "\\b[A-Z]{1} ")) {
-      n <- c(n, stringr::str_remove_all(n, "\\b[A-Z]{1} "))
-    }
-
-    u <- dplyr::tibble(name = n) %>%
-      dplyr::mutate(gh_user = purrr::map(name, ~
-        gh::gh(endpoint = "/search/users",
-               q = glue::glue("{.x} in:name"))$items)) %>%
-      tidyr::unnest(gh_user, keep_empty = TRUE) %>%
-      dplyr::mutate(gh_user = purrr::map(.data$gh_user, "login")) %>%
-      tidyr::unnest(gh_user, keep_empty = TRUE) %>%
-      dplyr::filter(is.na(.data$gh_user) | .data$gh_user %in% !!repo_users) %>%
-      dplyr::mutate(twitter_user = purrr::map2_chr(.data$gh_user, .data$name,
-                                                   get_twitter)) %>%
-      dplyr::arrange(is.na(gh_user), is.na(twitter_user)) %>%
-      dplyr::slice(1) %>%
-      dplyr::select("gh_user", "twitter_user")
-  }
-  u
-}
-
-#' @export
-get_gh_name <- function(gh_user) {
+gh_name <- function(gh_user) {
   i <- gh::gh("/users/:username", username = gh_user)
   if(!is.null(i$name)) return(i$name) else return(NA_character_)
 }
 
+
+#' Find GH username from repository and full name
+#'
+#' Look up users of a repository and match to a name. Try with and without
+#' initials.
+#'
+#' @param name Character. Full or partial name of the person for whom you want
+#'   to fetch the GitHub username.
+#' @param owner Character. Owner of the repository.
+#' @param pkg Character. Repository name (package name).
+#'
+#' @return Data frame with names attempted and usernames found
 #' @export
-get_twitter <- function(gh_user, name = NULL) {
+#'
+#' @examples
+#'
+#' gh_user(name = "Steffi E. LaZerte", owner = "ropensci", pkg = "weathercan")
+#' gh_user(name = "Steffi", owner = "ropensci", pkg = "weathercan")
 
-  t <- NA_character_
+gh_user <- function(name, owner = "ropensci", pkg) {
 
-  if(!is.na(gh_user) & gh_user %in% twitter_lists()$gh_user) {
-    t <- dplyr::filter(twitter_lists(), .data$gh_user == !!gh_user)$twitter_user
+  repo_users <- gh::gh(endpoint = "/repos/:owner/:pkg/contributors",
+                       owner = owner, pkg = pkg)
+  repo_users <- purrr::map_chr(repo_users, "login")
+
+  # Try also without initials
+  n <- stringr::str_remove_all(name, "\\.")
+  if(stringr::str_detect(n, "\\b[A-Z]{1} ")) {
+    n <- c(n, stringr::str_remove_all(n, "\\b[A-Z]{1} "))
   }
 
-  if(is.na(t) && is.null(name) && !is.na(gh_user)) name <- get_gh_name(gh_user)
+  dplyr::tibble(name = n) |>
+    dplyr::mutate(gh_user = purrr::map(
+      name, \(x) gh::gh(endpoint = "/search/users",
+                        q = glue::glue("{x} in:name"))$items)) |>
+    tidyr::unnest(gh_user, keep_empty = TRUE) |>
+    dplyr::mutate(gh_user = purrr::map(.data$gh_user, "login")) |>
+    tidyr::unnest(gh_user, keep_empty = TRUE) |>
+    dplyr::filter(is.na(.data$gh_user) | .data$gh_user %in% !!repo_users) |>
+    dplyr::arrange(is.na(gh_user)) |>
+    dplyr::slice(1)
+}
 
-  if(is.na(t) && !is.na(name) && !is.null(name)) {
+#' Fetch GH and Mastodon usernames
+#'
+#' Based on a name and a repository, fetch the usernames
+#'
+#' @param name Character. Full name
+#' @param owner Character. Repository owner.
+#' @param pkg Character. Repository name (package name).
+#'
+#' @return Data frame of user names: gh_user and masto_user
+#' @export
+#'
+#' @examples
+#' all_users(name = "Steffi LaZerte", pkg = "weathercan")
+all_users <- function(name, owner = "ropensci", pkg) {
+  gh_user(name, owner, pkg) |>
+    dplyr::mutate(masto_user = masto_user(gh_user = u$gh_user, name = u$name)) |>
+    dplyr::select(-"name")
+}
+
+
+#' Fetch Mastodon username
+#'
+#' Using the GH username or the Full name, check rOpenSci author pages and then
+#' GitHub for references to the person Mastodon account.
+#'
+#' @param gh_user Character. GH user name.
+#' @param name Character. Full/Partial name
+#'
+#' @return Character url to Mastodon profile
+#' @export
+#'
+#' @examples
+#' masto_user("steffilazerte")
+
+masto_user <- function(gh_user = NULL, name = NULL) {
+
+  # Name placeholder
+  m <- NA_character_
+
+  # If no name let's get it from GH
+  if(is.null(name) && !is.null(gh_user) && !is.na(gh_user) ) name <- gh_name(gh_user)
+
+  # Now try via name from rOpenSci
+  if(!is.na(name) && !is.null(name)) {
     name <- stringr::str_remove_all(name, "\\.")
-    t <- get_twitter_from_ro(name)
+    t <- ro_masto(name)
   }
 
-  if(is.na(t) && !is.na(gh_user)) t <- get_twitter_from_gh(gh_user)
+  # Otherwise chech GH profile
+  if(!is.na(t) && !is.null(gh_user) && !is.na(gh_user)) t <- gh_masto(gh_user)
 
   t
 }
 
-get_twitter_from_gh <- function(gh_user) {
-  info <- gh::gh("/users/:username", username = gh_user)
-  twitter_user <- info$twitter_username
-  if(is.null(twitter_user)) twitter_user <- NA_character_
-  twitter_user
+#' Find Mastodon username from GitHub profile
+#'
+#' @param gh_user Character. GH username
+#'
+#' @return Character URL to mastodon profile if it exists, NA otherwise.
+#' @export
+#'
+#' @examples
+#' gh_masto("steffilazerte")
+
+gh_masto <- function(gh_user) {
+  info <- gh::gh("/users/{username}/social_accounts", username = gh_user)
+  m <- info |>
+    purrr::map(dplyr::as_tibble) |>
+    purrr::list_rbind() |>
+    dplyr::filter(stringr::str_detect(tolower(provider), "mastodon")) |>
+    dplyr::pull("url")
+
+  if(is.null(m) || length(m) == 0) m <- NA_character_
+  m
 }
 
-get_twitter_from_ro <- function(name) {
+#' Find Mastodon username from rOpenSci author pages
+#'
+#' @param gh_user Character. Full name as on RO author pages
+#'
+#' @return Character URL to mastodon profile if it exists, NA otherwise.
+#' @export
+#'
+#' @examples
+#' ro_masto("Steffi LaZerte")
+
+ro_masto <- function(name) {
   name <- stringr::str_replace_all(name, " ", "-")
   name <- tolower(name)
 
@@ -124,25 +190,33 @@ get_twitter_from_ro <- function(name) {
                   name = name)[["download_url"]], silent = TRUE)
   if(class(t) %in% "try-error") return(NA_character_)
 
-  t <- t %>%
-    httr::GET() %>%
-    httr::content(as = "text") %>%
-    yaml::read_yaml(text = .) %>%
-    .$twitter
+  t <- t |>
+    httr2::request() |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    yaml::read_yaml(text = _)
+  t <- t$mastodon
   if(is.null(t)) t <- NA_character_
   t
 }
 
+
+
+#' Extract mentions from forum text
+#'
+#' @param x Forum text
+#'
+#' @return Character of metions
 #' @export
 forum_mention <- function(x) {
   if(stringr::str_detect(rvest::html_text(x), "@")) {
-    r <- rvest::html_nodes(x, css = ".mention") %>%
-      rvest::html_text() %>%
+    r <- rvest::html_nodes(x, css = ".mention") |>
+      rvest::html_text() |>
       stringr::str_subset("rOpenSci", negate = TRUE)
 
     if(length(r) == 0) {
-      r <- stringr::str_extract_all(rvest::html_text(x), "@[0-9a-zA-Z]+") %>%
-        unlist() %>%
+      r <- stringr::str_extract_all(rvest::html_text(x), "@[0-9a-zA-Z]+") |>
+        unlist() |>
         stringr::str_subset("rOpenSci", negate = TRUE)
     }
 
@@ -152,119 +226,24 @@ forum_mention <- function(x) {
   r
 }
 
+#' Extract resources from forum text
+#'
+#' @param x Forum text
+#'
+#' @return Character vector of resources
+#'
 #' @export
 forum_resource <- function(x) {
-  x %>%
+  x |>
     # https://stackoverflow.com/questions/60137188/xpath-picking-div-after-h4-with-specific-text
-    rvest::html_elements(css = 'h4:contains(resource) + *') %>%
-    rvest::html_text2() %>%
-    stringr::str_split("\\\n|,( )*|;( )*") %>%
-    unlist() %>%
-    stringr::str_trim() %>%
-    stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])") %>%
-    stringr::str_trim() %>%
+    rvest::html_elements(css = 'h4:contains(resource) + *') |>
+    rvest::html_text2() |>
+    stringr::str_split("\\\n|,( )*|;( )*") |>
+    unlist() |>
+    stringr::str_trim() |>
+    stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])") |>
+    stringr::str_trim() |>
     unlist()
-}
-
-#' @export
-get_issues <- function(owner, repo,
-                       filter_labels = TRUE,
-                       labels_help = "", labels_first = "",
-                       since = NULL) {
-
-  message("owner: ", owner, "; repo: ", repo)
-
-  if(!is.null(since)) {
-    i <- gh::gh(endpoint = "/repos/{owner}/{repo}/issues",
-                owner = owner, repo = repo,
-                state = "open",
-                since = format(since, "%Y-%m-%dT%H:%M:%SZ"),
-                .limit = Inf)
-  } else {
-    i <- gh::gh(endpoint = "/repos/{owner}/{repo}/issues",
-                owner = owner, repo = repo,
-                state = "open",
-                .limit = Inf)
-  }
-
-  i <- dplyr::tibble(url = purrr::map_chr(i, "url"),
-                     number = purrr::map_dbl(i, "number"),
-                     labels = purrr::map(i, "labels"),
-                     title = purrr::map_chr(i, "title"),
-                     created = purrr::map_chr(i, "created_at"),
-                     update = purrr::map_chr(i, "updated_at"),
-                     body = purrr::map_chr(i, "body", .default = ""),
-                     gh_user_issue = purrr::map_chr(i, ~.[["user"]]$login)) %>%
-    dplyr::mutate(labels = purrr::map_depth(.data$labels, 2, "name"),
-                  n_labels = purrr::map_int(.data$labels, length))
-
-  if(filter_labels && !all(labels_help == "")) {
-    i <- i |>
-      dplyr::mutate(labels_help = purrr::map_lgl(
-        .data$labels,
-        ~any(stringr::str_detect(tolower(.), !!labels_help))),
-        labels_first = purrr::map_lgl(
-          .data$labels,
-          ~any(stringr::str_detect(tolower(.), !!labels_first)))) |>
-      dplyr::filter(.data$labels_help) |>
-      dplyr::mutate(events = purrr::map(
-        .data$number, ~get_label_events(owner, repo, .,
-                                        labels = !!labels_help))) %>%
-      tidyr::unnest(.data$events, keep_empty = TRUE)
-  }
-
-  i
-}
-
-get_label_events <- function(owner, repo, issue, labels) {
-  events <- gh::gh(endpoint = "/repos/{owner}/{repo}/issues/{issue}/events",
-                   owner = owner, repo = repo, issue = issue)
-
-  e <- dplyr::tibble(event = purrr::map_dbl(events, "id"),
-                     type = purrr::map_chr(events, "event"),
-                     label = purrr::map(events, "label"),
-                     gh_user = purrr::map_chr(events, ~.[["actor"]]$login),
-                     label_created = purrr::map_chr(events, "created_at")) %>%
-    dplyr::filter(.data$type == "labeled") %>%
-    tidyr::unnest(.data$label)
-  if(nrow(e) > 1) {
-    e %>%
-      tidyr::unnest(.data$label) %>%
-      dplyr::filter(stringr::str_detect(.data$label, !!labels)) %>%
-      dplyr::mutate(label_created = lubridate::ymd_hms(.data$label_created)) %>%
-      dplyr::arrange(dplyr::desc(.data$label_created)) %>%
-      dplyr::slice(1) %>%
-      dplyr::select("gh_user_labelled" = "gh_user", "label_created")
-  } else data.frame()
-}
-
-
-# Get package references out of url
-# get_package_ref(url = "https://link.springer.com/article/10.1007/s40823-021-00067-y/tables/1")
-get_package_ref <- function(url, pkgs = NULL) {
-
-  text <- httr::GET(url) %>%
-    httr::content() %>%
-    rvest::html_element("body") %>%
-    rvest::html_text2() %>%
-    stringr::str_split(pattern = "\n") %>%
-    unlist()
-
-  if(is.null(pkgs)) pkgs <- pkgs()
-  pkgs %>%
-    dplyr::mutate(
-      name_reg = glue::glue("\\b{name}\\b"),
-      text_ref = purrr::map(.data$name_reg,
-                            ~any(stringr::str_detect(!!text, .))),
-      text_context = purrr::map(.data$name_reg,
-                                ~stringr::str_extract_all(!!text, .))) %>%
-    dplyr::filter(.data$text_ref == TRUE) %>%
-    dplyr::mutate(author = purrr::map2(.data$maintainer, .data$name,
-                                       ~get_user(name = .x,
-                                                 owner = "ropensci",
-                                                 pkg = .y))) %>%
-    tidyr::unnest(.data$author) %>%
-    dplyr::mutate(draft = glue::glue("{name} by @{twitter_user}"))
 }
 
 
@@ -278,5 +257,48 @@ nth_day <- function(x) {
   paste0(x, th)
 }
 
+#' Find the next date
+#'
+#' Given a date and a day of the week,
+#' Given a date return the next month's first Tuesday
+#'
+#' @param month Character/Date. The current month. Date returned is the next month.
+#' @param which Character/Numeric. Which week day to return. Either number or
+#'   abbreviated English weekday.
+#' @param which Numeric. The nth week to return (i.e. the 1st Tuesday if `n = 1`
+#'   and `which = "Tues"`).
+#'
+#' @return A date
+#' @export
+#'
+#' @examples
+#'
+#' # Get the next first Tuesday
+#' next_date("2023-11-01")
+#' next_date("2023-11-30")
+#'
+#' # Get the next 3rd Tuesday
+#' next_date("2023-11-01", n = 3)
+#'
+#' # Oops
+#' \dontrun{
+#' next_date("2023-11-01", n = 5)
+#' }
+#'
+next_date <- function(month, which = "Tues", n = 1) {
+  month <- lubridate::as_date(month) + lubridate::period("1 month")
 
+  d <- month |>
+    lubridate::floor_date(unit = "months") |>
+    lubridate::ceiling_date(unit = "weeks", week_start = which,
+                            change_on_boundary = FALSE)
+
+  d <- d + lubridate::weeks(n - 1)
+
+  if(lubridate::month(d) != lubridate::month(month)) {
+    stop("There are not ", n, " ", format(d, "%A"), "s in ", format(month, "%B %Y"),
+         call. = FALSE)
+  }
+  d
+}
 

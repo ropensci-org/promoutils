@@ -11,11 +11,22 @@
 #' @param cohost Character. Name of cohost, if unknown, uses XXXX placeholder
 #'
 #' @export
-cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX") {
+cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
+                     dry_run = FALSE) {
 
-  t <- get_details(i, type = "next")
+  t <- cw_details(which = "next")
 
-  if(is.null(date)) date <- next_tues(t$date)
+  if(is.null(date)) {
+    date <- next_tues(t$date)
+  } else {
+    date <- suppressWarnings(lubridate::as_date(date))
+    if(is.na(date)) {
+      stop("Invalid data, must be a full date down to the day, ",
+           "or do not supply date and let the function find the next j",
+           "one for you", call. = FALSE)
+    }
+  }
+
   if(is.null(tz)) {
     tz <- which(t$tz == c("Australia", "Europe", "America")) + 1
     if(tz > 3) tz <- tz - 3
@@ -33,24 +44,25 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX") {
 
   gh_issue_post(title = title, body = body,
                 labels = "coworking",
-                owner = "rosadmin", repo = "comms")
+                owner = "rosadmin", repo = "comms",
+                dry_run = dry_run)
 
 }
 
 #' Create a draft event for coworking
 #'
-#' Creates a draft coworking event for the roweb3 website
+#' Creates a draft coworking event for the roweb3 website. All details pulled
+#' from the coworking todo list issue in `rosadmin/comms`.
 #'
 #' @param date Character/Date. Date of the coworking event (local)
-#' @param tz Character. Timezone of the event (match from `OlsonNames()`)
-#' @param theme Character. Theme.
-#' @param cohost Character. Name of cohost
+#' @param dry_run Logical. Whether to really create the event or just return the
+#'   text.
 #'
 #' @export
-cw_event <- function(date) {
+cw_event <- function(date, dry_run = FALSE) {
 
   # Get issue
-  e <- cw_details(type = "date", date = date)
+  e <- cw_details(which = date)
 
   # Get details
   date <- e$date
@@ -58,10 +70,12 @@ cw_event <- function(date) {
   theme <- e$theme
   cohost <- e$cohost
 
-  dir <- "./content/events/"
-  if(!dir.exists(dir)) {
-    stop("Directory ", dir, " doesn't exist. ",
-         "Are you running this in `roweb3`?", call. = FALSE)
+  if(!dry_run) {
+    dir <- "./content/events/"
+    if(!dir.exists(dir)) {
+      stop("Directory ", dir, " doesn't exist. ",
+           "Are you running this in `roweb3`?", call. = FALSE)
+    }
   }
 
   details <- data.frame(
@@ -91,7 +105,7 @@ cw_event <- function(date) {
 
   slug <- glue::glue("coworking-{format(date, '%Y-%m')}")
 
-  f <- file.path(dir, glue::glue("{lubridate::as_date(date)}-{slug}.md"))
+  if(!dry_run) f <- file.path(dir, glue::glue("{lubridate::as_date(date)}-{slug}.md"))
 
   yaml <- glue::glue(
     .sep = "\n",
@@ -165,8 +179,8 @@ cw_event <- function(date) {
     "accommodate different parts of the world."
   )
 
-
-  writeLines(paste0(yaml, "\n\n", time_check, "\n\n", body), f)
+  e <- paste0(yaml, "\n\n", time_check, "\n\n", body)
+  if(dry_run) e else writeLines(e, f)
 
 }
 
@@ -193,7 +207,7 @@ cw_event <- function(date) {
 #' }
 
 cw_socials <- function(date, who_masto, who_slack, who_linkedin,
-                           posters_tz = "America/Winnipeg") {
+                           posters_tz = "America/Winnipeg", dry_run = FALSE) {
 
   i <- gh::gh("/repos/{owner}/{repo}/contents/content/events",
               owner = "ropensci", repo = "roweb3")
@@ -264,10 +278,10 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
   Sys.sleep(1) # Give time for event to open first
 
   # Create draft issues for the mastodon posts
-  social_week(deets, where = "mastodon")
-  social_hour(deets, where = "mastodon")
-  social_week(deets, where = "linkedin")
-  social_hour(deets, where = "linkedin")
+  cw_social_week(deets, where = "mastodon", dry_run = dry_run)
+  cw_social_hour(deets, where = "mastodon", dry_run = dry_run)
+  cw_social_week(deets, where = "linkedin", dry_run = dry_run)
+  cw_social_hour(deets, where = "linkedin", dry_run = dry_run)
 
   # Create draft text for slack messages
   glue::glue(slack_week(deets, posters_tz),
@@ -277,7 +291,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
 
 
 
-social_week <- function(x, where) {
+cw_social_week <- function(x, where, dry_run) {
   p <- x |>
     dplyr::mutate(
       time_post = .data$date_local - lubridate::weeks(1),
@@ -300,10 +314,11 @@ social_week <- function(x, where) {
         .sep = "\n",
       ))
 
-  post_issue(time = p$time_post, tz = p$tz, where = where, title = p$title, body = p$body)
+  socials_post_issue(time = p$time_post, tz = p$tz, where = where,
+                     title = p$title, body = p$body, dry_run = dry_run)
 }
 
-social_hour <- function(x, where) {
+cw_social_hour <- function(x, where, dry_run) {
   p <- x |>
     dplyr::mutate(
       time_post = .data$date_local - lubridate::hours(1),
@@ -320,7 +335,8 @@ social_hour <- function(x, where) {
         .sep = "\n"
       )
     )
-  post_issue(time = p$time_post, tz = p$tz, where = where, title = p$title, body = p$body)
+  socials_post_issue(time = p$time_post, tz = p$tz, where = where,
+                     title = p$title, body = p$body, dry_run = dry_run)
 }
 
 slack_week <- function(x, posters_tz) {
@@ -361,45 +377,43 @@ slack_hour <- function(x, posters_tz) {
 }
 
 
-# Given a date return the next month's first Tuesday
-next_tues <- function(month) {
-  month <- lubridate::as_date(month) + lubridate::period("1 month")
+#' Fetch details about coworking sessions
+#'
+#' @param which Character/Date. "next" to fetch details on the next coworking
+#'   session or a Date fetch details for a specific coworking session.
+#'
+#' @return Data frame with coworking event details
+#'
+#' @examples
+#' cw_details()
+#' cw_details("2023-11")
 
-  month |>
-    lubridate::floor_date(unit = "months") |>
-    lubridate::ceiling_date(unit = "weeks", week_start = "Tues")
-}
+cw_details <- function(which = "next") {
 
+  i <- gh_issue_fetch(repo = "comms", labels = "coworking", state = "all")
 
-cw_details <- function(type, ...) {
+  d <- data.frame(title = purrr::map_chr(i, "title"),
+                  body = purrr::map_chr(i, "body"))
 
-  args <- list(...) # date
-
-  i <- gh_issue_get(repo = "comms", labels = "coworking", state = "all")
-
-  d <- data.frame(t = purrr::map_chr(i, "title"),
-                  b = purrr::map_chr(i, "body"))
-
-  if(type == "next") {
+  if(is.character(which) && which == "next") {
     d <- d |>
-      dplyr::arrange(dplyr::desc(t)) |>
+      dplyr::arrange(dplyr::desc(title)) |>
       dplyr::slice(1)
-  } else if (type == "date") {
-    d <- dplyr::filter(d, stringr::str_detect(t, args[["date"]]))
+  } else { # Assume date
+    d <- dplyr::filter(d, stringr::str_detect(title, which))
   }
 
   if(nrow(d) != 1) {
     if(nrow(d) == 0) stop("No details found", call. = FALSE)
-    stop("Mulitple event details selected:\n", paste0(d$t, collapse = "\n"), call. = FALSE)
+    stop("Mulitple event details selected:\n", paste0(d$title, collapse = "\n"), call. = FALSE)
   }
 
   dplyr::mutate(
     d,
-    date = stringr::str_extract(t, "\\d{4}-\\d{2}-\\d{2}"),
-    tz = stringr::str_extract(b, "America|Europe|Australia"),
-    #b = stringr::str_split(b, "\r\n", simplify = TRUE),
-    theme = stringr::str_subset(stringr::str_split(b, "\n", simplify = TRUE), "Theme"),
+    date = stringr::str_extract(title, "\\d{4}-\\d{2}-\\d{2}"),
+    tz = stringr::str_extract(body, "America|Europe|Australia"),
+    theme = stringr::str_subset(stringr::str_split(body, "\n", simplify = TRUE), "Theme"),
     theme = stringr::str_remove(theme, "\\*\\*Theme\\*\\*: "),
-    cohost = stringr::str_subset(stringr::str_split(b, "\n", simplify = TRUE), "\\*\\*Co-host"),
+    cohost = stringr::str_subset(stringr::str_split(body, "\n", simplify = TRUE), "\\*\\*Co-host"),
     cohost = stringr::str_remove(cohost, "\\*\\*Co-host\\*\\*: "))
 }

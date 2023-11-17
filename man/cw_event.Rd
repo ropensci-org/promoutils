@@ -4,17 +4,15 @@
 \alias{cw_event}
 \title{Create a draft event for coworking}
 \usage{
-cw_event(date)
+cw_event(date, dry_run = FALSE)
 }
 \arguments{
 \item{date}{Character/Date. Date of the coworking event (local)}
 
-\item{tz}{Character. Timezone of the event (match from \code{OlsonNames()})}
-
-\item{theme}{Character. Theme.}
-
-\item{cohost}{Character. Name of cohost}
+\item{dry_run}{Logical. Whether to really create the event or just return the
+text.}
 }
 \description{
-Creates a draft coworking event for the roweb3 website
+Creates a draft coworking event for the roweb3 website. All details pulled
+from the coworking todo list issue in \code{rosadmin/comms}.
 }

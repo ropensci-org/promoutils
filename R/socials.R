@@ -14,13 +14,15 @@
 #' @param where Character vector. Either `mastodon` and/or `linkedin` to
 #'   specifty which platforms this should be posted on.
 #' @param dry_run Logical. Whether to perform a dry run (do not post, but
-#'   display draft).
+#'   display draft if `verbose = TRUE`).
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
+#' @param verbose Logical. If dry run, displace draft?
 #'
 #' @export
-post_issue <- function(time, tz, title, body, where = "mastodon", dry_run = FALSE,
-                       avoid_dups = TRUE) {
+socials_post_issue <- function(time, tz, title, body, where = "mastodon",
+                               avoid_dups = TRUE, dry_run = FALSE,
+                               verbose = FALSE) {
 
   if(!all(where %in% c("mastodon", "linkedin"))) {
     stop("'where' must be one of 'mastodon' or 'linkedin'", call. = FALSE)
@@ -42,12 +44,12 @@ post_issue <- function(time, tz, title, body, where = "mastodon", dry_run = FALS
     "#RStats",
     "@rstats@a.gup.pe", .sep = "\n")
 
-  if(dry_run) {
+  if(dry_run & verbose) {
     message("labels: ", paste0(labels, collapse = ", ") , "\n\n", title, "\n\n", body)
   }
 
   gh_issue_post(title, body,
                 labels = labels,
                 owner = "rosadmin", repo = "scheduled_socials",
-                avoid_dups = avoid_dups)
+                avoid_dups = avoid_dups, dry_run = dry_run)
 }

@@ -32,6 +32,15 @@ This function authorizes with the scopes:
 \item r_organization_admin \link{special request}
 }
 }
+\examples{
+
+\dontrun{
+# Only run if you need to update the scopes or get a new token (otherwise
+# you'll have to replace all your tokens)
+t <- li_auth()
+t$refresh_token
+}
+}
 \references{
 \itemize{
 \item Refresh tokens API: https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens

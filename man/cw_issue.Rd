@@ -4,7 +4,13 @@
 \alias{cw_issue}
 \title{Create Coworking To-Do's on Comms Repo}
 \usage{
-cw_issue(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX")
+cw_issue(
+  date = NULL,
+  tz = NULL,
+  theme = "XXXX",
+  cohost = "XXXX",
+  dry_run = FALSE
+)
 }
 \arguments{
 \item{date}{Character. Date of next event (if NULL picks next first Tuesday).}

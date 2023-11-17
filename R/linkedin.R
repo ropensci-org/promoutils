@@ -165,9 +165,10 @@ li_client <- function() {
 #'   - Refresh tokens API: https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens
 #'
 #' @examples
+#'
 #' \dontrun{
 #' # Only run if you need to update the scopes or get a new token (otherwise
-#' you'll have to replace all your tokens
+#' # you'll have to replace all your tokens)
 #' t <- li_auth()
 #' t$refresh_token
 #' }

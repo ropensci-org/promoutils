@@ -9,7 +9,8 @@ cw_socials(
   who_masto,
   who_slack,
   who_linkedin,
-  posters_tz = "America/Winnipeg"
+  posters_tz = "America/Winnipeg",
+  dry_run = FALSE
 )
 }
 \arguments{
