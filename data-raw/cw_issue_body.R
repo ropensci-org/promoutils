@@ -23,5 +23,6 @@ cw_issue_body <- "**Prepare**
 - [ ] Post summary on Staff Slack
 - [ ] Post summary with link to next event on Mastodon"
 
+ro_urn <- "urn:li:organization:77132573"
 
-usethis::use_data(cw_issue_body, overwrite = TRUE)
+usethis::use_data(cw_issue_body, ro_urn, overwrite = TRUE)

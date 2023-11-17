@@ -1,7 +1,7 @@
 # 0.4.0
 - Tweak post templates
 - Automatically create post issues on GitHub
-- Add linkedin options
+- Add functions for posting to linkedIn
 
 # 0.3.2
 - Tweak post templates
