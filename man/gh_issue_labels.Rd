@@ -13,10 +13,10 @@ gh_issue_labels(
 \arguments{
 \item{i}{Data frame of issues from \code{gh_issue_fmt()}}
 
-\item{labels_first}{Character. Regular expression to meatch good-first-issue
+\item{labels_help}{Character. Regular expression to match help-wanted
 labels.}
 
-\item{labels_help.}{Character. Regular expression to match help-wanted
+\item{labels_first}{Character. Regular expression to meatch good-first-issue
 labels.}
 }
 \value{

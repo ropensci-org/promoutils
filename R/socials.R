@@ -7,7 +7,7 @@
 #'
 #' @param time Date/time. Date and time at which the post should be made
 #' @param tz Character. Timezone (from `OlsonNames()`) in which to post
-#' @param title Character. Title of the post ("[Post]" and the date will be
+#' @param title Character. Title of the post (`[Post]` and the date will be
 #'   prepended and appended
 #' @param body Character. Text to be posted (omit the YAML for posting info;
 #'   #RStats and @rstats@a.gup.pe will be appended

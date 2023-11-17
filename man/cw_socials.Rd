@@ -26,7 +26,7 @@ cw_socials(
 time at which to post Slack messages as these are posted in the local
 timezone}
 
-\item{when}{Character. Is this a "week" before reminder or an "hour" before reminder?}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
 }
 \description{
 Creates draft posts for Mastodon and LinkedIn (by opening issues on

@@ -9,7 +9,10 @@ next_date(month, which = "Tues", n = 1)
 \arguments{
 \item{month}{Character/Date. The current month. Date returned is the next month.}
 
-\item{which}{Numeric. The nth week to return (i.e. the 1st Tuesday if \code{n = 1}
+\item{which}{Character/Numeric. Which week day to return. Either number or
+abbreviated English weekday.}
+
+\item{n}{Numeric. The nth week to return (i.e. the 1st Tuesday if \code{n = 1}
 and \code{which = "Tues"}).}
 }
 \value{

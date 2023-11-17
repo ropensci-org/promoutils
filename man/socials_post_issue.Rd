@@ -20,7 +20,7 @@ socials_post_issue(
 
 \item{tz}{Character. Timezone (from \code{OlsonNames()}) in which to post}
 
-\item{title}{Character. Title of the post ("\link{Post}" and the date will be
+\item{title}{Character. Title of the post (\verb{[Post]} and the date will be
 prepended and appended}
 
 \item{body}{Character. Text to be posted (omit the YAML for posting info;

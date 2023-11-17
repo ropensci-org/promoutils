@@ -7,5 +7,5 @@ test_that("pkgs() & pkg_authors()", {
 
 
   expect_silent(a <- pkg_authors("weathercan", p))
-  expact_equal(a, "Steffi LaZerte")
+  expect_equal(a, "Steffi LaZerte")
 })

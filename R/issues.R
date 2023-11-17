@@ -28,7 +28,7 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
                 title = title, body = body, labels = as.list(labels),
                 owner = owner, repo = repo)
 
-    browseURL(r$html_url)
+    utils::browseURL(r$html_url)
   }
 }
 
@@ -71,8 +71,8 @@ gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
 #' @export
 #'
 #' @examples
-#' gh_issue_fetch() |>
-#'   gh_issue_fmt(which = "title")
+#' i <- gh_issue_fetch()
+#' i <- gh_issue_fmt(i, which = "title")
 gh_issue_fmt <- function(i, which = c("title", "number", "body", "labels", "url",
                                   "created", "updated", "gh_user_issue")) {
 
@@ -85,6 +85,7 @@ gh_issue_fmt <- function(i, which = c("title", "number", "body", "labels", "url"
                       body = purrr::map_chr(i, "body", .default = ""),
                       gh_user_issue = purrr::map_chr(i, \(x) x[["user"]]$login)) |>
     dplyr::select(dplyr::any_of(which))
+
 
   if("labels" %in% which) {
     df <- dplyr::mutate(df, labels = purrr::map_depth(.data$labels, 2, "name"),
@@ -99,7 +100,7 @@ gh_issue_fmt <- function(i, which = c("title", "number", "body", "labels", "url"
 #' Extract information on help-wanted labels for issues
 #'
 #' @param i Data frame of issues from `gh_issue_fmt()`
-#' @param labels_help. Character. Regular expression to match help-wanted
+#' @param labels_help Character. Regular expression to match help-wanted
 #'   labels.
 #' @param labels_first Character. Regular expression to meatch good-first-issue
 #'   labels.
@@ -118,17 +119,22 @@ gh_issue_labels <- function(
     labels_first = "(good first issue)|(beginner)|(good-first-issue)") {
 
   i |>
-    dplyr::mutate(labels_help = purrr::map_lgl(
-      .data$labels,
-      ~any(stringr::str_detect(tolower(.), .env$labels_help))),
+    dplyr::mutate(
+      info = stringr::str_remove_all(.data$url, "(https://api.github.com/repos/)|(/issues/\\d+)"),
+      owner = stringr::str_extract(.data$info, "^[[:alpha:]]*"),
+      repo = stringr::str_extract(.data$info, "[[:alpha:]]*$"),
+      labels_help = purrr::map_lgl(
+        .data$labels,
+        \(x) any(stringr::str_detect(tolower(x), .env$labels_help))),
       labels_first = purrr::map_lgl(
         .data$labels,
-        ~any(stringr::str_detect(tolower(.), .env$labels_first)))) |>
+        \(x) any(stringr::str_detect(tolower(x), .env$labels_first)))) |>
     dplyr::filter(.data$labels_help) |>
-    dplyr::mutate(events = purrr::map(
-      .data$number, \(x) gh_label_events(owner, repo, x,
-                                         labels = .env$labels_help))) |>
-    tidyr::unnest(.data$events, keep_empty = TRUE)
+    dplyr::mutate(
+      events = purrr::pmap(
+        list(.data$owner, .data$repo, .data$number),
+        \(x, y, z) gh_label_events(x, y, z, labels = .env$labels_help))) |>
+    tidyr::unnest("events", keep_empty = TRUE)
 
 }
 

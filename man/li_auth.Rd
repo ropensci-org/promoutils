@@ -26,10 +26,10 @@ and the re-start your R session to continue}
 
 This function authorizes with the scopes:
 \itemize{
-\item w_member_social \link{default}
-\item w_organization_social \link{special request}
-\item r_organization_social \link{special request}
-\item r_organization_admin \link{special request}
+\item w_member_social (default)
+\item w_organization_social (special request)
+\item r_organization_social (special request)
+\item r_organization_admin (special request)
 }
 }
 \examples{

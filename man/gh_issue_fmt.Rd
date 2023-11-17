@@ -22,6 +22,6 @@ Issues formated as a data frame
 Format issues list from GH
 }
 \examples{
-gh_issue_fetch() |>
-  gh_issue_fmt(which = "title")
+i <- gh_issue_fetch()
+i <- gh_issue_fmt(i, which = "title")
 }

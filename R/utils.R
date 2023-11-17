@@ -1,12 +1,19 @@
 
+
+#' Return a data frame of rOpenSci packages
+#'
+#' @param url Character. Registry url
+#' @param which Character. Status of packages to return
+#' @param return Character. Return a subset ('sub') or all ('all') package fields.
+#'
+#' @return data frame
 #' @export
 pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
                  which = "active", return = "sub") {
   if(return == "sub") cols <- c("name", "maintainer", "owner")
   if(return == "all") cols <- substitute(dplyr::everything())
 
-
-  pkgs <- jsonlite::fromJSON(url)[["package"]]
+  pkgs <- jsonlite::fromJSON(url)$package
 
    if(which == "active") {
      pkgs <- dplyr::filter(pkgs, stringr::str_detect(.data$status, "active"))
@@ -18,16 +25,23 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
   pkgs |>
     dplyr::mutate(owner = stringr::str_remove_all(
       .data$github, glue::glue("(https://github.com/)|(/{name})"))) |>
-    dplyr::select(!!cols) |>
-    dplyr::mutate(owner = dplyr::if_else(owner == "frictionlessdata-r",
+    dplyr::select(dplyr::any_of(cols)) |>
+    dplyr::mutate(owner = dplyr::if_else(.data$owner == "frictionlessdata-r",
                                          "frictionlessdata",
-                                         owner),
-                  name = dplyr::if_else(name == "frictionless",
+                                         .data$owner),
+                  name = dplyr::if_else(.data$name == "frictionless",
                                          "frictionless-r",
-                                         name))
+                                        .data$name))
 
 }
 
+
+#' Get package author names
+#'
+#' @param x Character. Package name
+#' @param pkgs Data frame. Packages returned by `pkgs()`.
+#'
+#' @return Character name of maintainer
 #' @export
 pkg_authors <- function(x, pkgs) {
   a <- dplyr::filter(pkgs, .data$name %in% x) |>
@@ -111,7 +125,7 @@ gh_user <- function(name, owner = "ropensci", pkg) {
 #' all_users(name = "Steffi LaZerte", pkg = "weathercan")
 all_users <- function(name, owner = "ropensci", pkg) {
   gh_user(name, owner, pkg) |>
-    dplyr::mutate(masto_user = masto_user(gh_user = u$gh_user, name = u$name)) |>
+    dplyr::mutate(masto_user = masto_user(gh_user = .data$gh_user, name = .data$name)) |>
     dplyr::select(-"name")
 }
 
@@ -165,7 +179,7 @@ gh_masto <- function(gh_user) {
   m <- info |>
     purrr::map(dplyr::as_tibble) |>
     purrr::list_rbind() |>
-    dplyr::filter(stringr::str_detect(tolower(provider), "mastodon")) |>
+    dplyr::filter(stringr::str_detect(tolower(.data$provider), "mastodon")) |>
     dplyr::pull("url")
 
   if(is.null(m) || length(m) == 0) m <- NA_character_
@@ -174,7 +188,7 @@ gh_masto <- function(gh_user) {
 
 #' Find Mastodon username from rOpenSci author pages
 #'
-#' @param gh_user Character. Full name as on RO author pages
+#' @param name Character. Full name as on RO author pages
 #'
 #' @return Character URL to mastodon profile if it exists, NA otherwise.
 #' @export
@@ -265,7 +279,7 @@ nth_day <- function(x) {
 #' @param month Character/Date. The current month. Date returned is the next month.
 #' @param which Character/Numeric. Which week day to return. Either number or
 #'   abbreviated English weekday.
-#' @param which Numeric. The nth week to return (i.e. the 1st Tuesday if `n = 1`
+#' @param n Numeric. The nth week to return (i.e. the 1st Tuesday if `n = 1`
 #'   and `which = "Tues"`).
 #'
 #' @return A date

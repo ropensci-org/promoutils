@@ -7,7 +7,7 @@
 ro_masto(name)
 }
 \arguments{
-\item{gh_user}{Character. Full name as on RO author pages}
+\item{name}{Character. Full name as on RO author pages}
 }
 \value{
 Character URL to mastodon profile if it exists, NA otherwise.

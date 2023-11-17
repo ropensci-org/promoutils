@@ -2,6 +2,7 @@
 
 export("%>%")
 export(all_users)
+export(cw_details)
 export(cw_event)
 export(cw_issue)
 export(cw_socials)
@@ -25,3 +26,4 @@ export(ro_masto)
 export(socials_post_issue)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)
+importFrom(rlang,.env)

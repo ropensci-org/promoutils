@@ -20,6 +20,8 @@ cw_issue(
 \item{theme}{Character. Name of theme, if unknown, uses XXXX placeholder}
 
 \item{cohost}{Character. Name of cohost, if unknown, uses XXXX placeholder}
+
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
 }
 \description{
 Create an issue listing the coworking todos. If no date or timezone, picks

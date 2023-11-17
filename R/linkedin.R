@@ -153,10 +153,10 @@ li_client <- function() {
 #'
 #' This function authorizes with the scopes:
 #'
-#' - w_member_social [default]
-#' - w_organization_social [special request]
-#' - r_organization_social [special request]
-#' - r_organization_admin [special request]
+#' - w_member_social (default)
+#' - w_organization_social (special request)
+#' - r_organization_social (special request)
+#' - r_organization_admin (special request)
 #'
 #' @return httr2 authorization
 #' @export

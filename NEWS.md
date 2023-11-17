@@ -2,6 +2,9 @@
 - Tweak post templates
 - Automatically create post issues on GitHub
 - Add functions for posting to linkedIn
+- Revamp functions
+- Omit twitter
+- Rename fuctions for clarity
 
 # 0.3.2
 - Tweak post templates

@@ -9,6 +9,7 @@
 #' @param tz Character. Timezone of next event (if NULL picks next in order).
 #' @param theme Character. Name of theme, if unknown, uses XXXX placeholder
 #' @param cohost Character. Name of cohost, if unknown, uses XXXX placeholder
+#' @param dry_run Logical. Whether to do a dry run (i.e. don't post)
 #'
 #' @export
 cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
@@ -17,7 +18,7 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
   t <- cw_details(which = "next")
 
   if(is.null(date)) {
-    date <- next_tues(t$date)
+    date <- next_date(t$date)
   } else {
     date <- suppressWarnings(lubridate::as_date(date))
     if(is.na(date)) {
@@ -40,7 +41,7 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
     "**Timezone**: {tz}",
     "**Link**: https://ropensci.org/events/coworking-{format(date, '%Y-%m')}",
     "",
-    cw_issue_body, .sep = "\n")
+    promoutils::cw_issue_body, .sep = "\n")
 
   gh_issue_post(title = title, body = body,
                 labels = "coworking",
@@ -90,8 +91,8 @@ cw_event <- function(date, dry_run = FALSE) {
   }
 
 
-  tz_nice <- setNames(details$tz_nice, details$tz)
-  times <- setNames(details$time, details$tz)
+  tz_nice <- stats::setNames(details$tz_nice, details$tz)
+  times <- stats::setNames(details$time, details$tz)
 
 
   date <- lubridate::ymd_h(paste(date, times[[tz]]), tz = tz)
@@ -194,10 +195,10 @@ cw_event <- function(date, dry_run = FALSE) {
 #' @param who_masto Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)
 #' @param who_slack Character. The full Slack handle for the cohost (i.e. @XXXX)
 #' @param who_linkedin Character. The full LinkedIn handle for the cohost (i.e. @XXXX)
-#' @param when Character. Is this a "week" before reminder or an "hour" before reminder?
 #' @param posters_tz Character. Timezone of poster. Required for getting the
 #'   time at which to post Slack messages as these are posted in the local
 #'   timezone
+#' @param dry_run Logical. Whether to do a dry run (i.e. don't post)
 #' @export
 #'
 #' @examples
@@ -207,7 +208,7 @@ cw_event <- function(date, dry_run = FALSE) {
 #' }
 
 cw_socials <- function(date, who_masto, who_slack, who_linkedin,
-                           posters_tz = "America/Winnipeg", dry_run = FALSE) {
+                       posters_tz = "America/Winnipeg", dry_run = FALSE) {
 
   i <- gh::gh("/repos/{owner}/{repo}/contents/content/events",
               owner = "ropensci", repo = "roweb3")
@@ -235,7 +236,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
     yaml = purrr::map(.data$content, ~.x[1:20] |> paste0(collapse = "\n")))
 
   tz <- stringr::str_extract(event$content[[1]], "(America/Vancouver)|(Europe/Paris)|(Australia/Perth)") |>
-    na.omit()
+    stats::na.omit()
 
   if(!tz %in% OlsonNames()) stop("Couldn't detect timezone", call. = FALSE)
 
@@ -273,7 +274,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
       event_url = glue::glue("https://ropensci.org/events/{slug}"))
 
   # Open event for comparison
-  browseURL(deets$event_url)
+  utils::browseURL(deets$event_url)
 
   Sys.sleep(1) # Give time for event to open first
 
@@ -296,7 +297,7 @@ cw_social_week <- function(x, where, dry_run) {
     dplyr::mutate(
       time_post = .data$date_local - lubridate::weeks(1),
       title = glue::glue("Coworking {month} {year} - week before"),
-      who = dplyr::if_else(where == "mastodon", who_masto, who_linkedin),
+      who = dplyr::if_else(where == "mastodon", .data$who_masto, .data$who_linkedin),
       body = glue::glue(
         "Coworking and Office Hours next week!",
         "",
@@ -323,7 +324,7 @@ cw_social_hour <- function(x, where, dry_run) {
     dplyr::mutate(
       time_post = .data$date_local - lubridate::hours(1),
       title = glue::glue("Coworking {month} {year} - 1-hr before"),
-      who = dplyr::if_else(where == "mastodon", who_masto, who_linkedin),
+      who = dplyr::if_else(where == "mastodon", .data$who_masto, .data$who_linkedin),
       body = glue::glue(
         "rOpenSci Coworking and Office Hours coming up in an hour!",
         "",
@@ -383,7 +384,7 @@ slack_hour <- function(x, posters_tz) {
 #'   session or a Date fetch details for a specific coworking session.
 #'
 #' @return Data frame with coworking event details
-#'
+#' @export
 #' @examples
 #' cw_details()
 #' cw_details("2023-11")
@@ -397,23 +398,26 @@ cw_details <- function(which = "next") {
 
   if(is.character(which) && which == "next") {
     d <- d |>
-      dplyr::arrange(dplyr::desc(title)) |>
+      dplyr::arrange(dplyr::desc(.data$title)) |>
       dplyr::slice(1)
   } else { # Assume date
-    d <- dplyr::filter(d, stringr::str_detect(title, which))
+    d <- dplyr::filter(d, stringr::str_detect(.data$title, .env$which))
   }
 
   if(nrow(d) != 1) {
     if(nrow(d) == 0) stop("No details found", call. = FALSE)
-    stop("Mulitple event details selected:\n", paste0(d$title, collapse = "\n"), call. = FALSE)
+    stop("Mulitple event details selected:\n",
+         paste0(d$title, collapse = "\n"), call. = FALSE)
   }
 
   dplyr::mutate(
     d,
-    date = stringr::str_extract(title, "\\d{4}-\\d{2}-\\d{2}"),
-    tz = stringr::str_extract(body, "America|Europe|Australia"),
-    theme = stringr::str_subset(stringr::str_split(body, "\n", simplify = TRUE), "Theme"),
-    theme = stringr::str_remove(theme, "\\*\\*Theme\\*\\*: "),
-    cohost = stringr::str_subset(stringr::str_split(body, "\n", simplify = TRUE), "\\*\\*Co-host"),
-    cohost = stringr::str_remove(cohost, "\\*\\*Co-host\\*\\*: "))
+    date = stringr::str_extract(.data$title, "\\d{4}-\\d{2}-\\d{2}"),
+    tz = stringr::str_extract(.data$body, "America|Europe|Australia"),
+    theme = stringr::str_subset(stringr::str_split(.data$body, "\n", simplify = TRUE),
+                                "Theme"),
+    theme = stringr::str_remove(.data$theme, "\\*\\*Theme\\*\\*: "),
+    cohost = stringr::str_subset(stringr::str_split(.data$body, "\n", simplify = TRUE),
+                                 "\\*\\*Co-host"),
+    cohost = stringr::str_remove(.data$cohost, "\\*\\*Co-host\\*\\*: "))
 }
