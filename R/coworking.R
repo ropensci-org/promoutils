@@ -282,7 +282,7 @@ social_week <- function(x, where) {
     dplyr::mutate(
       time_post = .data$date_local - lubridate::weeks(1),
       title = glue::glue("Coworking {month} {year} - week before"),
-      who = if_else(where == "mastodon", who_masto, who_linkedin),
+      who = dplyr::if_else(where == "mastodon", who_masto, who_linkedin),
       body = glue::glue(
         "Coworking and Office Hours next week!",
         "",
@@ -303,15 +303,16 @@ social_week <- function(x, where) {
   post_issue(time = p$time_post, tz = p$tz, where = where, title = p$title, body = p$body)
 }
 
-masto_hour <- function(x) {
+social_hour <- function(x, where) {
   p <- x |>
     dplyr::mutate(
       time_post = .data$date_local - lubridate::hours(1),
       title = glue::glue("Coworking {month} {year} - 1-hr before"),
+      who = dplyr::if_else(where == "mastodon", who_masto, who_linkedin),
       body = glue::glue(
         "rOpenSci Coworking and Office Hours coming up in an hour!",
         "",
-        "Today's Theme: {theme} with cohost {who_masto}",
+        "Today's Theme: {theme} with cohost {who}",
         "",
         "{time}",
         "",
@@ -319,7 +320,7 @@ masto_hour <- function(x) {
         .sep = "\n"
       )
     )
-  post_issue(time = p$time_post, tz = p$tz, title = p$title, body = p$body)
+  post_issue(time = p$time_post, tz = p$tz, where = where, title = p$title, body = p$body)
 }
 
 slack_week <- function(x, posters_tz) {
