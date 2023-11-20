@@ -151,3 +151,60 @@ next_date <- function(month, which = "Tues", n = 1) {
   d
 }
 
+
+#' Replace emoji codes with unicode
+#'
+#' Replaces emoji codes like :tada: with unicode like 🎉.
+#'
+#' @param x Character. Text string within which to replace codes
+#'
+#' @return  Text string with emoji unicodes
+#' @export
+#'
+#' @examples
+#' x <- replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
+#' x
+replace_emoji <- function(x) {
+  emo <- stringr::str_extract_all(x, "\\:.+\\:") |>
+    unlist() |>
+    unique()
+
+  if(length(emo) > 1) {
+    emo <- stats::setNames(
+      purrr::map(emo, ~pandoc::pandoc_convert(
+        text = .x, from = "markdown+emoji", to = "plain")) |>
+        unlist(),
+      nm = emo)
+
+    x <- stringr::str_replace_all(x, emo)
+  }
+  x
+}
+
+
+#' Extract YAML keys from block
+#'
+#' @param yaml Character. String from which to extract YAML keys
+#' @param trim Character. Text to remove from the YAML block before processing.
+#'   Usually the text that defines the block.
+#'
+#' @return data frame of yaml keys
+#' @export
+#'
+#' @examples
+#'
+#' yaml_extract("~~~start: 2023-11-12\nauthor: Steffi\n~~~")
+#'
+yaml_extract <- function(yaml, trim = "~~~") {
+  y <- stringr::str_remove_all(yaml, trim) %>%
+    yaml::yaml.load() %>%
+    purrr::map_if(is.null,  ~"") %>%
+    data.frame()
+
+  # Catch common typos
+  names(y) <- tolower(names(y))
+  names(y) <- stringr::str_replace_all(names(y),
+                                       "(reocuring)|(reoccuring)|(reocurring)",
+                                       "reoccurring")
+  y
+}

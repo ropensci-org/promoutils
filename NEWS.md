@@ -4,7 +4,8 @@
 - Add functions for posting to linkedIn
 - Revamp functions
 - Omit twitter
-- Rename fuctions for clarity
+- Rename functions for clarity
+- Add functions from scheduled_socials 
 
 # 0.3.2
 - Tweak post templates
