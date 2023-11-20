@@ -30,7 +30,7 @@ id <- li_posts_write(
 id <- li_posts_write(
   author = ro_urn,
   body = "Testing out the LinkedIn API via R and httr2!",
-  dry_run = FALSE)
+  dry_run = TRUE)
 
 
 id <- li_posts_write(
@@ -41,9 +41,17 @@ id <- li_posts_write(
       "And again with links...",
       "",
       "- https://docs.ropensci.org/weathercan",
-      "- [weathercan docs](https://docs.ropensci.org/weathercan)",
+      "- weathercan docs \\(https://docs.ropensci.org/weathercan\\)",
+      "- \\(what about other things in brackets?\\)",
       "",
       "🎉",
       sep = "\n"
     )
 )
+
+li_posts_write(author = steffi_urn,
+               body = glue::glue(
+                 "testing urls... in line https://steffilazerte.ca",
+                 "",
+                 "with (https://github.com/steffilazerte)",
+                 "with hashtags #testing", .sep = "\n"))

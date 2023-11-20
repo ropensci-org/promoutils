@@ -47,6 +47,10 @@ li_posts_read <- function(author) {
 
 
 li_posts_write <- function(author, body, dry_run = FALSE) {
+
+  # Need to escape () in the body or we lose links with them and everything following
+  body <- escape_brackets(body)
+
   r <- li_req_posts() |>
     httr2::req_headers("Content-Type" = "application/json") |>
     httr2::req_body_json(list(

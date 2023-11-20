@@ -208,3 +208,8 @@ yaml_extract <- function(yaml, trim = "~~~") {
                                        "reoccurring")
   y
 }
+
+
+escape_brackets <- function(x) {
+  stringr::str_replace_all(x, c("\\(" = "\\\\\\(", "\\)" = "\\\\\\)"))
+}
