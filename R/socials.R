@@ -33,6 +33,9 @@ socials_post_issue <- function(time, tz, title, body, where = "mastodon",
   date <- lubridate::as_date(time)
   labels <- c(where, "draft", "needs-review")
   title <- glue::glue("[Post] - {title} - {date}")
+  hash <- "#RStats"
+  if("mastodon" %in% where) hash <- glue::glue("{hash}\n@rstats@a.gup.pe")
+
   body <- glue::glue(
     "~~~",
     "time: {time}",
@@ -41,8 +44,7 @@ socials_post_issue <- function(time, tz, title, body, where = "mastodon",
     "",
     "{body}",
     "",
-    "#RStats",
-    "@rstats@a.gup.pe", .sep = "\n")
+    "{hash}", .sep = "\n")
 
   if(dry_run & verbose) {
     message("labels: ", paste0(labels, collapse = ", ") , "\n\n", title, "\n\n", body)
