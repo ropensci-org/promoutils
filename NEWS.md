@@ -6,6 +6,7 @@
 - Omit twitter
 - Rename functions for clarity
 - Add functions from scheduled_socials 
+- Helper function to create mastodon handles from urls
 
 # 0.3.2
 - Tweak post templates

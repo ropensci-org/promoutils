@@ -23,3 +23,7 @@ data frame
 \description{
 Return a data frame of rOpenSci packages
 }
+\examples{
+pkgs()
+pkgs(which = "all", return = "all")
+}

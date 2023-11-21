@@ -217,3 +217,21 @@ yaml_extract <- function(yaml, trim = "~~~") {
 escape_brackets <- function(x) {
   stringr::str_replace_all(x, c("\\(" = "\\\\\\(", "\\)" = "\\\\\\)"))
 }
+
+
+#' Convert a mastodon user link to handle
+#'
+#' @param x Character. Link to user's profile
+#'
+#' @return Character user handle @user@instance
+#' @export
+#'
+#' @examples
+#' masto2user("https://fosstodon.org/@steffilazerte")
+
+masto2user <- function(x) {
+  n <- stringr::str_remove(x, "http(s?)://") |>
+    stringr::str_split("/", simplify = TRUE) |>
+    as.vector()
+  paste0(n[2], "@", n[1])
+}
