@@ -68,7 +68,9 @@ forum_mention <- function(x) {
       stringr::str_subset("rOpenSci", negate = TRUE)
 
     if(length(r) == 0) {
-      r <- stringr::str_extract_all(rvest::html_text(x), "@[0-9a-zA-Z]+") |>
+      r <- stringr::str_extract_all(
+        # Should get Twitter or Mastodon handles
+        rvest::html_text(x), "@[0-9a-zA-Z]+(@[0-9a-zA-Z.]+)?") |>
         unlist() |>
         stringr::str_subset("rOpenSci", negate = TRUE)
     }
