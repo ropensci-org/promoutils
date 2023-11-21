@@ -63,17 +63,11 @@ pkg_authors <- function(x, pkgs) {
 #' @export
 forum_mention <- function(x) {
   if(stringr::str_detect(rvest::html_text(x), "@")) {
-    r <- rvest::html_nodes(x, css = ".mention") |>
-      rvest::html_text() |>
+    r <- stringr::str_extract_all(
+      # Should get Twitter or Mastodon handles
+      rvest::html_text(x), "@[0-9a-zA-Z]+(@[0-9a-zA-Z.]+)?") |>
+      unlist() |>
       stringr::str_subset("rOpenSci", negate = TRUE)
-
-    if(length(r) == 0) {
-      r <- stringr::str_extract_all(
-        # Should get Twitter or Mastodon handles
-        rvest::html_text(x), "@[0-9a-zA-Z]+(@[0-9a-zA-Z.]+)?") |>
-        unlist() |>
-        stringr::str_subset("rOpenSci", negate = TRUE)
-    }
 
     r <- glue::glue_collapse(r, sep = ", ", last = " & ")
 
