@@ -29,12 +29,12 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
       .data$github, glue::glue("(https://github.com/)|(/{name})")))
   if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner")))
 
-  p <- p |>
+  p |>
     dplyr::mutate(owner = dplyr::if_else(.data$owner == "frictionlessdata-r",
                                          "frictionlessdata",
                                          .data$owner),
                   name = dplyr::if_else(.data$name == "frictionless",
-                                         "frictionless-r",
+                                        "frictionless-r",
                                         .data$name))
 
 }

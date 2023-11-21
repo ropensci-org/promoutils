@@ -121,8 +121,8 @@ gh_issue_labels <- function(
   i |>
     dplyr::mutate(
       info = stringr::str_remove_all(.data$url, "(https://api.github.com/repos/)|(/issues/\\d+)"),
-      owner = stringr::str_extract(.data$info, "^[[:alpha:]]*"),
-      repo = stringr::str_extract(.data$info, "[[:alpha:]]*$"),
+      owner = stringr::str_extract(.data$info, "^[^/]*"),
+      repo = stringr::str_extract(.data$info, "[^/]*$"),
       labels_help = purrr::map_lgl(
         .data$labels,
         \(x) any(stringr::str_detect(tolower(x), .env$labels_help))),

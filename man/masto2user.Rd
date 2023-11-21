@@ -17,4 +17,5 @@ Convert a mastodon user link to handle
 }
 \examples{
 masto2user("https://fosstodon.org/@steffilazerte")
+masto2user("steffi")
 }
