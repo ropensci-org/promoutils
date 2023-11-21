@@ -154,14 +154,16 @@ gh_label_events <- function(owner, repo, issue, labels) {
 
   # Get only the events reflecting a specific 'label' pattern
   if(nrow(e) > 0) {
-    e |>
+   e <- e |>
       tidyr::unnest(.data$label) |>
       dplyr::filter(stringr::str_detect(.data$label, .env$labels)) |>
       dplyr::mutate(label_created = lubridate::ymd_hms(.data$label_created)) |>
       dplyr::arrange(dplyr::desc(.data$label_created)) |>
       dplyr::slice(1) |>
       dplyr::select("gh_user_labelled" = "gh_user", "label_created")
-  } else data.frame()
+  } else e <- data.frame()
+
+  e
 }
 
 
