@@ -8,10 +8,12 @@
 #'
 #' @return data frame
 #' @export
+#'
+#' @examples
+#' pkgs()
+#' pkgs(which = "all", return = "all")
 pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
                  which = "active", return = "sub") {
-  if(return == "sub") cols <- c("name", "maintainer", "owner")
-  if(return == "all") cols <- substitute(dplyr::everything())
 
   pkgs <- jsonlite::fromJSON(url)$package
 
@@ -22,10 +24,12 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
                                                      negate = TRUE))
    }
 
-  pkgs |>
+  p <- pkgs |>
     dplyr::mutate(owner = stringr::str_remove_all(
-      .data$github, glue::glue("(https://github.com/)|(/{name})"))) |>
-    dplyr::select(dplyr::any_of(cols)) |>
+      .data$github, glue::glue("(https://github.com/)|(/{name})")))
+  if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner")))
+
+  p <- p |>
     dplyr::mutate(owner = dplyr::if_else(.data$owner == "frictionlessdata-r",
                                          "frictionlessdata",
                                          .data$owner),
