@@ -13,9 +13,9 @@ pkgs(
 \arguments{
 \item{url}{Character. Registry url}
 
-\item{which}{Character. Status of packages to return}
+\item{which}{Character. Status of packages to return ("all" or "active")}
 
-\item{return}{Character. Return a subset ('sub') or all ('all') package fields.}
+\item{return}{Character. Return a subset ("sub") or all ("all") package fields.}
 }
 \value{
 data frame

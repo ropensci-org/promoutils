@@ -3,8 +3,8 @@
 #' Return a data frame of rOpenSci packages
 #'
 #' @param url Character. Registry url
-#' @param which Character. Status of packages to return
-#' @param return Character. Return a subset ('sub') or all ('all') package fields.
+#' @param which Character. Status of packages to return ("all" or "active")
+#' @param return Character. Return a subset ("sub") or all ("all") package fields.
 #'
 #' @return data frame
 #' @export
@@ -18,10 +18,9 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
   pkgs <- jsonlite::fromJSON(url)$package
 
    if(which == "active") {
-     pkgs <- dplyr::filter(pkgs, stringr::str_detect(.data$status, "active"))
+     pkgs <- dplyr::filter(pkgs, .data$type == "active")
    } else {
-     pkgs <- dplyr::filter(pkgs, stringr::str_detect(.data$status, "abandoned",
-                                                     negate = TRUE))
+     pkgs <- dplyr::filter(pkgs, .data$type != "archived")
    }
 
   p <- pkgs |>
