@@ -21,6 +21,7 @@ Imports:
     jsonlite,
     lubridate,
     magrittr,
+    memoise (>= 2.0.1),
     purrr,
     rlang,
     rvest,

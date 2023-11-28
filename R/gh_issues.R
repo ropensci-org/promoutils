@@ -24,9 +24,9 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
           dplyr::if_else(dry_run, " [DRY-RUN]", ""))
 
   if(!dry_run) {
-    r <- gh::gh("POST /repos/{owner}/{repo}/issues",
-                title = title, body = body, labels = as.list(labels),
-                owner = owner, repo = repo)
+    r <- gh_cache("POST /repos/{owner}/{repo}/issues",
+                  title = title, body = body, labels = as.list(labels),
+                  owner = owner, repo = repo)
 
     utils::browseURL(r$html_url)
   }
@@ -54,11 +54,11 @@ gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
 
   if(!is.null(since)) since <- format(lubridate::as_datetime(since), "%Y-%m-%dT%H:%M:%SZ")
 
-  gh::gh("/repos/{owner}/{repo}/issues",
-         state = state, labels = labels,
-         since = since,
-         sort = "created", direction = "desc",
-         owner = owner, repo = repo, .limit = Inf)
+  gh_cache("/repos/{owner}/{repo}/issues",
+           state = state, labels = labels,
+           since = since,
+           sort = "created", direction = "desc",
+           owner = owner, repo = repo, .limit = Inf)
 }
 
 
@@ -141,8 +141,8 @@ gh_issue_labels <- function(
 
 
 gh_label_events <- function(owner, repo, issue, labels) {
-  events <- gh::gh(endpoint = "/repos/{owner}/{repo}/issues/{issue}/events",
-                   owner = owner, repo = repo, issue = issue)
+  events <- gh_cache(endpoint = "/repos/{owner}/{repo}/issues/{issue}/events",
+                     owner = owner, repo = repo, issue = issue)
 
   e <- dplyr::tibble(event = purrr::map_dbl(events, "id"),
                      type = purrr::map_chr(events, "event"),

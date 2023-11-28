@@ -210,8 +210,8 @@ cw_event <- function(date, dry_run = FALSE) {
 cw_socials <- function(date, who_masto, who_slack, who_linkedin,
                        posters_tz = "America/Winnipeg", dry_run = FALSE) {
 
-  i <- gh::gh("/repos/{owner}/{repo}/contents/content/events",
-              owner = "ropensci", repo = "roweb3")
+  i <- gh_cache("/repos/{owner}/{repo}/contents/content/events",
+                owner = "ropensci", repo = "roweb3")
 
   event <- dplyr::tibble(name = purrr::map_chr(i, "name"),
                          download_url = purrr::map_chr(i, "download_url")) |>

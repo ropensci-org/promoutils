@@ -11,9 +11,10 @@
 #' gh_name("steffilazerte")
 
 gh_name <- function(gh_user) {
-  i <- gh::gh("/users/:username", username = gh_user)
+  i <- gh_cache("/users/:username", username = gh_user)
   if(!is.null(i$name)) return(i$name) else return(NA_character_)
 }
+
 
 
 #' Find GH username from repository and full name
@@ -36,8 +37,8 @@ gh_name <- function(gh_user) {
 
 gh_user <- function(name, owner = "ropensci", pkg) {
 
-  repo_users <- gh::gh(endpoint = "/repos/:owner/:pkg/contributors",
-                       owner = owner, pkg = pkg)
+  repo_users <- gh_cache(endpoint = "/repos/:owner/:pkg/contributors",
+                         owner = owner, pkg = pkg)
   repo_users <- purrr::map_chr(repo_users, "login")
 
   # Try also without initials
@@ -48,8 +49,8 @@ gh_user <- function(name, owner = "ropensci", pkg) {
 
   u <- dplyr::tibble(name = n) |>
     dplyr::mutate(gh_user = purrr::map(
-      name, \(x) gh::gh(endpoint = "/search/users",
-                        q = glue::glue("{x} in:name"))$items)) |>
+      name, \(x) gh_cache(endpoint = "/search/users",
+                          q = glue::glue("{x} in:name"))$items)) |>
     tidyr::unnest(gh_user, keep_empty = TRUE) |>
     dplyr::mutate(gh_user = purrr::map(.data$gh_user, "login")) |>
     tidyr::unnest(gh_user, keep_empty = TRUE) |>
@@ -125,7 +126,7 @@ masto_user <- function(gh_user = NULL, name = NULL) {
 #' gh_masto("steffilazerte")
 
 gh_masto <- function(gh_user) {
-  info <- gh::gh("/users/{username}/social_accounts", username = gh_user)
+  info <- gh_cache("/users/{username}/social_accounts", username = gh_user)
 
   if(length(info) > 0) {
     m <- info |>
@@ -153,7 +154,7 @@ ro_masto <- function(name) {
   name <- stringr::str_replace_all(name, " ", "-")
   name <- tolower(name)
 
-  t <- try(gh::gh("/repos/ropensci/roweb3/contents/content/author/{name}/_index.md",
+  t <- try(gh_cache("/repos/ropensci/roweb3/contents/content/author/{name}/_index.md",
                   name = name)[["download_url"]], silent = TRUE)
   if(class(t) %in% "try-error") return(NA_character_)
 

@@ -1,4 +1,9 @@
-
+#' Create a cached version of the GH api calls
+#'
+#' @details `memoise::memoise(gh::gh)`
+#'
+#' @export
+gh_cache <- memoise::memoise(gh::gh)
 
 #' Return a data frame of rOpenSci packages
 #'
