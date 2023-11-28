@@ -124,13 +124,16 @@ masto_user <- function(gh_user = NULL, name = NULL) {
 
 gh_masto <- function(gh_user) {
   info <- gh::gh("/users/{username}/social_accounts", username = gh_user)
-  m <- info |>
-    purrr::map(dplyr::as_tibble) |>
-    purrr::list_rbind() |>
-    dplyr::filter(stringr::str_detect(tolower(.data$provider), "mastodon")) |>
-    dplyr::pull("url")
 
-  if(is.null(m) || length(m) == 0) m <- NA_character_
+  if(length(info) > 0) {
+    m <- info |>
+      purrr::map(dplyr::as_tibble) |>
+      purrr::list_rbind() |>
+      dplyr::filter(stringr::str_detect(tolower(.data$provider), "mastodon")) |>
+      dplyr::pull("url")
+  }
+
+  if(!exists("m") || is.null(m) || length(m) == 0) m <- NA_character_
   m
 }
 
