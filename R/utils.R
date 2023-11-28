@@ -224,10 +224,13 @@ escape_brackets <- function(x) {
 #' @examples
 #' masto2user("https://fosstodon.org/@steffilazerte")
 #' masto2user("steffi")
+#' masto2user("@steffilazerte@fosstodon.org")
 
 masto2user <- function(x) {
 
-  if(stringr::str_detect(x, "http|@")) {
+  if(stringr::str_count(x, "@") > 1) {
+    n <- x
+  } else if(stringr::str_detect(x, "http|@")) {
     n <- stringr::str_remove(x, "http(s?)://") |>
       stringr::str_split("/", simplify = TRUE) |>
       as.vector()
