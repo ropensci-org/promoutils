@@ -24,18 +24,13 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
    }
 
   p <- pkgs |>
-    dplyr::mutate(owner = stringr::str_remove_all(
-      .data$github, glue::glue("(https://github.com/)|(/{name})")))
-  if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner")))
+    dplyr::mutate(
+      repo = stringr::str_extract_all(.data$github, "[[:alnum:].]+$"),
+      owner = stringr::str_remove_all(
+        .data$github, glue::glue("(https://github.com/)|(/{repo})")))
+  if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner", "repo")))
 
-  p |>
-    dplyr::mutate(owner = dplyr::if_else(.data$owner == "frictionlessdata-r",
-                                         "frictionlessdata",
-                                         .data$owner),
-                  name = dplyr::if_else(.data$name == "frictionless",
-                                        "frictionless-r",
-                                        .data$name))
-
+  p
 }
 
 
