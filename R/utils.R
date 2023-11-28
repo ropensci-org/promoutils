@@ -25,7 +25,7 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
 
   p <- pkgs |>
     dplyr::mutate(
-      repo = stringr::str_extract_all(.data$github, "[[:alnum:].]+$"),
+      repo = stringr::str_extract_all(.data$github, "[[:alnum:].-]+$"),
       owner = stringr::str_remove_all(
         .data$github, glue::glue("(https://github.com/)|(/{repo})")))
   if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner", "repo")))
