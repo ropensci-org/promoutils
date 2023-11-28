@@ -4,7 +4,7 @@
 \alias{gh_user}
 \title{Find GH username from repository and full name}
 \usage{
-gh_user(name, owner = "ropensci", pkg)
+gh_user(name, owner = "ropensci", pkg, .max_rate = NULL)
 }
 \arguments{
 \item{name}{Character. Full or partial name of the person for whom you want
@@ -13,6 +13,8 @@ to fetch the GitHub username.}
 \item{owner}{Character. Owner of the repository.}
 
 \item{pkg}{Character. Repository name (package name).}
+
+\item{.max_rate}{Numeric. Passed through to \code{gh:gh()}.}
 }
 \value{
 Data frame with names attempted and usernames found
