@@ -46,7 +46,7 @@ gh_user <- function(name, owner = "ropensci", pkg) {
     n <- c(n, stringr::str_remove_all(n, "\\b[A-Z]{1} "))
   }
 
-  dplyr::tibble(name = n) |>
+  u <- dplyr::tibble(name = n) |>
     dplyr::mutate(gh_user = purrr::map(
       name, \(x) gh::gh(endpoint = "/search/users",
                         q = glue::glue("{x} in:name"))$items)) |>
@@ -56,6 +56,8 @@ gh_user <- function(name, owner = "ropensci", pkg) {
     dplyr::filter(is.na(.data$gh_user) | .data$gh_user %in% !!repo_users) |>
     dplyr::arrange(is.na(gh_user)) |>
     dplyr::slice(1)
+  if(nrow(u) == 0) u <- data.frame(name = name, gh_user = NA_character_)
+  u
 }
 
 #' Fetch GH and Mastodon usernames
