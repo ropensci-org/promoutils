@@ -3,7 +3,7 @@
 #' @details `memoise::memoise(gh::gh)`
 #'
 #' @export
-gh_cache <- memoise::memoise(gh::gh)
+gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
 
 #' Return a data frame of rOpenSci packages
 #'

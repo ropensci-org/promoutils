@@ -39,7 +39,7 @@ gh_name <- function(gh_user) {
 gh_user <- function(name, owner = "ropensci", pkg, .max_rate = NULL) {
 
   repo_users <- gh_cache(endpoint = "/repos/:owner/:pkg/contributors",
-                         owner = owner, pkg = pkg, .max_rate)
+                         owner = owner, pkg = pkg, .max_rate = .max_rate)
   repo_users <- purrr::map_chr(repo_users, "login")
 
   # Try also without initials
@@ -51,7 +51,8 @@ gh_user <- function(name, owner = "ropensci", pkg, .max_rate = NULL) {
   u <- dplyr::tibble(name = n) |>
     dplyr::mutate(gh_user = purrr::map(
       name, \(x) gh_cache(endpoint = "/search/users",
-                          q = glue::glue("{x} in:name"))$items), .max_rate) |>
+                          q = glue::glue("{x} in:name"),
+                          .max_rate = .max_rate)$items)) |>
     tidyr::unnest(gh_user, keep_empty = TRUE) |>
     dplyr::mutate(gh_user = purrr::map(.data$gh_user, "login")) |>
     tidyr::unnest(gh_user, keep_empty = TRUE) |>
