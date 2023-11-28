@@ -157,14 +157,17 @@ ro_masto <- function(name) {
   name <- tolower(name)
 
   t <- try(gh_cache("/repos/ropensci/roweb3/contents/content/author/{name}/_index.md",
-                  name = name)[["download_url"]], silent = TRUE)
+                  name = name)[["html_url"]], silent = TRUE)
   if(class(t) %in% "try-error") return(NA_character_)
 
-  t <- t |>
+  # In case of accents, need to use the HTML encoding with the download origin
+  t <- paste0("https://raw.githubusercontent.com/",
+         stringr::str_remove_all(t, "(https://github.com/)|(blob/)")) |>
     httr2::request() |>
     httr2::req_perform() |>
     httr2::resp_body_string() |>
     yaml::read_yaml(text = _)
+
   t <- t$mastodon
   if(is.null(t)) t <- NA_character_
   t
