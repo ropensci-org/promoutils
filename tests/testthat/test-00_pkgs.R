@@ -3,7 +3,7 @@ test_that("pkgs() & pkg_authors()", {
 
   expect_silent(p <- pkgs())
   expect_s3_class(p, "data.frame")
-  expect_named(p, c("name", "maintainer", "owner"))
+  expect_named(p, c("name", "maintainer", "owner", "repo"))
 
   expect_silent(p <- pkgs(which = "all", return = "all"))
 

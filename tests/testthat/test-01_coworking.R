@@ -22,7 +22,9 @@ test_that("cw_event()", {
 
 test_that("cw_socials()", {
   skip_on_ci()
-  cw_socials("2023-10-03", "@Drmowinckels@fosstodon.org ", "@Mo (Athanasia Mowinckel)", "", dry_run = TRUE) |>
+  l <- cw_socials("2023-10-03", "@Drmowinckels@fosstodon.org ", "@Mo (Athanasia Mowinckel)", "", dry_run = TRUE) |>
     expect_message("Timezone: Europe/Paris") |>
-    expect_type("list")
+    suppressMessages()
+
+  expect_type(l, "list")
 })
