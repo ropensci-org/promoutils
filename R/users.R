@@ -103,13 +103,13 @@ masto_user <- function(gh_user = NULL, name = NULL) {
   # Now try via name from rOpenSci
   if(!is.na(name) && !is.null(name)) {
     name <- stringr::str_remove_all(name, "\\.")
-    t <- ro_masto(name)
+    m <- ro_masto(name)
   }
 
-  # Otherwise chech GH profile
-  if(!is.na(t) && !is.null(gh_user) && !is.na(gh_user)) t <- gh_masto(gh_user)
+  # Otherwise check GH profile
+  if(is.na(m) && !is.null(gh_user) && !is.na(gh_user)) m <- gh_masto(gh_user)
 
-  t
+  m
 }
 
 #' Find Mastodon username from GitHub profile
