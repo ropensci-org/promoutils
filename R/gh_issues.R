@@ -29,6 +29,10 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
                   owner = owner, repo = repo)
 
     utils::browseURL(r$html_url)
+  } else {
+    message(paste0("title: ", title, "\n",
+                   "labels: ", paste0(labels, collapse = ", "), "\n",
+                   "body: \n\n", body))
   }
 }
 

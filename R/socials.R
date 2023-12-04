@@ -35,10 +35,7 @@ socials_post_issue <- function(time, tz, title, body, where = "mastodon",
   labels <- c(where, "draft", "needs-review")
   title <- glue::glue("[Post] - {title} - {date}")
 
-  if(add_hash) {
-    hash <- "#RStats"
-    if("mastodon" %in% where) hash <- glue::glue("{hash}\n@rstats@a.gup.pe")
-  } else hash <- ""
+
 
   body <- glue::glue(
     "~~~",
@@ -46,9 +43,13 @@ socials_post_issue <- function(time, tz, title, body, where = "mastodon",
     "tz: {tz}",
     "~~~",
     "",
-    "{body}",
-    "",
-    "{hash}", .sep = "\n")
+    "{body}", .sep = "\n")
+
+  if(add_hash) {
+    hash <- "#RStats"
+    if("mastodon" %in% where) hash <- glue::glue("{hash}\n@rstats@a.gup.pe")
+    body <- glue::glue("{body}\n\n{hash}")
+  }
 
   if(dry_run & verbose) {
     message("labels: ", paste0(labels, collapse = ", ") , "\n\n", title, "\n\n", body)
