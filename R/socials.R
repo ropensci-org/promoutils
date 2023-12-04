@@ -13,6 +13,7 @@
 #'   #RStats and @rstats@a.gup.pe will be appended
 #' @param where Character vector. Either `mastodon` and/or `linkedin` to
 #'   specifty which platforms this should be posted on.
+#' @param add_hash Logical. Whether to automatically add the RStats hashtags.
 #' @param dry_run Logical. Whether to perform a dry run (do not post, but
 #'   display draft if `verbose = TRUE`).
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
@@ -21,8 +22,8 @@
 #'
 #' @export
 socials_post_issue <- function(time, tz, title, body, where = "mastodon",
-                               avoid_dups = TRUE, dry_run = FALSE,
-                               verbose = FALSE) {
+                               avoid_dups = TRUE, add_hash = TRUE,
+                               dry_run = FALSE, verbose = FALSE) {
 
   if(!all(where %in% c("mastodon", "linkedin"))) {
     stop("'where' must be one of 'mastodon' or 'linkedin'", call. = FALSE)
@@ -33,8 +34,11 @@ socials_post_issue <- function(time, tz, title, body, where = "mastodon",
   date <- lubridate::as_date(time)
   labels <- c(where, "draft", "needs-review")
   title <- glue::glue("[Post] - {title} - {date}")
-  hash <- "#RStats"
-  if("mastodon" %in% where) hash <- glue::glue("{hash}\n@rstats@a.gup.pe")
+
+  if(add_hash) {
+    hash <- "#RStats"
+    if("mastodon" %in% where) hash <- glue::glue("{hash}\n@rstats@a.gup.pe")
+  } else hash <- ""
 
   body <- glue::glue(
     "~~~",
