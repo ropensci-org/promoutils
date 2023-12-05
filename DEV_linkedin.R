@@ -34,20 +34,37 @@ id <- li_posts_write(
 
 
 id <- li_posts_write(
-  author = steffi_urn,
+  author = li_urn_me(),
   body =
     paste(
       "Testing out the LinkedIn API via R and httr2!",
       "And again with links...",
       "",
       "- https://docs.ropensci.org/weathercan",
-      "- weathercan docs \\(https://docs.ropensci.org/weathercan\\)",
-      "- \\(what about other things in brackets?\\)",
+      "- weathercan docs (https://docs.ropensci.org/weathercan)",
+      "- (what about other things in brackets?)",
       "",
       "🎉",
       sep = "\n"
-    )
+    ), dry_run = FALSE
 )
+
+
+p <- paste(
+  "Testing out the LinkedIn API via R and httr2!",
+  "And again with links...",
+  "",
+  "- https://docs.ropensci.org/weathercan",
+  "- weathercan docs (https://docs.ropensci.org/weathercan)",
+  #"- (what about other things in brackets?)",
+  "",
+  "🎉",
+  sep = "\n"
+)
+
+escape_url_brackets(p) |> cat()
+
+
 
 li_posts_write(author = steffi_urn,
                body = glue::glue(

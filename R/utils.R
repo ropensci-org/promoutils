@@ -209,8 +209,12 @@ yaml_extract <- function(yaml, trim = "~~~") {
 }
 
 
-escape_brackets <- function(x) {
-  stringr::str_replace_all(x, c("\\(" = "\\\\\\(", "\\)" = "\\\\\\)"))
+# LinkedIn Chars to escape
+escape_linkedin_chars <- function(x) {
+  chars <- c("\\|", "\\{", "\\}", "\\@", "\\[", "\\]", "\\(", "\\)", "\\<", "\\>",
+             "\\#", "\\\\", "\\*", "\\_", "\\~")
+  p <- stats::setNames(paste0("\\", chars), chars)
+  stringr::str_replace_all(x, p)
 }
 
 
