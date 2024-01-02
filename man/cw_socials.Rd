@@ -9,6 +9,9 @@ cw_socials(
   who_masto,
   who_slack,
   who_linkedin,
+  who_main_masto = "@steffilazerte@fosstodon.org",
+  who_main_slack = "@Steffi LaZerte",
+  who_main_linkedin = "Steffi LaZerte",
   posters_tz = "America/Winnipeg",
   dry_run = FALSE
 )
@@ -21,6 +24,12 @@ cw_socials(
 \item{who_slack}{Character. The full Slack handle for the cohost (i.e. @XXXX)}
 
 \item{who_linkedin}{Character. The full LinkedIn handle for the cohost (i.e. @XXXX)}
+
+\item{who_main_masto}{Character. The full mastodon handle for the rOpenSci staff organizer.}
+
+\item{who_main_slack}{Character. The full Slack handle for the rOpenSci staff organizer.}
+
+\item{who_main_linkedin}{Character. The full LinkedIn handle for the rOpenSci staff organizer.}
 
 \item{posters_tz}{Character. Timezone of poster. Required for getting the
 time at which to post Slack messages as these are posted in the local

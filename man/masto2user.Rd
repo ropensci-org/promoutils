@@ -19,4 +19,5 @@ Convert a mastodon user link to handle
 masto2user("https://fosstodon.org/@steffilazerte")
 masto2user("steffi")
 masto2user("@steffilazerte@fosstodon.org")
+masto2user(NA)
 }

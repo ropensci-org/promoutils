@@ -64,9 +64,21 @@ p <- paste(
 
 escape_url_brackets(p) |> cat()
 
+p <- "Testing escape Chars with LinkedIn API
+#Taxonomy
+#RStats
+#PackageWeeklyDigest
+#OSS
+
+(testing brackets!!!!)
+
+(and one more with a link to https://ropensci.org)"
 
 
-li_posts_write(author = steffi_urn,
+escape_linkedin_chars(p) |> cat()
+
+li_posts_write(author = li_urn_me(), body = p)
+li_posts_write(author = li_urn_me(),
                body = glue::glue(
                  "testing urls... in line https://steffilazerte.ca",
                  "",

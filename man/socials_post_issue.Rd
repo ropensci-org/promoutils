@@ -11,6 +11,7 @@ socials_post_issue(
   body,
   where = "mastodon",
   avoid_dups = TRUE,
+  add_hash = TRUE,
   dry_run = FALSE,
   verbose = FALSE
 )
@@ -31,6 +32,8 @@ specifty which platforms this should be posted on.}
 
 \item{avoid_dups}{Logical. Don't post an issue if any open issue has the
 same title.}
+
+\item{add_hash}{Logical. Whether to automatically add the RStats hashtags.}
 
 \item{dry_run}{Logical. Whether to perform a dry run (do not post, but
 display draft if \code{verbose = TRUE}).}

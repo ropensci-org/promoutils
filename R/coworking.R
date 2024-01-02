@@ -195,6 +195,9 @@ cw_event <- function(date, dry_run = FALSE) {
 #' @param who_masto Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)
 #' @param who_slack Character. The full Slack handle for the cohost (i.e. @XXXX)
 #' @param who_linkedin Character. The full LinkedIn handle for the cohost (i.e. @XXXX)
+#' @param who_main_masto Character. The full mastodon handle for the rOpenSci staff organizer.
+#' @param who_main_slack Character. The full Slack handle for the rOpenSci staff organizer.
+#' @param who_main_linkedin Character. The full LinkedIn handle for the rOpenSci staff organizer.
 #' @param posters_tz Character. Timezone of poster. Required for getting the
 #'   time at which to post Slack messages as these are posted in the local
 #'   timezone
@@ -208,6 +211,9 @@ cw_event <- function(date, dry_run = FALSE) {
 #' }
 
 cw_socials <- function(date, who_masto, who_slack, who_linkedin,
+                       who_main_masto = "@steffilazerte@fosstodon.org",
+                       who_main_slack = "@Steffi LaZerte",
+                       who_main_linkedin = "Steffi LaZerte",
                        posters_tz = "America/Winnipeg", dry_run = FALSE) {
 
   i <- gh_cache("/repos/{owner}/{repo}/contents/content/events",
@@ -253,6 +259,9 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
       who_masto = .env$who_masto,
       who_slack = .env$who_slack,
       who_linkedin = .env$who_linkedin,
+      who_main_masto = .env$who_main_masto,
+      who_main_linkedin = .env$who_main_linkedin,
+      who_main_slack = .env$who_main_slack,
       author = stringr::str_extract(.data$author, "^[^ ]+"),
       action1 = purrr::map(event$content, ~.x[stringr::str_which(.x, "### Cowork") + 1:2]),
       action1 = purrr::map_chr(.data$action1, ~glue::glue_collapse(.x, sep = "\n")),
@@ -298,6 +307,7 @@ cw_social_week <- function(x, where, dry_run) {
       time_post = .data$date_local - lubridate::weeks(1),
       title = glue::glue("Coworking {month} {year} - week before"),
       who = dplyr::if_else(where == "mastodon", .data$who_masto, .data$who_linkedin),
+      who_main = dplyr::if_else(where == "mastodon", .data$who_main_masto, .data$who_main_linkedin),
       body = glue::glue(
         "Coworking and Office Hours next week!",
         "",
@@ -305,7 +315,7 @@ cw_social_week <- function(x, where, dry_run) {
         "",
         "{time}",
         "",
-        "Join {who} and @steffilazerte@fosstodon.org",
+        "Join {who} and {who_main}",
         "",
         "- General coworking",
         "{action1}",
@@ -352,7 +362,7 @@ slack_week <- function(x, posters_tz) {
       "",
       ":grey_exclamation: Theme: {theme}",
       ":hourglass_flowing_sand: When: {time}",
-      ":cookie: Hosted by: @Steffi LaZerte and community host {who_slack}",
+      ":cookie: Hosted by: {who_main_slack} and community host {who_slack}",
       "",
       "You can use this time for...",
       "- General coworking",
