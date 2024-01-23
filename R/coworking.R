@@ -31,7 +31,7 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
   if(is.null(tz)) {
     tz <- which(t$tz == c("Australia", "Europe", "America")) + 1
     if(tz > 3) tz <- tz - 3
-    tz <- c("America", "Europe", "Australia")[tz]
+    tz <- c("Australia", "Europe", "America")[tz]
   }
   title <- glue::glue("[Coworking] - {date} - {theme}")
 
