@@ -322,7 +322,7 @@ cw_social_week <- function(x, where, dry_run) {
         "- Chat with {author} and other attendees and discuss strategies for XXXX",
         "",
         "{event_url}",
-        .sep = "\n",
+        .sep = "\n"
       ))
 
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
