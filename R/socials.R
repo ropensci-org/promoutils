@@ -72,7 +72,7 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
     stringr::str_replace("\n\n", "\n")
 
   if(add_hash) {
-    hash <- c("mastodon" = "#RStats\n@rstats@a.gup.pe", "linkedin" = "#RStats")
+    hash <- c("mastodon" = "\n#RStats\n@rstats@a.gup.pe", "linkedin" = "\n#RStats")
     hash <- hash[where]
     body <- glue::glue("{body}\n{hash}")
   }
