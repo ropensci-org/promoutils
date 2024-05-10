@@ -10,9 +10,12 @@
 #' @param title Character. Title of the post (`[Post]` and the date will be
 #'   prepended and appended
 #' @param body Character. Text to be posted (omit the YAML for posting info;
-#'   #RStats and @rstats@a.gup.pe will be appended
+#'   #RStats and @rstats@a.gup.pe will be appended for Mastodon, #RStats for
+#'   LinkedIn),
+#'   *or* link to text file with both Mastodon and LinkedIn body text, headed by
+#'   by ---- Mastodon ----- and --- LinkedIn -----.
 #' @param where Character vector. Either `mastodon` and/or `linkedin` to
-#'   specifty which platforms this should be posted on.
+#'   specify which platforms this should be posted on.
 #' @param add_hash Logical. Whether to automatically add the RStats hashtags.
 #' @param dry_run Logical. Whether to perform a dry run (do not post, but
 #'   display draft if `verbose = TRUE`).
@@ -21,7 +24,8 @@
 #' @param verbose Logical. If dry run, displace draft?
 #'
 #' @export
-socials_post_issue <- function(time, tz, title, body, where = "mastodon",
+socials_post_issue <- function(time, tz = "America/Winnipeg",
+                               title, body, where = "mastodon",
                                avoid_dups = TRUE, add_hash = TRUE,
                                dry_run = FALSE, verbose = FALSE) {
 
@@ -32,23 +36,45 @@ socials_post_issue <- function(time, tz, title, body, where = "mastodon",
   if(!tz %in% OlsonNames()) stop("Couldn't detect timezone", call. = FALSE)
 
   date <- lubridate::as_date(time)
-  labels <- c(where, "draft", "needs-review")
   title <- glue::glue("[Post] - {title} - {date}")
 
+  if(file.exists(body)) {
+    body <- readr::read_lines(body)
+    n <- stringr::str_which(body, "--- (Mastodon)|(LinkedIn) ---")
+    if(length(n) == 2) {
+      where <- c("mastodon", "linkedin")
+      body <- list(body[(n[1]+1):(n[2]-1)],
+                   body[(n[2]+1):(length(body))])
+    } else if(length(n) == 1) {
+      body <- list(body[(n[1]+1):(length(body))])
+    }
+    body <- purrr::map(body, \(x) glue::glue_collapse(x, sep = "\n"))
+  }
 
+  purrr::map2(body, where, \(x, y) {
+    socials_post_single(time, tz, title, x, y,
+                        avoid_dups, add_hash, dry_run, verbose)
+  })
+}
+
+
+socials_post_single <- function(time, tz, title, body, where, avoid_dups,
+                                add_hash, dry_run, verbose) {
+
+  labels <- c(where, "draft", "needs-review")
 
   body <- glue::glue(
-    "~~~",
-    "time: {time}",
-    "tz: {tz}",
-    "~~~",
-    "",
-    "{body}", .sep = "\n")
+      "~~~",
+      "time: {time}",
+      "tz: {tz}",
+      "~~~\n",
+      "{body}",  .sep = "\n") |>
+    stringr::str_replace("\n\n", "\n")
 
   if(add_hash) {
-    hash <- "#RStats"
-    if("mastodon" %in% where) hash <- glue::glue("{hash}\n@rstats@a.gup.pe")
-    body <- glue::glue("{body}\n\n{hash}")
+    hash <- c("mastodon" = "#RStats\n@rstats@a.gup.pe", "linkedin" = "#RStats")
+    hash <- hash[where]
+    body <- glue::glue("{body}\n{hash}")
   }
 
   if(dry_run & verbose) {

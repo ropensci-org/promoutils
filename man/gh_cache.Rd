@@ -8,6 +8,7 @@ gh_cache(
   endpoint,
   ...,
   per_page = NULL,
+  .per_page = NULL,
   .token = NULL,
   .destfile = NULL,
   .overwrite = FALSE,

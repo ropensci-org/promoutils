@@ -6,7 +6,7 @@
 \usage{
 socials_post_issue(
   time,
-  tz,
+  tz = "America/Winnipeg",
   title,
   body,
   where = "mastodon",
@@ -25,10 +25,13 @@ socials_post_issue(
 prepended and appended}
 
 \item{body}{Character. Text to be posted (omit the YAML for posting info;
-#RStats and @rstats@a.gup.pe will be appended}
+#RStats and @rstats@a.gup.pe will be appended for Mastodon, #RStats for
+LinkedIn),
+\emph{or} link to text file with both Mastodon and LinkedIn body text, headed by
+by ---- Mastodon ----- and --- LinkedIn -----.}
 
 \item{where}{Character vector. Either \code{mastodon} and/or \code{linkedin} to
-specifty which platforms this should be posted on.}
+specify which platforms this should be posted on.}
 
 \item{avoid_dups}{Logical. Don't post an issue if any open issue has the
 same title.}

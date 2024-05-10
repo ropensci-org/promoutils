@@ -1,3 +1,7 @@
+# 0.4.1
+- Can supply path to text file with both Mastodon and LinkedIn bodies
+  for social media posts
+
 # 0.4.0
 - Tweak post templates
 - Automatically create post issues on GitHub
