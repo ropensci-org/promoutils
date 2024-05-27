@@ -239,7 +239,8 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
         x[x != ""]
       }
     ),
-    yaml = purrr::map(.data$content, ~.x[1:20] |> paste0(collapse = "\n")))
+    yaml_end = purrr::map_dbl(.data$content, \(x) stringr::str_which(x, "---")[2]),
+    yaml = purrr::map2(.data$content, .data$yaml_end, \(x, y) x[1:y] |> paste0(collapse = "\n")))
 
   tz <- stringr::str_extract(event$content[[1]], "(America/Vancouver)|(Europe/Paris)|(Australia/Perth)") |>
     stats::na.omit()
@@ -254,6 +255,8 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
   deets <- yaml::read_yaml(text = event$yaml[[1]]) |>
     purrr::keep_at(c("title", "dateStart", "date", "title", "author")) |>
     dplyr::as_tibble() |>
+    dplyr::summarize(author = paste0(author, collapse = ", "),
+                     .by = c("title", "dateStart", "date")) |>
     dplyr::rename("date_UTC" = "dateStart", "theme" = "title") |>
     dplyr::mutate(
       who_masto = .env$who_masto,
@@ -270,7 +273,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
                                 .data$tz == "Europe/Paris" ~ "European Central",
                                 .data$tz == "Australia/Perth" ~ "Australian Western"),
       date_UTC = lubridate::as_datetime(.data$date_UTC),
-      date_local = lubridate::with_tz(.data$date_UTC, tz = .data$tz),
+      date_local = lubridate::with_tz(.data$date_UTC, tz = .env$tz),
       month = lubridate::month(.data$date_local, label = TRUE, abbr = TRUE),
       year = lubridate::year(.data$date_local),
       theme = stringr::str_remove(.data$theme, "Social Coworking and Office Hours - "),
