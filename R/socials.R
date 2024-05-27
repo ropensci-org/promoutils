@@ -21,14 +21,15 @@
 #'   display draft if `verbose = TRUE`).
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
+#' @param
 #' @param verbose Logical. If dry run, displace draft?
 #'
 #' @export
 socials_post_issue <- function(time, tz = "America/Winnipeg",
                                title, body, where = "mastodon",
                                avoid_dups = TRUE, add_hash = TRUE,
-                               open_browser = TRUE,
-                               dry_run = FALSE, verbose = FALSE) {
+                               dry_run = FALSE, open_browser = TRUE,
+                               verbose = FALSE) {
 
   if(!all(where %in% c("mastodon", "linkedin"))) {
     stop("'where' must be one of 'mastodon' or 'linkedin'", call. = FALSE)
