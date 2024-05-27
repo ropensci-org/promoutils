@@ -12,6 +12,7 @@ socials_post_issue(
   where = "mastodon",
   avoid_dups = TRUE,
   add_hash = TRUE,
+  open_browser = TRUE,
   dry_run = FALSE,
   verbose = FALSE
 )

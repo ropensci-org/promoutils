@@ -1,5 +1,5 @@
 gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
-                          dry_run = FALSE) {
+                          dry_run = FALSE, open_browser = TRUE) {
 
   if(missing(title)) stop("Require a title for this issue", call. = FALSE)
   if(missing(body)) stop("Require a body for this issue", call. = FALSE)
@@ -28,7 +28,7 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
                   title = title, body = body, labels = as.list(labels),
                   owner = owner, repo = repo)
 
-    utils::browseURL(r$html_url)
+    if(open_browser) utils::browseURL(r$html_url)
   } else {
     message(paste0("title: ", title, "\n",
                    "labels: ", paste0(labels, collapse = ", "), "\n",

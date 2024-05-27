@@ -3,6 +3,7 @@
   for social media posts
 - Fix bug in coworking posts where long yamls are not correctly processed
 - Fix bug in coworking posts where multiple authors aren't handled correctly
+- Opening browser when posting issues is now optional
 
 
 # 0.4.0

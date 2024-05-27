@@ -27,6 +27,7 @@
 socials_post_issue <- function(time, tz = "America/Winnipeg",
                                title, body, where = "mastodon",
                                avoid_dups = TRUE, add_hash = TRUE,
+                               open_browser = TRUE,
                                dry_run = FALSE, verbose = FALSE) {
 
   if(!all(where %in% c("mastodon", "linkedin"))) {
@@ -53,13 +54,13 @@ socials_post_issue <- function(time, tz = "America/Winnipeg",
 
   purrr::map2(body, where, \(x, y) {
     socials_post_single(time, tz, title, x, y,
-                        avoid_dups, add_hash, dry_run, verbose)
+                        avoid_dups, add_hash, dry_run, open_browser, verbose)
   })
 }
 
 
 socials_post_single <- function(time, tz, title, body, where, avoid_dups,
-                                add_hash, dry_run, verbose) {
+                                add_hash, dry_run, open_browser, verbose) {
 
   labels <- c(where, "draft", "needs-review")
 
@@ -84,5 +85,6 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
   gh_issue_post(title, body,
                 labels = labels,
                 owner = "rosadmin", repo = "scheduled_socials",
-                avoid_dups = avoid_dups, dry_run = dry_run)
+                avoid_dups = avoid_dups, dry_run = dry_run,
+                open_browser = open_browser)
 }
