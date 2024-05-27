@@ -1,6 +1,9 @@
 # 0.4.1
 - Can supply path to text file with both Mastodon and LinkedIn bodies
   for social media posts
+- Fix bug in coworking posts where long yamls are not correctly processed
+- Fix bug in coworking posts where multiple authors aren't handled correctly
+
 
 # 0.4.0
 - Tweak post templates
