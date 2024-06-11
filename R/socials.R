@@ -49,6 +49,9 @@ socials_post_issue <- function(time, tz = "America/Winnipeg",
                    body[(n[2]+1):(length(body))])
     } else if(length(n) == 1) {
       body <- list(body[(n[1]+1):(length(body))])
+    } else {
+      n <- 0
+      body <- list(body[(n[1]+1):(length(body))])
     }
     body <- purrr::map(body, \(x) glue::glue_collapse(x, sep = "\n"))
   }
