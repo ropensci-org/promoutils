@@ -75,7 +75,7 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
   }
 
 
-  if((n <- nchar(body, type = "width")) >= 490) {
+  if((n <- calc_chars(body)) >= 490) {
     stop("Very close or over the character limit of 500\n",
          "(this message has ", n, " including hashtags)",
          call. = FALSE)
@@ -98,4 +98,11 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
                 owner = "rosadmin", repo = "scheduled_socials",
                 avoid_dups = avoid_dups, dry_run = dry_run,
                 open_browser = open_browser)
+}
+
+calc_chars <- function(x) {
+  stringr::str_remove_all(x, "(?<=\\w)@(\\w|\\.)+") |>
+    stringr::str_replace_all("http(s?)\\:[^ ]+", paste0(rep("Z", 23), collapse = "")) |>
+    nchar() |>
+    sum()
 }
