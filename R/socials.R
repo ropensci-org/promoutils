@@ -75,7 +75,7 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
   }
 
 
-  if((n <- calc_chars(body)) >= 490) {
+  if(where == "mastodon" & (n <- calc_chars(body)) >= 490) {
     stop("Very close or over the character limit of 500\n",
          "(this message has ", n, " including hashtags)",
          call. = FALSE)
