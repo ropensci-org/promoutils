@@ -81,6 +81,11 @@ forum_mention <- function(x) {
 #' @return Character vector of resources
 #'
 #' @export
+#'
+#' @examples
+#' # forum_post(3920) |> # Needs auth
+#' #   forum_resource()  # > weatherOz
+
 forum_resource <- function(x) {
   x |>
     # https://stackoverflow.com/questions/60137188/xpath-picking-div-after-h4-with-specific-text
@@ -89,9 +94,31 @@ forum_resource <- function(x) {
     stringr::str_split("\\\n|,( )*|;( )*") |>
     unlist() |>
     stringr::str_trim() |>
-    stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])") |>
+    stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])|(\\{)|(\\})") |>
     stringr::str_trim() |>
     unlist()
+}
+
+#' Fetch post text from by topic id
+#'
+#' @param x Topic id
+#'
+#' @return HTML of the post
+#'
+#' @export
+#' @examples
+#' # forum_post(3920) # Needs auth
+forum_post <- function(topic_id) {
+  httr2::request(glue::glue("https://discuss.ropensci.org/t/{topic_id}.json")) |>
+    httr2::req_headers("API-Key" = Sys.getenv("DISCOURSE_API_KEY"),
+                       "Api-Username" = Sys.getenv("DISCOURSE_USERNAME")) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    jsonlite::fromJSON() |>
+    purrr::pluck("post_stream", "posts") |>
+    dplyr::slice(1) |>
+    purrr::pluck("cooked") |>
+    xml2::read_html()
 }
 
 

@@ -15,3 +15,7 @@ Character vector of resources
 \description{
 Extract resources from forum text
 }
+\examples{
+# forum_post(3920) |> # Needs auth
+#   forum_resource()  # > weatherOz
+}
