@@ -68,6 +68,11 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
 
   labels <- c(where, "draft", "needs-review")
 
+  if(n <- nchar(body, type = "width") >= 490) {
+    stop("Very close or over the character limit of 500 (this message has ", n, ")",
+         call. = FALSE)
+  }
+
   body <- glue::glue(
       "~~~",
       "time: {time}",
