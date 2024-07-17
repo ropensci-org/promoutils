@@ -68,8 +68,16 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
 
   labels <- c(where, "draft", "needs-review")
 
+  if(add_hash) {
+    hash <- c("mastodon" = "\n#RStats\n@rstats@a.gup.pe", "linkedin" = "\n#RStats")
+    hash <- hash[where]
+    body <- glue::glue("{body}\n{hash}")
+  }
+
+
   if((n <- nchar(body, type = "width")) >= 490) {
-    stop("Very close or over the character limit of 500 (this message has ", n, ")",
+    stop("Very close or over the character limit of 500\n",
+         "(this message has ", n, " including hashtags)",
          call. = FALSE)
   }
 
@@ -80,12 +88,6 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
       "~~~\n",
       "{body}",  .sep = "\n") |>
     stringr::str_replace("\n\n", "\n")
-
-  if(add_hash) {
-    hash <- c("mastodon" = "\n#RStats\n@rstats@a.gup.pe", "linkedin" = "\n#RStats")
-    hash <- hash[where]
-    body <- glue::glue("{body}\n{hash}")
-  }
 
   if(dry_run & verbose) {
     message("labels: ", paste0(labels, collapse = ", ") , "\n\n", title, "\n\n", body)
