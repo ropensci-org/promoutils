@@ -1,3 +1,8 @@
+# 0.4.2
+- Create Discourse user name function
+- Move forum functions from workflow to promoutils
+- Remove {} from package names in forum resources
+
 # 0.4.1
 - Can supply path to text file with both Mastodon and LinkedIn bodies
   for social media posts
