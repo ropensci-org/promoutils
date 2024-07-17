@@ -83,6 +83,30 @@ all_users <- function(name, owner = "ropensci", pkg) {
 }
 
 
+#' Fetch full name of Discourse user (id)
+#'
+#' Using the Discourse username id, return the full name of that discourse user.
+#'
+#' @param user_id Integer. Discourse user id.
+#'
+#' @return Character
+#' @export
+#'
+#' @examples
+#' # discourse_user(1) # Requires authentication
+
+discourse_user <- function(user) {
+  httr2::request("https://discuss.ropensci.org") |>
+    httr2::req_headers("API-Key" = Sys.getenv("DISCOURSE_API_KEY"),
+                "Api-Username" = Sys.getenv("DISCOURSE_USERNAME")) |>
+    httr2::req_url_path("admin", "users", paste0(user, ".json")) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    jsonlite::fromJSON() |>
+    purrr::pluck("name")
+}
+
+
 #' Fetch Mastodon username
 #'
 #' Using the GH username or the Full name, check rOpenSci author pages and then
