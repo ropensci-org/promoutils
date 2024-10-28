@@ -407,12 +407,19 @@ cw_details <- function(which = "next") {
   i <- gh_issue_fetch(repo = "comms", labels = "coworking", state = "all")
 
   d <- data.frame(title = purrr::map_chr(i, "title"),
-                  body = purrr::map_chr(i, "body"))
+                  body = purrr::map_chr(i, "body")) |>
+    dplyr::mutate(date = stringr::str_extract(.data$title, "\\d{4}-\\d{2}-\\d{2}"))
 
-  if(is.character(which) && which == "next") {
-    d <- d |>
-      dplyr::arrange(dplyr::desc(.data$title)) |>
-      dplyr::slice(1)
+  if(is.character(which)) {
+    if(which == "last") {
+      d <- dplyr::arrange(d, dplyr::desc(.data$title))
+    } else if(which == "next") {
+      d <- dplyr::filter(d, lubridate::ymd(.data$date) >= Sys.Date()) |>
+        dplyr::arrange(.data$date)
+    } else {
+      stop("'which' must be a date, or 'next', or 'last'", call. = FALSE)
+    }
+     d <- dplyr::slice(d, 1)
   } else { # Assume date
     d <- dplyr::filter(d, stringr::str_detect(.data$title, .env$which))
   }
@@ -425,7 +432,6 @@ cw_details <- function(which = "next") {
 
   dplyr::mutate(
     d,
-    date = stringr::str_extract(.data$title, "\\d{4}-\\d{2}-\\d{2}"),
     tz = stringr::str_extract(.data$body, "America|Europe|Australia"),
     theme = stringr::str_subset(stringr::str_split(.data$body, "\n", simplify = TRUE),
                                 "Theme"),
