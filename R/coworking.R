@@ -410,14 +410,12 @@ cw_details <- function(which = "next") {
                   body = purrr::map_chr(i, "body")) |>
     dplyr::mutate(date = stringr::str_extract(.data$title, "\\d{4}-\\d{2}-\\d{2}"))
 
-  if(is.character(which)) {
+  if(is.character(which) && which %in% c("last", "next")) {
     if(which == "last") {
       d <- dplyr::arrange(d, dplyr::desc(.data$title))
     } else if(which == "next") {
       d <- dplyr::filter(d, lubridate::ymd(.data$date) >= Sys.Date()) |>
         dplyr::arrange(.data$date)
-    } else {
-      stop("'which' must be a date, or 'next', or 'last'", call. = FALSE)
     }
      d <- dplyr::slice(d, 1)
   } else { # Assume date
