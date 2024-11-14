@@ -21,7 +21,7 @@
 #'   display draft if `verbose = TRUE`).
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
-#' @param
+#' @param open_browser Logical. Whether to open the issue in the browser.
 #' @param verbose Logical. If dry run, displace draft?
 #'
 #' @export

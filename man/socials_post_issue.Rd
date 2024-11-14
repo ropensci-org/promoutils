@@ -42,6 +42,8 @@ same title.}
 \item{dry_run}{Logical. Whether to perform a dry run (do not post, but
 display draft if \code{verbose = TRUE}).}
 
+\item{open_browser}{Logical. Whether to open the issue in the browser.}
+
 \item{verbose}{Logical. If dry run, displace draft?}
 }
 \description{

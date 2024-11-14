@@ -43,6 +43,7 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
 #' @param since Character/Date/datetime. Fetch only issues since this date/time. (Optional)
 #' @param owner Character. Owner of the repository
 #' @param repo Character. Name of the repository (name of the package)
+#' @param issue Numeric. Specific Issue number to fetch.
 #' @param verbose Logical. Show progress messages.
 #'
 #' @return List of issues
@@ -53,14 +54,17 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
 
 gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
                            owner = "rosadmin", repo = "scheduled_socials",
-                           verbose = FALSE) {
+                           issue = NULL, verbose = FALSE) {
   if(verbose) message("owner: ", owner, "; repo: ", repo)
 
   if(!is.null(since)) since <- format(lubridate::as_datetime(since), "%Y-%m-%dT%H:%M:%SZ")
 
-  gh_cache("/repos/{owner}/{repo}/issues",
+  r <- "/repos/{owner}/{repo}/issues"
+  if(!is.null(issue) && is.numeric(issue)) r <- "repos/{owner}/{repo}/issues/{issue}"
+
+  gh_cache(r,
            state = state, labels = labels,
-           since = since,
+           since = since, issue = issue,
            sort = "created", direction = "desc",
            owner = owner, repo = repo, .limit = Inf)
 }

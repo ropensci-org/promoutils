@@ -10,6 +10,7 @@ gh_issue_fetch(
   since = NULL,
   owner = "rosadmin",
   repo = "scheduled_socials",
+  issue = NULL,
   verbose = FALSE
 )
 }
@@ -23,6 +24,8 @@ gh_issue_fetch(
 \item{owner}{Character. Owner of the repository}
 
 \item{repo}{Character. Name of the repository (name of the package)}
+
+\item{issue}{Numeric. Specific Issue number to fetch.}
 
 \item{verbose}{Logical. Show progress messages.}
 }
