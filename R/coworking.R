@@ -15,7 +15,7 @@
 cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
                      dry_run = FALSE) {
 
-  t <- cw_details(which = "next")
+  t <- cw_details(which = "last")
 
   if(is.null(date)) {
     date <- next_date(t$date)
@@ -394,7 +394,9 @@ slack_hour <- function(x, posters_tz) {
 #' Fetch details about coworking sessions
 #'
 #' @param which Character/Date. "next" to fetch details on the next coworking
-#'   session or a Date fetch details for a specific coworking session.
+#'   session, "last" to fetch details on the last scheduled (in future)
+#'   coworking session, or a Date fetch details for a specific coworking
+#'   session.
 #'
 #' @return Data frame with coworking event details
 #' @export

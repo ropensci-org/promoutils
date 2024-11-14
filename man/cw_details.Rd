@@ -8,7 +8,9 @@ cw_details(which = "next")
 }
 \arguments{
 \item{which}{Character/Date. "next" to fetch details on the next coworking
-session or a Date fetch details for a specific coworking session.}
+session, "last" to fetch details on the last scheduled (in future)
+coworking session, or a Date fetch details for a specific coworking
+session.}
 }
 \value{
 Data frame with coworking event details
