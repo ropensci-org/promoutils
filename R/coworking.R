@@ -183,6 +183,7 @@ cw_event <- function(date, dry_run = FALSE) {
   e <- paste0(yaml, "\n\n", time_check, "\n\n", body)
   if(dry_run) e else writeLines(e, f)
 
+  f
 }
 
 #' Create a draft post for coworking
