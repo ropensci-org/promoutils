@@ -1,3 +1,6 @@
+# 0.4.3
+- New version of LinkedIn API
+
 # 0.4.2
 - Create Discourse user name function
 - Move forum functions from workflow to promoutils

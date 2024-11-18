@@ -1,6 +1,6 @@
 Package: promoutils
 Title: Utilities for Promoting rOpenSci on Twitter
-Version: 0.4.2
+Version: 0.4.3
 Authors@R: 
     person(given = "Steffi",
            family = "LaZerte",
