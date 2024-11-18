@@ -4,17 +4,22 @@
 #
 # - Put this token in the GitHub secrets as HTTR2_REFRESH_TOKEN
 # - For local testing add HTTR2_REFRESH_TOKEN to your .Renviron file
-ro_org_id <- 77132573
-ro_urn <- paste0("urn:li:organization:", ro_org_id)
-steffi_urn <- li_urn_me()
 
-# Define the client
-#ro_auth()
-#ro_auth()$refresh_token
-#usethis::edit_r_environ()
+# t <- li_auth()
+# t$refresh_token
+# usethis::edit_r_environ()
+
+
+
+
+
 
 # Get rOpenSci posts
 p <- li_posts_read(ro_urn)
+
+ro_org_id <- 77132573
+ro_urn <- paste0("urn:li:organization:", ro_org_id)
+steffi_urn <- li_urn_me()
 
 # Get error details about last response
 httr2::last_response() |>
