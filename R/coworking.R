@@ -66,10 +66,7 @@ cw_event <- function(date, dry_run = FALSE) {
   e <- cw_details(which = date)
 
   # Get details
-  date <- e$date
-  tz <- e$tz
-  theme <- e$theme
-  cohost <- e$cohost
+  details <- cw_times(e)
 
   if(!dry_run) {
     dir <- "./content/events/"
@@ -77,38 +74,11 @@ cw_event <- function(date, dry_run = FALSE) {
       stop("Directory ", dir, " doesn't exist. ",
            "Are you running this in `roweb3`?", call. = FALSE)
     }
-  }
+    f <- file.path(dir, glue::glue("{lubridate::as_date(details$date)}-{slug}.md"))
+  } else f <- "DRY RUN"
 
-  details <- data.frame(
-    tz = c("America/Vancouver", "Australia/Perth", "Europe/Paris"),
-    time = c(9, 9, 14),
-    tz_nice = c("Americas Pacific", "Australian Western", "European Central"))
-
-  tz <- stringr::str_subset(details$tz, tz)
-
-  if(!tz %in% OlsonNames()) {
-    stop("`tz` (", tz, ") not in `OlsonNames()`", call. = FALSE)
-  }
-
-
-  tz_nice <- stats::setNames(details$tz_nice, details$tz)
-  times <- stats::setNames(details$time, details$tz)
-
-
-  date <- lubridate::ymd_h(paste(date, times[[tz]]), tz = tz)
-  date_utc <- lubridate::with_tz(date, "UTC")
-  date_utc_end <- lubridate::format_ISO8601(date_utc + lubridate::hours(2))
-
-  date_nice <- glue::glue("{format(date, '%A %B %d, %H:00')} ",
-                          "{tz_nice[[tz]]} ({format(date_utc, '%H')}:00 UTC)")
-
-  date_utc <- lubridate::format_ISO8601(date_utc)
-
-  slug <- glue::glue("coworking-{format(date, '%Y-%m')}")
-
-  if(!dry_run) f <- file.path(dir, glue::glue("{lubridate::as_date(date)}-{slug}.md"))
-
-  yaml <- glue::glue(
+  yaml <- glue::glue_data(
+    details,
     .sep = "\n",
     "---",
     "title: Social Coworking and Office Hours - {theme}",
@@ -125,17 +95,18 @@ cw_event <- function(date, dry_run = FALSE) {
     "  - HTML",
     "  - Calendar",
     "attendees:",
-    "  - {cohost}",
+    "  - {stringr::str_split_1(details$cohost, pattern = 'and') |> paste0(collapse = '\n  -')}",
     "  - Steffi LaZerte",
     "author:",
-    "  - {cohost}",
+    "  - {stringr::str_split_1(details$cohost, pattern = 'and') |> paste0(collapse = '\n  -')}",
     "deets: |",
     "    Meeting ID: 913 2825 6625",
     "    Passcode: 512767",
     "zoomurl: https://zoom.us/j/91328256625?pwd=WGVDdWpGdnhWWTFvZkZVTkNzWElNQT09",
     "---")
 
-  time_check <- glue::glue(
+  time_check <- glue::glue_data(
+    details,
     .sep = "\n",
     "<!--",
     "```{{r}}",
@@ -145,7 +116,8 @@ cw_event <- function(date, dry_run = FALSE) {
     "```",
     "-->")
 
-  body <- glue::glue(
+  body <- glue::glue_data(
+    details,
     .sep = "\n",
     "**Join us for 2 hours {date_nice} for ",
     "[Social Coworking + Office Hours](/blog/2023/06/21/coworking/)**",
@@ -185,6 +157,35 @@ cw_event <- function(date, dry_run = FALSE) {
 
   f
 }
+
+cw_times <- function(details) {
+  dates <- data.frame(
+    tz = c("America/Vancouver", "Australia/Perth", "Europe/Paris"),
+    time = c(9, 9, 14),
+    tz_nice = c("Americas Pacific", "Australian Western", "European Central"))
+
+  details <- details |>
+    dplyr::mutate(
+      tz = stringr::str_subset(dates$tz, .data[["tz"]])) |>
+    dplyr::left_join(dates, by = "tz")
+
+  if(!details$tz %in% OlsonNames()) {
+    stop("`tz` (", tz, ") not in `OlsonNames()`", call. = FALSE)
+  }
+
+  details |>
+    dplyr::mutate(
+      tz_nice = stats::setNames(tz_nice, tz),
+      time = stats::setNames(time, tz),
+      date = lubridate::ymd_h(paste(date, time), tz = tz),
+      date_utc = lubridate::with_tz(date, "UTC"),
+      date_utc_end = lubridate::format_ISO8601(date_utc + lubridate::hours(2)),
+      date_nice = glue::glue("{format(date, '%A %B %d, %H:00')} ",
+                          "{tz_nice[[tz]]} ({format(date_utc, '%H')}:00 UTC)"),
+      date_utc = lubridate::format_ISO8601(date_utc),
+      slug = glue::glue("coworking-{format(date, '%Y-%m')}"))
+}
+
 
 #' Create a draft post for coworking
 #'
@@ -330,7 +331,8 @@ cw_social_week <- function(x, where, dry_run) {
       ))
 
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
-                     title = p$title, body = p$body, dry_run = dry_run)
+                     title = p$title, body = p$body, dry_run = dry_run,
+                     over_char_limit = warning)
 }
 
 cw_social_hour <- function(x, where, dry_run) {
@@ -351,7 +353,8 @@ cw_social_hour <- function(x, where, dry_run) {
       )
     )
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
-                     title = p$title, body = p$body, dry_run = dry_run)
+                     title = p$title, body = p$body, dry_run = dry_run,
+                     over_char_limit = warning)
 }
 
 slack_week <- function(x, posters_tz) {
@@ -440,4 +443,40 @@ cw_details <- function(which = "next") {
     cohost = stringr::str_subset(stringr::str_split(.data$body, "\n", simplify = TRUE),
                                  "\\*\\*Co-host"),
     cohost = stringr::str_remove(.data$cohost, "\\*\\*Co-host\\*\\*: "))
+}
+
+
+#' Create draft message for checking in with Cohosts
+#'
+#' The week before, prepare the slides and coworking document, then use this
+#' draft text to invite the cohost(s) to review via Slack or Email.
+#'
+#' @param which Character/Date. "next" to fetch details on the next coworking
+#'   session, "last" to fetch details on the last scheduled (in future)
+#'   coworking session, or a Date fetch details for a specific coworking
+#'   session.
+#' @param names Character. Names of cohost if overriding those in the event listing.
+#' @param notes_link Character. Link to the Google doc with coworking notes.
+#' @param slides_link Character. Link to the Google slides.
+#'
+#' @export
+cw_checkin <- function(which = "next", names = NULL, notes_link, slides_link) {
+  if(is.null(which)) cw <- cw_details() else cw <- cw_details(which)
+  if(is.null(names)) names <- cw$cohost
+  times <- cw_times(cw)
+
+  glue::glue(
+    "Hi {names}!
+
+I'm excited for coworking with you next week :tada:  ({times$date_nice})
+
+I've shared two Google docs with you
+
+1. The [coworking document]({notes_link}) - Feel free to add items to the \"Shared\" section, or anywhere else (especially any links you think might be relevant to get started with).
+2. And the [Slides]({slides_link}) - Please fill out the \"{names}'s Spot\" introduction slide (and change the name if you have a different preferred name). If you'd like some inspiration, checkout the other \"Spot\" slides, but any format is good!
+
+Remember that you can always checkout our [Coworking Blog post](https://ropensci.org/blog/2023/06/21/coworking/) for a quick run down of how things work, and of course, ask me any questions you have!
+
+I'll be advertising through rOpenSci channels and feel free to boost our posts or add your own to spread the word into your own networks. Thanks again for your time!") |>
+    cat()
 }

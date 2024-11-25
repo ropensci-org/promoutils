@@ -1,5 +1,6 @@
 # 0.4.3
 - New version of LinkedIn API
+- Add more coworking helper functions
 
 # 0.4.2
 - Create Discourse user name function
