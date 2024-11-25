@@ -89,7 +89,7 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
       "time: {time}",
       "tz: {tz}",
       "~~~\n",
-      "{body}",  .sep = "\n") |>
+      "{body}",  .sep = "\n", trim = FALSE) |>
     stringr::str_replace("\n\n", "\n")
 
   if(dry_run & verbose) {
