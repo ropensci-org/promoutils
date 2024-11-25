@@ -14,6 +14,7 @@ socials_post_issue(
   add_hash = TRUE,
   dry_run = FALSE,
   open_browser = TRUE,
+  over_char_limit = stop,
   verbose = FALSE
 )
 }
@@ -43,6 +44,8 @@ same title.}
 display draft if \code{verbose = TRUE}).}
 
 \item{open_browser}{Logical. Whether to open the issue in the browser.}
+
+\item{over_char_limit}{Function. Stop or warn if over the character limit?}
 
 \item{verbose}{Logical. If dry run, displace draft?}
 }

@@ -22,6 +22,7 @@
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
 #' @param open_browser Logical. Whether to open the issue in the browser.
+#' @param over_char_limit Function. Stop or warn if over the character limit?
 #' @param verbose Logical. If dry run, displace draft?
 #'
 #' @export
@@ -29,7 +30,7 @@ socials_post_issue <- function(time, tz = "America/Winnipeg",
                                title, body, where = "mastodon",
                                avoid_dups = TRUE, add_hash = TRUE,
                                dry_run = FALSE, open_browser = TRUE,
-                               verbose = FALSE) {
+                               over_char_limit = stop, verbose = FALSE) {
 
   if(!all(where %in% c("mastodon", "linkedin"))) {
     stop("'where' must be one of 'mastodon' or 'linkedin'", call. = FALSE)
@@ -58,13 +59,15 @@ socials_post_issue <- function(time, tz = "America/Winnipeg",
 
   purrr::map2(body, where, \(x, y) {
     socials_post_single(time, tz, title, x, y,
-                        avoid_dups, add_hash, dry_run, open_browser, verbose)
+                        avoid_dups, add_hash, dry_run, open_browser,
+                        over_char_limit, verbose)
   })
 }
 
 
 socials_post_single <- function(time, tz, title, body, where, avoid_dups,
-                                add_hash, dry_run, open_browser, verbose) {
+                                add_hash, dry_run, open_browser,
+                                over_char_limit = stop, verbose) {
 
   labels <- c(where, "draft", "needs-review")
 
@@ -76,9 +79,9 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
 
 
   if(where == "mastodon" & (n <- calc_chars(body)) >= 490) {
-    stop("Very close or over the character limit of 500\n",
-         "(this message has ", n, " including hashtags)",
-         call. = FALSE)
+    over_char_limit("Very close or over the character limit of 500\n",
+                    "(this message has ", n, " including hashtags)",
+                    call. = FALSE)
   }
 
   body <- glue::glue(
