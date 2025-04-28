@@ -76,7 +76,7 @@ cw_event <- function(date, dry_run = FALSE) {
       stop("Directory ", dir, " doesn't exist. ",
            "Are you running this in `roweb3`?", call. = FALSE)
     }
-    f <- file.path(dir, glue::glue("{lubridate::as_date(details$date)}-{slug}.md"))
+    f <- file.path(dir, glue::glue("{lubridate::as_date(details$date)}-{details$slug}.md"))
   } else f <- "DRY RUN"
 
   yaml <- glue::glue_data(
@@ -206,6 +206,7 @@ cw_times <- function(details) {
 #'   time at which to post Slack messages as these are posted in the local
 #'   timezone
 #' @param dry_run Logical. Whether to do a dry run (i.e. don't post)
+#' @param branch Character. Branch name if not on main.
 #' @export
 #'
 #' @examples
@@ -218,9 +219,11 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
                        who_main_masto = "@steffilazerte@fosstodon.org",
                        who_main_slack = "@Steffi LaZerte",
                        who_main_linkedin = "Steffi LaZerte",
-                       posters_tz = "America/Winnipeg", dry_run = FALSE) {
+                       posters_tz = "America/Winnipeg", dry_run = FALSE,
+                       branch = NULL) {
 
   i <- gh_cache("/repos/{owner}/{repo}/contents/content/events",
+                ref = branch,
                 owner = "ropensci", repo = "roweb3")
 
   event <- dplyr::tibble(name = purrr::map_chr(i, "name"),
@@ -412,7 +415,7 @@ slack_hour <- function(x, posters_tz) {
 
 cw_details <- function(which = "next") {
 
-  i <- gh_issue_fetch(repo = "comms", labels = "coworking", state = "all")
+  i <- gh_issue_fetch(repo = "comms", labels = "coworking", state = "open")
 
   d <- data.frame(title = purrr::map_chr(i, "title"),
                   body = purrr::map_chr(i, "body")) |>
