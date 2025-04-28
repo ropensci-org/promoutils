@@ -34,15 +34,17 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
     tz <- c("Australia", "Europe", "America")[tz]
   }
   title <- glue::glue("[Coworking] - {date} - {theme}")
+  link <- glue::glue("https://ropensci.org/events/coworking-{format(date, '%Y-%m')}")
 
-  body <- glue::glue(
-    "**Theme**: {theme}",
-    "**Co-host**: {cohost}",
-    "**Timezone**: {tz}",
-    "**Link**: https://ropensci.org/events/coworking-{format(date, '%Y-%m')}",
-    "",
-    promoutils::cw_issue_body, .sep = "\n")
+  # Get issue template from repository and fill in
+  body <- gh::gh("/repos/rosadmin/comms/contents/.github/ISSUE_TEMPLATE/coworking-prep.md",
+              .accept = "application/vnd.github.raw+json") |>
+    unlist() |>
+    stringr::str_remove("^---(\\S|\\s)+---\\n?\\n?") |> # Remove YAML
+    stringr::str_remove_all("\\[[^\\[\\]]+\\]") |>      # Remove comments
+    glue::glue()                                        # Add details
 
+  # Create issue
   gh_issue_post(title = title, body = body,
                 labels = "coworking",
                 owner = "rosadmin", repo = "comms",
