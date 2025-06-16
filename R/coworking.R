@@ -383,7 +383,7 @@ cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
       "You can use this time for...",
       "- General coworking",
       "{action1}",
-      "- Chat with others for advice/resources",
+      "- Chat with {who_slack} and others about our theme!",
       "",
       "{event_url}",
       .sep = "\n") |>
