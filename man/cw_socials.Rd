@@ -10,10 +10,11 @@ cw_socials(
   who_slack,
   who_linkedin,
   who_main_masto = "@steffilazerte@fosstodon.org",
-  who_main_slack = "@Steffi LaZerte",
+  who_main_slack = "<@UNRAUCMTK>",
   who_main_linkedin = "Steffi LaZerte",
   posters_tz = "America/Winnipeg",
-  dry_run = FALSE
+  dry_run = FALSE,
+  branch = NULL
 )
 }
 \arguments{
@@ -27,7 +28,8 @@ cw_socials(
 
 \item{who_main_masto}{Character. The full mastodon handle for the rOpenSci staff organizer.}
 
-\item{who_main_slack}{Character. The full Slack handle for the rOpenSci staff organizer.}
+\item{who_main_slack}{Character. The Slack id for the rOpenSci staff
+organizer (i.e., \verb{<@UXXXXXXX>}. Defaults to Steffi's id.}
 
 \item{who_main_linkedin}{Character. The full LinkedIn handle for the rOpenSci staff organizer.}
 
@@ -36,6 +38,8 @@ time at which to post Slack messages as these are posted in the local
 timezone}
 
 \item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+
+\item{branch}{Character. Branch name if not on main.}
 }
 \description{
 Creates draft posts for Mastodon and LinkedIn (by opening issues on
@@ -45,6 +49,6 @@ schedule).
 \examples{
 
 \dontrun{
-cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "@cohost")
+cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXX>")
 }
 }

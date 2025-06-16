@@ -1,3 +1,6 @@
+# 0.4.4
+- Preliminary workflows for automatic Slack message scheduling
+
 # 0.4.3
 - New version of LinkedIn API
 - Add more coworking helper functions

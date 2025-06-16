@@ -200,7 +200,8 @@ cw_times <- function(details) {
 #' @param who_slack Character. The full Slack handle for the cohost (i.e. @XXXX)
 #' @param who_linkedin Character. The full LinkedIn handle for the cohost (i.e. @XXXX)
 #' @param who_main_masto Character. The full mastodon handle for the rOpenSci staff organizer.
-#' @param who_main_slack Character. The full Slack handle for the rOpenSci staff organizer.
+#' @param who_main_slack Character. The Slack id for the rOpenSci staff
+#'   organizer (i.e., `<@UXXXXXXX>`. Defaults to Steffi's id.
 #' @param who_main_linkedin Character. The full LinkedIn handle for the rOpenSci staff organizer.
 #' @param posters_tz Character. Timezone of poster. Required for getting the
 #'   time at which to post Slack messages as these are posted in the local
@@ -212,12 +213,12 @@ cw_times <- function(details) {
 #' @examples
 #'
 #' \dontrun{
-#' cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "@cohost")
+#' cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXX>")
 #' }
 
 cw_socials <- function(date, who_masto, who_slack, who_linkedin,
                        who_main_masto = "@steffilazerte@fosstodon.org",
-                       who_main_slack = "@Steffi LaZerte",
+                       who_main_slack = "<@UNRAUCMTK>",
                        who_main_linkedin = "Steffi LaZerte",
                        posters_tz = "America/Winnipeg", dry_run = FALSE,
                        branch = NULL) {
@@ -303,10 +304,8 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
   cw_social_week(deets, where = "linkedin", dry_run = dry_run)
   cw_social_hour(deets, where = "linkedin", dry_run = dry_run)
 
-  # Create draft text for slack messages
-  glue::glue(slack_week(deets, posters_tz),
-             "\n\n---------\n\n",
-             slack_hour(deets, posters_tz))
+  # Post slack week before message
+  cw_slack_week(deets, posters_tz, dry_run)
 }
 
 
@@ -329,7 +328,7 @@ cw_social_week <- function(x, where, dry_run) {
         "",
         "- General coworking",
         "{action1}",
-        "- Chat with {author} and other attendees and discuss strategies for XXXX",
+        "- Chat with {author} and other attendees and discuss our theme!",
         "",
         "{event_url}",
         .sep = "\n"
@@ -362,14 +361,19 @@ cw_social_hour <- function(x, where, dry_run) {
                      over_char_limit = warning)
 }
 
-slack_week <- function(x, posters_tz) {
-  x |>
-    dplyr::mutate(time_post = .data$date_local - lubridate::weeks(1),
-                  time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
+cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
+
+  time_post <- x |>
+    dplyr::mutate(
+      time_post = .data$date_local - lubridate::weeks(1),
+      time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
+    dplyr::pull(time_post)
+
+  body <- x |>
     glue::glue_data(
-      "[SLACK WEEK BEFORE: #general & #co-working]",
-      "[POST AT: {time_post}]",
-      "\n",
+      #"[SLACK WEEK BEFORE: #general & #co-working]",
+      #"[POST AT: {time_post}]",
+      #"\n",
       "Join us for Social Coworking and office hours next week!",
       "",
       ":grey_exclamation: Theme: {theme}",
@@ -382,23 +386,88 @@ slack_week <- function(x, posters_tz) {
       "- Chat with others for advice/resources",
       "",
       "{event_url}",
-      .sep = "\n")
+      .sep = "\n") |>
+    fmt_slack()
+
+  if(dry_run) {
+    slack_posts_write(body, when = time_post, tz = posters_tz)
+  } else {
+    slack_posts_write(body, when = time_post, tz = posters_tz, channel = "#general")
+    slack_posts_write(body, when = time_post, tz = posters_tz, channel = "#co-working")
+  }
 }
 
-slack_hour <- function(x, posters_tz) {
-  x |>
-    dplyr::mutate(time_post = .data$date_local - lubridate::hours(1),
-                  time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
-    glue::glue_data(
-      "[SLACK HOUR BEFORE: #general]",
-      "[POST AT: {time_post}]",
-      "\n",
-      "See you in an hour :wink:",
-      "",
-      "URL TO ORIGINAL SLACK POST!",
-      .sep = "\n")
+fmt_slack <- function(body) {
+ stringr::str_replace_all(
+   body, "\\[(.+)\\]\\((.+)\\)", "<\\2|\\1>")
 }
 
+
+#' Schedule 1-hour before messages on rOpenSci Slack
+#'
+#' Will only work if running between the time that the 1-week message was posted
+#' and the start of the coworking.
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   cw_slack_hour(dry_run = TRUE)
+#' }
+cw_slack_hour <- function(user = "UNRAUCMTK", dry_run = FALSE) {
+
+  dt <- cw_details() |>
+    cw_times() |>
+    dplyr::select(date, tz)
+
+  if(is.null(dt$date) | dt$date < Sys.Date()) {
+    rlang::abort("Either event isn't posted or is passed", call = NULL)
+  }
+
+  msg_link_gen <- cw_slack_msg_link("C026GCWKA", user = user)
+  msg_link_co <- cw_slack_msg_link("C0152F1SKAP",  user = user)
+
+  body <- paste(
+    "See you in an hour :wink:",
+    "",
+    c(msg_link_gen, msg_link_co),
+    sep = "\n")
+
+  if(dry_run) {
+    slack_posts_write(body[1], when = dt$date - lubridate::hours(1),
+                      tz = dt$tz, channel = "#testing-api")
+    slack_posts_write(body[2], when = dt$date - lubridate::hours(1),
+                      tz = dt$tz, channel = "#testing-api")
+  } else {
+    slack_cleanup() # Remove previously scheduled posts from #admin-scheduled
+    slack_posts_write(body[1], when = dt$date - lubridate::hours(1),
+                      tz = dt$tz, channel = "#general")
+    slack_posts_write(body[2], when = dt$date - lubridate::hours(1),
+                      tz = dt$tz, channel = "#co-working")
+  }
+}
+
+cw_slack_msg_link <- function(channel_id, user) {
+
+
+  prev_msgs <- slack_messages(channel_id = channel_id) |>
+    dplyr::mutate(
+      hour = stringr::str_detect(.data$text, "See you in an hour :wink:"),
+      week = stringr::str_detect(.data$text, "Join us for Social Coworking")) |>
+    dplyr::filter(.data$user == .env$user,
+                  .data$hour | .data$week,
+                  .data$time > Sys.Date() - months(1))
+
+  if(prev_msgs$hour[1]) {
+    rlang::abort("Haven't posted the one-week before announcement yet", call = NULL)
+  }
+
+  # Create message link
+  paste0(
+    "https://ropensci.slack.com/archives/", channel_id, "/",
+    stringr::str_remove(prev_msgs$ts[prev_msgs$week][1], "\\."))
+}
 
 #' Fetch details about coworking sessions
 #'
