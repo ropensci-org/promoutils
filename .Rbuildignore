@@ -4,3 +4,7 @@
 ^data-raw$
 ^DEV.R$
 ^DEV_linkedin.R$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^vignettes/articles$
