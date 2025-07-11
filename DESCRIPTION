@@ -1,5 +1,5 @@
 Package: promoutils
-Title: Utilities for Promoting rOpenSci on Twitter
+Title: Utilities for Promoting rOpenSci on Social Media
 Version: 0.4.4
 Authors@R: 
     person(given = "Steffi",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "steffi@steffi.ca",
            comment = c(ORCID = "0000-0002-7690-8360"))
-Description: Utility functions for accessing GitHub and twitter data.
+Description: Utility functions for accessing GitHub and social media data.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
