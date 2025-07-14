@@ -20,11 +20,11 @@ cw_socials(
 \arguments{
 \item{date}{Character/Date. Date of the coworking event (local)}
 
-\item{who_masto}{Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)}
+\item{who_masto}{Character. The full mastodon handle for the cohost (i.e. \code{XXXX@XXXX.com})}
 
-\item{who_slack}{Character. The full Slack handle for the cohost (i.e. @XXXX)}
+\item{who_slack}{Character. The full API Slack id for the cohost (i.e. \verb{<@UXXXXXXX>})}
 
-\item{who_linkedin}{Character. The full LinkedIn handle for the cohost (i.e. @XXXX)}
+\item{who_linkedin}{Character. The full LinkedIn handle for the cohost (i.e. \verb{@XXXX})}
 
 \item{who_main_masto}{Character. The full mastodon handle for the rOpenSci staff organizer.}
 

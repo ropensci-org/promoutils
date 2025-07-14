@@ -196,9 +196,9 @@ cw_times <- function(details) {
 #' schedule).
 #'
 #' @param date Character/Date. Date of the coworking event (local)
-#' @param who_masto Character. The full mastodon handle for the cohost (i.e. XXXX@XXXX.com)
-#' @param who_slack Character. The full Slack handle for the cohost (i.e. @XXXX)
-#' @param who_linkedin Character. The full LinkedIn handle for the cohost (i.e. @XXXX)
+#' @param who_masto Character. The full mastodon handle for the cohost (i.e. `XXXX@XXXX.com`)
+#' @param who_slack Character. The full API Slack id for the cohost (i.e. `<@UXXXXXXX>`)
+#' @param who_linkedin Character. The full LinkedIn handle for the cohost (i.e. `@XXXX`)
 #' @param who_main_masto Character. The full mastodon handle for the rOpenSci staff organizer.
 #' @param who_main_slack Character. The Slack id for the rOpenSci staff
 #'   organizer (i.e., `<@UXXXXXXX>`. Defaults to Steffi's id.
@@ -250,7 +250,9 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
     yaml_end = purrr::map_dbl(.data$content, \(x) stringr::str_which(x, "---")[2]),
     yaml = purrr::map2(.data$content, .data$yaml_end, \(x, y) x[1:y] |> paste0(collapse = "\n")))
 
-  tz <- stringr::str_extract(event$content[[1]], "(America/Vancouver)|(Europe/Paris)|(Australia/Perth)") |>
+  tz <- stringr::str_extract(
+    event$content[[1]],
+    "(America/Vancouver)|(Europe/Paris)|(Australia/Perth)") |>
     stats::na.omit()
 
   if(!tz %in% OlsonNames()) stop("Couldn't detect timezone", call. = FALSE)
@@ -365,27 +367,42 @@ cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
 
   time_post <- x |>
     dplyr::mutate(
-      time_post = .data$date_local - lubridate::weeks(1),
+      time_post = .data$date_local - lubridate::weeks(2),
       time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
     dplyr::pull(time_post)
 
   body <- x |>
     glue::glue_data(
-      #"[SLACK WEEK BEFORE: #general & #co-working]",
-      #"[POST AT: {time_post}]",
-      #"\n",
       "Join us for Social Coworking and office hours next week!",
       "",
       ":grey_exclamation: Theme: {theme}",
       ":hourglass_flowing_sand: When: {time}",
       ":cookie: Hosted by: {who_main_slack} and community host {who_slack}",
+      ":mag: Details: {event_url}",
       "",
       "You can use this time for...",
       "- General coworking",
       "{action1}",
-      "- Chat with {who_slack} and others about our theme!",
+      "- Chat with {who_slack} and other attendees about our theme!",
       "",
-      "{event_url}",
+      .sep = "\n") |>
+    fmt_slack()
+
+  # Use linkedin (i.e. Full names)
+  body_sister <- x |>
+    glue::glue_data(
+      "Join us for Social Coworking and office hours next week!",
+      "",
+      ":grey_exclamation: Theme: {theme}",
+      ":hourglass_flowing_sand: When: {time}",
+      ":cookie: Hosted by: @{who_main_linkedin} and community host @{who_linkedin}",
+      ":mag: Details: {event_url}",
+      "",
+      "You can use this time for...",
+      "- General coworking",
+      "{action1}",
+      "- Chat with @{who_linkedin} and other attendees about our theme!",
+      "",
       .sep = "\n") |>
     fmt_slack()
 
@@ -395,13 +412,17 @@ cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
     slack_posts_write(body, when = time_post, tz = posters_tz, channel = "#general")
     slack_posts_write(body, when = time_post, tz = posters_tz, channel = "#co-working")
   }
+
+  clipr::write_clip(body_sister)
+  cli::cli_alert_success("Copied Sister-Slack messages to clipboard")
+  cli::cli_alert_info(paste0("Post on ", time_post))
+  cli::cli_code(body_sister)
 }
 
 fmt_slack <- function(body) {
  stringr::str_replace_all(
    body, "\\[(.+)\\]\\((.+)\\)", "<\\2|\\1>")
 }
-
 
 #' Schedule 1-hour before messages on rOpenSci Slack
 #'

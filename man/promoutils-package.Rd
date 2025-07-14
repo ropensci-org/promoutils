@@ -4,9 +4,17 @@
 \name{promoutils-package}
 \alias{promoutils}
 \alias{promoutils-package}
-\title{promoutils: Utilities for Promoting rOpenSci on Twitter}
+\title{promoutils: Utilities for Promoting rOpenSci on Social Media}
 \description{
-Utility functions for accessing GitHub and twitter data.
+Utility functions for accessing GitHub and social media data.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ropensci-org/promoutils}
+  \item Report bugs at \url{https://github.com/ropensci-org/promoutils/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Steffi LaZerte \email{steffi@steffi.ca} (\href{https://orcid.org/0000-0002-7690-8360}{ORCID})

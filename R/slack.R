@@ -1,14 +1,16 @@
-#' Title
+#' Write Slack message
+#'
+#' Write a Slack message for posting now or later.
 #'
 #' See https://docs.slack.dev/messaging/formatting-message-text#special-mentions
 #' https://docs.slack.dev/messaging/formatting-message-text#mentioning-users
 #'
-#' @param body
-#' @param when
-#' @param where
-#' @param dry_run
+#' @param body Character. Text of message to post.
+#' @param when Character or Date/time. When to post message.
+#' @param where Character. Channel to post message to.
+#' @param dry_run Logical. Test run?
 #'
-#' @returns
+#' @returns Success message
 #' @export
 #'
 #' @references

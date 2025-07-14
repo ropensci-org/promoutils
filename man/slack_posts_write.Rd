@@ -2,7 +2,7 @@
 % Please edit documentation in R/slack.R
 \name{slack_posts_write}
 \alias{slack_posts_write}
-\title{Title}
+\title{Write Slack message}
 \usage{
 slack_posts_write(
   body,
@@ -13,9 +13,21 @@ slack_posts_write(
 )
 }
 \arguments{
-\item{dry_run}{}
+\item{body}{Character. Text of message to post.}
+
+\item{when}{Character or Date/time. When to post message.}
+
+\item{dry_run}{Logical. Test run?}
+
+\item{where}{Character. Channel to post message to.}
+}
+\value{
+Success message
 }
 \description{
+Write a Slack message for posting now or later.
+}
+\details{
 See https://docs.slack.dev/messaging/formatting-message-text#special-mentions
 https://docs.slack.dev/messaging/formatting-message-text#mentioning-users
 }
