@@ -1,0 +1,13 @@
+Coworking and Office Hours next week!
+
+Theme: {theme}
+
+{time}
+
+Join {who} and {who_main}
+
+- General coworking
+{action1}
+- Chat with {author} and other attendees and discuss our theme!
+
+{event_url}

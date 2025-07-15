@@ -1,0 +1,24 @@
+---
+title: Social Coworking and Office Hours - {theme}
+dateStart: {date_utc} # UTC!!
+dateEnd: {date_utc_end} # UTC!!
+date: {date_utc_end} # UTC!! same as dateEnd
+description: Monthly coworking for productivity, asking questions, socializing
+coworking: true
+location: 'online' # free text
+slug: '{slug}'
+country: '\U0001F310' # emoji
+ropensci: yes
+outputs:
+  - HTML
+  - Calendar
+attendees:
+  - {cohost}
+  - Steffi LaZerte
+author:
+  - {cohost}
+deets: |
+    Meeting ID: 849 0838 1262
+    Passcode: socialize
+zoomurl: https://numfocus-org.zoom.us/j/84908381262?pwd=yLGDvE6xJYEJueL0bjxyup0JOU3CbL.1
+---

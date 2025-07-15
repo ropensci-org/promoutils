@@ -1,0 +1,33 @@
+**Theme**: {theme}
+**Co-host**: {cohost}
+**Timezone**: {tz} 
+**Link**: {link} 
+
+**Prepare**
+-  Find Co-host and decide on theme
+-  Create Event
+-  Set up 1-week before posts
+  -  Mastodon / LinkedIn
+  -  Slack (#general / #co-working)
+-  Set up 2-week before posts in Sister Slack communities
+  -  SORTEE
+  -  RLadies Global
+
+**Week of/before**
+-  Contact co-host to create intro slide
+-  Update slides to current theme (title slide, intro slide, and final slide)
+-  Create coworking document
+  -  Update doc and make **editable**
+  -  Add link on main docs page (as PR)
+-  Set up 1-hour before posts referring to 1-week before posts
+  -  Mastodon / LinkedIn
+  -  Slack (#general / #co-working)
+-  Merge PR adding link to coworking document
+-  Run Coworking :tada: (Share link to coworking document)
+
+**Wrap up**
+-  Add outstanding details to document
+-  Make document read only
+-  Post summary on Staff Slack
+-  Post summary with link to next event on Mastodon
+

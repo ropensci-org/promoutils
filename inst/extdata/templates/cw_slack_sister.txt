@@ -1,0 +1,11 @@
+Join us for Social Coworking and office hours next week!
+
+:grey_exclamation: Theme: {theme}
+:hourglass_flowing_sand: When: {time}
+:cookie: Hosted by: @{who_main_linkedin} and community host @{who_linkedin}
+:mag: Details: {event_url}
+
+You can use this time for...
+- General coworking
+{action1}
+- Chat with @{who_linkedin} and other attendees about our theme!

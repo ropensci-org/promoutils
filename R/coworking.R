@@ -36,13 +36,8 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
   title <- glue::glue("[Coworking] - {date} - {theme}")
   link <- glue::glue("https://ropensci.org/events/coworking-{format(date, '%Y-%m')}")
 
-  # Get issue template from repository and fill in
-  body <- gh::gh("/repos/rosadmin/comms/contents/.github/ISSUE_TEMPLATE/coworking-prep.md",
-              .accept = "application/vnd.github.raw+json") |>
-    unlist() |>
-    stringr::str_remove("^---(\\S|\\s)+---\\n?\\n?") |> # Remove YAML
-    stringr::str_remove_all("\\[[^\\[\\]]+\\]") |>      # Remove comments
-    glue::glue()                                        # Add details
+  # Fill in issue template with details
+  body <- glue::glue(template("cw_checklist"))
 
   # Create issue
   gh_issue_post(title = title, body = body,
@@ -79,80 +74,8 @@ cw_event <- function(date, dry_run = FALSE) {
     f <- file.path(dir, glue::glue("{lubridate::as_date(details$date)}-{details$slug}.md"))
   } else f <- "DRY RUN"
 
-  yaml <- glue::glue_data(
-    details,
-    .sep = "\n",
-    "---",
-    "title: Social Coworking and Office Hours - {theme}",
-    "dateStart: {date_utc} # UTC!!",
-    "dateEnd: {date_utc_end} # UTC!!",
-    "date: {date_utc_end} # UTC!! same as dateEnd",
-    "description: Monthly coworking for productivity, asking questions, socializing",
-    "coworking: true",
-    "location: 'online' # free text",
-    "slug: \"{slug}\"",
-    "country: \"\U0001F310\" # emoji",
-    "ropensci: yes",
-    "outputs:",
-    "  - HTML",
-    "  - Calendar",
-    "attendees:",
-    "  - {stringr::str_split_1(details$cohost, pattern = 'and') |> paste0(collapse = '\n  -')}",
-    "  - Steffi LaZerte",
-    "author:",
-    "  - {stringr::str_split_1(details$cohost, pattern = 'and') |> paste0(collapse = '\n  -')}",
-    "deets: |",
-    "    Meeting ID: 913 2825 6625",
-    "    Passcode: 512767",
-    "zoomurl: https://zoom.us/j/91328256625?pwd=WGVDdWpGdnhWWTFvZkZVTkNzWElNQT09",
-    "---")
-
-  time_check <- glue::glue_data(
-    details,
-    .sep = "\n",
-    "<!--",
-    "```{{r}}",
-    "d <- lubridate::ymd_hms('{date}', tz = '{tz}')",
-    "lubridate::with_tz(d, 'UTC')",
-    "lubridate::with_tz(d, 'America/Winnipeg')",
-    "```",
-    "-->")
-
-  body <- glue::glue_data(
-    details,
-    .sep = "\n",
-    "**Join us for 2 hours {date_nice} for ",
-    "[Social Coworking + Office Hours](/blog/2023/06/21/coworking/)**",
-    "",
-    "This month we're focusing on the theme **{theme}** ",
-    "with community host **{cohost}**, DESCRIPTION OF HOST.",
-    "",
-    "Come for the full 2 hrs or only as long as you need!",
-    "",
-    "### Cowork",
-    "",
-    "- THEME WORK",
-    "- THEME WORK/LEARN",
-    "- Cowork independently on work related to R",
-    "    - Plan out that package you’ve always wanted to create",
-    "    - Work on packages that tend to be neglected",
-    "    - What ever you need to get done!",
-    "",
-    "### Socialize/Network",
-    "",
-    "- Meet community host, **{cohost}**, and discuss THEME.",
-    "- Meet other R users and rOpenSci staff in Zoom",
-    "- Get answers to your questions",
-    "    - Ask your hosts",
-    "    - Ask your fellow coworkers",
-    "    - Discuss your work, best practices, or get advice and resources",
-    "- Answer other coworkers' questions!",
-    "",
-    "We host ",
-    "[Social Coworking + Office Hours](/blog/2023/06/21/coworking/) ",
-    "on the first Tuesday of each month, alternating among timezones to ",
-    "accommodate different parts of the world."
-  )
+  yaml <- glue::glue_data(details, template("cw_event_yml"), .sep = "\n")
+  body <- glue::glue_data(details, template("cw_event_body"), .sep = "\n")
 
   e <- paste0(yaml, "\n\n", time_check, "\n\n", body)
   if(dry_run) e else writeLines(e, f)
@@ -319,22 +242,8 @@ cw_social_week <- function(x, where, dry_run) {
       title = glue::glue("Coworking {month} {year} - week before"),
       who = dplyr::if_else(where == "mastodon", .data$who_masto, .data$who_linkedin),
       who_main = dplyr::if_else(where == "mastodon", .data$who_main_masto, .data$who_main_linkedin),
-      body = glue::glue(
-        "Coworking and Office Hours next week!",
-        "",
-        "Theme: {theme}",
-        "",
-        "{time}",
-        "",
-        "Join {who} and {who_main}",
-        "",
-        "- General coworking",
-        "{action1}",
-        "- Chat with {author} and other attendees and discuss our theme!",
-        "",
-        "{event_url}",
-        .sep = "\n"
-      ))
+      body = glue::glue(template("cw_social_week"), .sep = "\n")
+    )
 
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
                      title = p$title, body = p$body, dry_run = dry_run,
@@ -347,17 +256,9 @@ cw_social_hour <- function(x, where, dry_run) {
       time_post = .data$date_local - lubridate::hours(1),
       title = glue::glue("Coworking {month} {year} - 1-hr before"),
       who = dplyr::if_else(where == "mastodon", .data$who_masto, .data$who_linkedin),
-      body = glue::glue(
-        "rOpenSci Coworking and Office Hours coming up in an hour!",
-        "",
-        "Today's Theme: {theme} with cohost {who}",
-        "",
-        "{time}",
-        "",
-        "{event_url}",
-        .sep = "\n"
-      )
+      body = glue::glue(template("cw_social_hour"), .sep = "\n")
     )
+
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
                      title = p$title, body = p$body, dry_run = dry_run,
                      over_char_limit = warning)
@@ -371,40 +272,10 @@ cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
       time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)) |>
     dplyr::pull(time_post)
 
-  body <- x |>
-    glue::glue_data(
-      "Join us for Social Coworking and office hours next week!",
-      "",
-      ":grey_exclamation: Theme: {theme}",
-      ":hourglass_flowing_sand: When: {time}",
-      ":cookie: Hosted by: {who_main_slack} and community host {who_slack}",
-      ":mag: Details: {event_url}",
-      "",
-      "You can use this time for...",
-      "- General coworking",
-      "{action1}",
-      "- Chat with {who_slack} and other attendees about our theme!",
-      "",
-      .sep = "\n") |>
-    fmt_slack()
+  body <- glue::glue_data(x, template("cw_slack"), .sep = "\n")
 
-  # Use linkedin (i.e. Full names)
-  body_sister <- x |>
-    glue::glue_data(
-      "Join us for Social Coworking and office hours next week!",
-      "",
-      ":grey_exclamation: Theme: {theme}",
-      ":hourglass_flowing_sand: When: {time}",
-      ":cookie: Hosted by: @{who_main_linkedin} and community host @{who_linkedin}",
-      ":mag: Details: {event_url}",
-      "",
-      "You can use this time for...",
-      "- General coworking",
-      "{action1}",
-      "- Chat with @{who_linkedin} and other attendees about our theme!",
-      "",
-      .sep = "\n") |>
-    fmt_slack()
+  # Use linkedin handle for Sister Slacks (i.e. Full names)
+  body_sister <- glue::glue_data(x, template("cw_slack_sister"), .sep = "\n")
 
   if(dry_run) {
     slack_posts_write(body, when = time_post, tz = posters_tz)
@@ -558,20 +429,7 @@ cw_details <- function(which = "next") {
 cw_checkin <- function(which = "next", names = NULL, notes_link, slides_link) {
   if(is.null(which)) cw <- cw_details() else cw <- cw_details(which)
   if(is.null(names)) names <- cw$cohost
-  times <- cw_times(cw)
+  date_nice <- cw_times(cw)$date_nice
 
-  glue::glue(
-    "Hi {names}!
-
-I'm excited for coworking with you next week :tada:  ({times$date_nice})
-
-I've shared two Google docs with you
-
-1. The [coworking document]({notes_link}) - Feel free to add items to the \"Shared\" section, or anywhere else (especially any links you think might be relevant to get started with).
-2. And the [Slides]({slides_link}) - Please fill out the \"{names}'s Spot\" introduction slide (and change the name if you have a different preferred name). If you'd like some inspiration, checkout the other \"Spot\" slides, but any format is good!
-
-Remember that you can always checkout our [Coworking Blog post](https://ropensci.org/blog/2023/06/21/coworking/) for a quick run down of how things work, and of course, ask me any questions you have!
-
-I'll be advertising through rOpenSci channels and feel free to boost our posts or add your own to spread the word into your own networks. Thanks again for your time!") |>
-    cat()
+  body <- glue::glue(template("cw_checkin"))
 }
