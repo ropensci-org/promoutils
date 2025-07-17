@@ -320,4 +320,18 @@ slack_message_rm <- function(channel_id, ts) {
       msg = paste("Message", ts, "successfully removed from ", channel_id))
 }
 
-
+#' Format markdown urls to Slack format
+#'
+#' @param body Character. Text to check
+#'
+#' @returns Character.
+#'
+#' @examples
+#'
+#' fmt_slack_urls("[My awesome page](https://my-awesome.html)")
+#'
+#' @noRd
+fmt_slack_urls <- function(body) {
+  stringr::str_replace_all(
+    body, "\\[(.+)\\]\\((.+)\\)", "<\\2|\\1>")
+}

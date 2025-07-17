@@ -2,22 +2,46 @@ test_that("cw_details()", {
   skip_on_ci()
   expect_silent(d <- cw_details(which = "next"))
   expect_s3_class(d, "data.frame")
-  expect_silent(d <- cw_details(which = "2023-11"))
-  expect_s3_class(d, "data.frame")
   expect_named(d, c("title", "body", "date", "tz", "theme", "cohost"))
 })
 
 
 test_that("cw_issue()", {
   skip_on_ci()
-  expect_error(cw_issue("2023-11", dry_run = TRUE))
-  expect_message(cw_issue("2023-11-07", dry_run = TRUE), "Posting issue")
+
+  expect_error(cw_issue("2023-11", dry_run = TRUE), "Invalid date")
+
+  with_mocked_bindings(
+    cw_details = function(...) {
+      data.frame(title = "[Coworking]",
+                 body = "Theme...",
+                 date = "2025-01-01",
+                 tz = "America",
+                 theme = "Test theme",
+                 cohost = "Best ever")
+    },
+    code = {
+      expect_message(cw_issue("2025-01-01", dry_run = TRUE), "Posting issue") %>%
+        suppressMessages()
+    })
 })
 
 test_that("cw_event()", {
   skip_on_ci()
-  expect_silent(e <- cw_event("2023-11", dry_run = TRUE))
-  expect_true(is.character(e))
+
+  with_mocked_bindings(
+    cw_details = function(...) {
+      data.frame(title = "[Coworking]",
+                 body = "Theme...",
+                 date = "2025-01-01",
+                 tz = "America",
+                 theme = "Test theme",
+                 cohost = "Best ever")
+    },
+    code = {
+      expect_silent(e <- cw_event("2025-01", dry_run = TRUE))
+      expect_true(is.character(e))
+    })
 })
 
 test_that("cw_socials()", {

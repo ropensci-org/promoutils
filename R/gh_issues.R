@@ -175,4 +175,6 @@ gh_label_events <- function(owner, repo, issue, labels) {
 }
 
 
-
+gh_split_repo <- function(repo) {
+  stringr::str_split_1(repo, "\\/")
+}

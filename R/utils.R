@@ -269,3 +269,19 @@ masto2user <- function(x) {
   } else n <- x
   n
 }
+
+template <- function(name) {
+  name <- stringr::str_remove(name, "\\.txt$")
+  system.file("extdata", "templates", paste0(name, ".txt"), package = "promoutils") |>
+    readLines() |>
+    paste0(collapse = "\n")
+}
+
+copy <- function(body, what, print = FALSE) {
+  if(interactive()) {
+    clipr::write_clip(body)
+    cli::cli_alert_success("Copied {what} to clipboard")
+    if(print) cli::cli_text(body)
+  }
+  invisible(FALSE)
+}

@@ -1,30 +1,40 @@
-#' Create Coworking To-Do's on Comms Repo
+#' Create Coworking To-Dos
 #'
-#' Create an issue listing the coworking todos. If no date or timezone, picks
-#' the next appropriate date (first Tuesday in the month following an existing
-#' coworking issue) and next appropriate timezone (cycling through America,
-#' Europe, and Australia) automatically.
+#' Create a GitHub issue in a repository listing the Coworking ToDos. If no date
+#' or timezone, picks the next appropriate date (first Tuesday of the month
+#' following an existing coworking issue) and next appropriate timezone (cycling
+#' through America, Europe, and Australia) automatically.
 #'
 #' @param date Character. Date of next event (if NULL picks next first Tuesday).
 #' @param tz Character. Timezone of next event (if NULL picks next in order).
 #' @param theme Character. Name of theme, if unknown, uses XXXX placeholder
 #' @param cohost Character. Name of cohost, if unknown, uses XXXX placeholder
-#' @param dry_run Logical. Whether to do a dry run (i.e. don't post)
+#' @param repo Character. GitHub repository including owner (e.g.,
+#'   `rosadmin/comms`)
+#'
+#' @return Nothing
 #'
 #' @export
-cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
-                     dry_run = FALSE) {
+#'
+#' @examples
+#' cw_issue(dry_run = TRUE)
 
+cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
+                     repo = "rosadmin/comms", dry_run = FALSE) {
+
+  # Get last posted Coworking Session
   t <- cw_details(which = "last")
 
+  # Find the date/time of the next
   if(is.null(date)) {
     date <- next_date(t$date)
   } else {
     date <- suppressWarnings(lubridate::as_date(date))
     if(is.na(date)) {
-      stop("Invalid data, must be a full date down to the day, ",
-           "or do not supply date and let the function find the next j",
-           "one for you", call. = FALSE)
+      cli::cli_abort(
+        c("Invalid date",
+          "*" = "Date must include day of the month.",
+          "*" = "Use NULL for automatic assignment"))
     }
   }
 
@@ -33,6 +43,8 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
     if(tz > 3) tz <- tz - 3
     tz <- c("Australia", "Europe", "America")[tz]
   }
+
+  # Prepare details
   title <- glue::glue("[Coworking] - {date} - {theme}")
   link <- glue::glue("https://ropensci.org/events/coworking-{format(date, '%Y-%m')}")
 
@@ -40,19 +52,20 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
   body <- glue::glue(template("cw_checklist"))
 
   # Create issue
+  repo <- gh_split_repo(repo)
+
   gh_issue_post(title = title, body = body,
                 labels = "coworking",
-                owner = "rosadmin", repo = "comms",
+                owner = repo[1], repo = repo[2],
                 dry_run = dry_run)
-
 }
 
 #' Create a draft event for coworking
 #'
 #' Creates a draft coworking event for the roweb3 website. All details pulled
-#' from the coworking todo list issue in `rosadmin/comms`.
+#' from the coworking todo list issue in `rosadmin/comms`. See `cw_issue()`.
 #'
-#' @param date Character/Date. Date of the coworking event (local)
+#' @param date Character/Date. Date of the coworking event to create
 #' @param dry_run Logical. Whether to really create the event or just return the
 #'   text.
 #'
@@ -63,13 +76,17 @@ cw_event <- function(date, dry_run = FALSE) {
   e <- cw_details(which = date)
 
   # Get details
-  details <- cw_times(e)
+  details <- cw_times(e) |>
+    # Split multiple hosts
+    dplyr::mutate(
+      cohost = list(stringr::str_split_1(.data$cohost, pattern = "\\band\\b")),
+      cohost = purrr::map(.data$cohost, \(x) glue::glue_collapse(x, sep = "\n  -")))
 
   if(!dry_run) {
     dir <- "./content/events/"
     if(!dir.exists(dir)) {
-      stop("Directory ", dir, " doesn't exist. ",
-           "Are you running this in `roweb3`?", call. = FALSE)
+      cli::cli_abort(c("Directory {dir} doesn't exist",
+                       "Are you running this in `roweb3`?"))
     }
     f <- file.path(dir, glue::glue("{lubridate::as_date(details$date)}-{details$slug}.md"))
   } else f <- "DRY RUN"
@@ -77,7 +94,7 @@ cw_event <- function(date, dry_run = FALSE) {
   yaml <- glue::glue_data(details, template("cw_event_yml"), .sep = "\n")
   body <- glue::glue_data(details, template("cw_event_body"), .sep = "\n")
 
-  e <- paste0(yaml, "\n\n", time_check, "\n\n", body)
+  e <- paste0(yaml, "\n\n", body)
   if(dry_run) e else writeLines(e, f)
 
   f
@@ -95,7 +112,7 @@ cw_times <- function(details) {
     dplyr::left_join(dates, by = "tz")
 
   if(!details$tz %in% OlsonNames()) {
-    stop("`tz` (", tz, ") not in `OlsonNames()`", call. = FALSE)
+    cli::cli_abort("`tz` ({tz}) not in `OlsonNames()`")
   }
 
   details |>
@@ -129,11 +146,16 @@ cw_times <- function(details) {
 #' @param posters_tz Character. Timezone of poster. Required for getting the
 #'   time at which to post Slack messages as these are posted in the local
 #'   timezone
-#' @param dry_run Logical. Whether to do a dry run (i.e. don't post)
 #' @param branch Character. Branch name if not on main.
 #' @export
 #'
 #' @examples
+#'
+#' cw_socials("2023-07-04",
+#'            who_masto = "@cohost@mastodon.org",
+#'            who_linkedin = "Cohost the Best",
+#'            who_slack = "<UXXXXX>",
+#'            dry_run = TRUE)
 #'
 #' \dontrun{
 #' cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXX>")
@@ -143,8 +165,10 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
                        who_main_masto = "@steffilazerte@fosstodon.org",
                        who_main_slack = "<@UNRAUCMTK>",
                        who_main_linkedin = "Steffi LaZerte",
-                       posters_tz = "America/Winnipeg", dry_run = FALSE,
-                       branch = NULL) {
+                       posters_tz = "America/Winnipeg",
+                       test_run = FALSE, dry_run = FALSE, branch = NULL) {
+
+  if(test_run) dry_run <- TRUE
 
   i <- gh_cache("/repos/{owner}/{repo}/contents/content/events",
                 ref = branch,
@@ -158,8 +182,9 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
                   stringr::str_detect(.data$date, .env$date))
 
   if(nrow(event) > 1) {
-    stop("Detected more than one coworking event with this date:\n",
-         paste0(event$name, collapse = "\n"), call. = FALSE)
+    cli::cli_abort(
+      c("Detected more than one coworking event with this date:",
+      rlang::set_names(event$name, "*")))
   }
 
   event <- event |>
@@ -178,9 +203,9 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
     "(America/Vancouver)|(Europe/Paris)|(Australia/Perth)") |>
     stats::na.omit()
 
-  if(!tz %in% OlsonNames()) stop("Couldn't detect timezone", call. = FALSE)
+  if(!tz %in% OlsonNames()) cli::cli_abort("Couldn't detect timezone")
 
-  message("Timezone: ", tz)
+  cli::cli_h2("Timezone: {tz}")
 
   slug <- stringr::str_subset(event$content[[1]], "slug") |>
     stringr::str_extract("coworking-\\d*-\\d*(-\\d*)?")
@@ -230,7 +255,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
   cw_social_hour(deets, where = "linkedin", dry_run = dry_run)
 
   # Post slack week before message
-  cw_slack_week(deets, posters_tz, dry_run)
+  cw_slack_week(deets, posters_tz, test_run, dry_run)
 }
 
 
@@ -247,7 +272,7 @@ cw_social_week <- function(x, where, dry_run) {
 
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
                      title = p$title, body = p$body, dry_run = dry_run,
-                     over_char_limit = warning)
+                     over_char_limit = cli::cli_warn)
 }
 
 cw_social_hour <- function(x, where, dry_run) {
@@ -261,10 +286,10 @@ cw_social_hour <- function(x, where, dry_run) {
 
   socials_post_issue(time = p$time_post, tz = p$tz, where = where,
                      title = p$title, body = p$body, dry_run = dry_run,
-                     over_char_limit = warning)
+                     over_char_limit = cli::cli_warn)
 }
 
-cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
+cw_slack_week <- function(x, posters_tz, test_run = FALES, dry_run = FALSE) {
 
   time_post <- x |>
     dplyr::mutate(
@@ -277,22 +302,18 @@ cw_slack_week <- function(x, posters_tz, dry_run = FALSE) {
   # Use linkedin handle for Sister Slacks (i.e. Full names)
   body_sister <- glue::glue_data(x, template("cw_slack_sister"), .sep = "\n")
 
-  if(dry_run) {
+  if(test_run) {
     slack_posts_write(body, when = time_post, tz = posters_tz)
   } else {
-    slack_posts_write(body, when = time_post, tz = posters_tz, channel = "#general")
-    slack_posts_write(body, when = time_post, tz = posters_tz, channel = "#co-working")
+    slack_posts_write(body, when = time_post, tz = posters_tz,
+                      channel = "#general", dry_run = dry_run)
+    slack_posts_write(body, when = time_post, tz = posters_tz,
+                      channel = "#co-working", dry_run = dry_run)
   }
 
-  clipr::write_clip(body_sister)
-  cli::cli_alert_success("Copied Sister-Slack messages to clipboard")
-  cli::cli_alert_info(paste0("Post on ", time_post))
-  cli::cli_code(body_sister)
-}
+  copy(body_sister, "Sister-Slack messages")
+  cli::cli_alert_info("Post on {time_post}")
 
-fmt_slack <- function(body) {
- stringr::str_replace_all(
-   body, "\\[(.+)\\]\\((.+)\\)", "<\\2|\\1>")
 }
 
 #' Schedule 1-hour before messages on rOpenSci Slack
@@ -304,29 +325,33 @@ fmt_slack <- function(body) {
 #' @export
 #'
 #' @examples
+#'
 #' \dontrun{
+#'   cw_slack_hour(test_run = TRUE)
 #'   cw_slack_hour(dry_run = TRUE)
 #' }
-cw_slack_hour <- function(user = "UNRAUCMTK", dry_run = FALSE) {
+cw_slack_hour <- function(user = "UNRAUCMTK", test_run = FALSE, dry_run = FALSE,
+                          call = rlang::caller_env()) {
 
   dt <- cw_details() |>
     cw_times() |>
     dplyr::select(date, tz)
 
   if(is.null(dt$date) | dt$date < Sys.Date()) {
-    rlang::abort("Either event isn't posted or is passed", call = NULL)
+    cli::cli_abort("Either event isn't posted or is passed", call = call)
   }
 
   msg_link_gen <- cw_slack_msg_link("C026GCWKA", user = user)
   msg_link_co <- cw_slack_msg_link("C0152F1SKAP",  user = user)
 
-  body <- paste(
+  body <- glue::glue(
     "See you in an hour :wink:",
     "",
-    c(msg_link_gen, msg_link_co),
+    "{msg_link_gen}",
+    "{msg_link_co}",
     sep = "\n")
 
-  if(dry_run) {
+  if(test_run) {
     slack_posts_write(body[1], when = dt$date - lubridate::hours(1),
                       tz = dt$tz, channel = "#testing-api")
     slack_posts_write(body[2], when = dt$date - lubridate::hours(1),
@@ -334,13 +359,13 @@ cw_slack_hour <- function(user = "UNRAUCMTK", dry_run = FALSE) {
   } else {
     slack_cleanup() # Remove previously scheduled posts from #admin-scheduled
     slack_posts_write(body[1], when = dt$date - lubridate::hours(1),
-                      tz = dt$tz, channel = "#general")
+                      tz = dt$tz, channel = "#general", dry_run = dry_run)
     slack_posts_write(body[2], when = dt$date - lubridate::hours(1),
-                      tz = dt$tz, channel = "#co-working")
+                      tz = dt$tz, channel = "#co-working", dry_run = dry_run)
   }
 }
 
-cw_slack_msg_link <- function(channel_id, user) {
+cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
 
 
   prev_msgs <- slack_messages(channel_id = channel_id) |>
@@ -352,13 +377,12 @@ cw_slack_msg_link <- function(channel_id, user) {
                   .data$time > Sys.Date() - months(1))
 
   if(prev_msgs$hour[1]) {
-    rlang::abort("Haven't posted the one-week before announcement yet", call = NULL)
+    cli_cli_abort("Haven't posted the one-week before announcement yet", call = call)
   }
 
   # Create message link
-  paste0(
-    "https://ropensci.slack.com/archives/", channel_id, "/",
-    stringr::str_remove(prev_msgs$ts[prev_msgs$week][1], "\\."))
+  ts <- stringr::str_remove(prev_msgs$ts[prev_msgs$week][1], "\\.")
+  glue::glue("https://ropensci.slack.com/archives/{channel_id}/{ts}")
 }
 
 #' Fetch details about coworking sessions
@@ -372,7 +396,7 @@ cw_slack_msg_link <- function(channel_id, user) {
 #' @export
 #' @examples
 #' cw_details()
-#' cw_details("2023-11")
+#' # cw_details("2023-11") # Only works for events in the future
 
 cw_details <- function(which = "next") {
 
@@ -395,9 +419,9 @@ cw_details <- function(which = "next") {
   }
 
   if(nrow(d) != 1) {
-    if(nrow(d) == 0) stop("No details found", call. = FALSE)
-    stop("Mulitple event details selected:\n",
-         paste0(d$title, collapse = "\n"), call. = FALSE)
+    if(nrow(d) == 0) cli::cli_abort("No details found")
+    cli::cli_abort(c("Mulitple event details selected:",
+                     rlang::set_names(d$title, "*")))
   }
 
   dplyr::mutate(
@@ -432,4 +456,5 @@ cw_checkin <- function(which = "next", names = NULL, notes_link, slides_link) {
   date_nice <- cw_times(cw)$date_nice
 
   body <- glue::glue(template("cw_checkin"))
+  copy(body, "Checkin message")
 }
