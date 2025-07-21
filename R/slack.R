@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' slack_posts_write("testing on Tuesday")
-#' slack_posts_write("testing more and more", when = "2025-05-22 14:00:00", tz = "Europe/Paris")
+#' slack_posts_write("testing more and more", when = Sys.time() + 3600, tz = "Europe/Paris")
 #' slack_posts_write(
 #'   paste(
 #'   "Join us for Social Coworking and office hours next week!",
@@ -30,6 +30,10 @@
 #'   "",
 #'   "You can use this time for...",
 #'   "- General coworking", sep = "\n"), when = "now")
+#'
+#' # Dry runs
+#' slack_posts_write("testing on Tuesday", dry_run = TRUE)
+#' slack_posts_write("testing [this cool link](https://mycoolsite.com)", dry_run = TRUE)
 slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
                               channel = "#testing-api", dry_run = FALSE) {
 
@@ -44,29 +48,55 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
     type <- "scheduled"
   }
 
-  r <- httr2::request("https://slack.com/api/") |>
-    httr2::req_url_path_append(end) |>
-    httr2::req_body_json(list(channel = channel, text = body, post_at = post_at)) |>
-    slack_auth() |>
-    httr2::req_perform() |>
-    slack_check(msg = paste("Slack message", type, "successfully to", channel))
+  # Fix formatting of links
+  body <- fmt_slack_urls(body)
 
-  if(type == "scheduled") {
+  if(dry_run) {
+    cli::cli_h1("Dry Run")
+    cli::cli_ul()
+    cli::cli_li("When: {when}")
+    cli::cli_li("Where: {channel}")
+    cli::cli_li("What: {body}")
+  } else {
 
-    # Post to #admin-scheduled as a quick check record
-    body2 <- paste0(
-      "-------------------------\n",
-      ":clock1: SCHEDULED FOR: ", lubridate::with_tz(when, Sys.timezone()), " ", Sys.timezone(), "\n",
-      ":bookmark: CHANNEL: ", channel, "\n",
-      ":id: MESSAGE ID: ", r$scheduled_message_id, "\n",
-      "\n> ", stringr::str_replace_all(body, "\\\n", "\n>"),
-      "\n-------------------------")
-    r2 <- httr2::request("https://slack.com/api/") |>
-      httr2::req_url_path_append("chat.postMessage") |>
-      httr2::req_body_json(list(channel = "#admin-scheduled", text = body2)) |>
+    # Check if already scheduled
+    msgs <- slack_scheduled_list()
+    if(any(post_at == msgs$post_at &
+           stringr::str_detect(msgs$text, body) &
+           msgs$channel == stringr::str_remove(channel, "#"))) {
+      cli::cli_alert_warning(
+        "Same message already scheduled in Slack channel for the same time, skipping...")
+      return(invisible())
+    }
+
+    # Post now or Schedule
+    r <- httr2::request("https://slack.com/api/") |>
+      httr2::req_url_path_append(end) |>
+      httr2::req_body_json(list(channel = channel, text = body, post_at = post_at)) |>
       slack_auth() |>
       httr2::req_perform() |>
-      slack_check(msg = "Scheduled message successfully added to #admin-scheduled")
+      slack_check(msg = glue::glue("Slack message {type} successfully to {channel}"))
+
+    if(type == "scheduled") {
+
+      # Post to #admin-scheduled to keep track of scheduled messages
+      local_time <- lubridate::with_tz(when, Sys.timezone())
+      body2 <- glue::glue(
+        "-------------------------",
+        ":clock1: SCHEDULED FOR: {local_time} {Sys.timezone()}",
+        ":bookmark: CHANNEL: {channel}",
+        ":id: MESSAGE ID: {r$scheduled_message_id}",
+        "\n> {stringr::str_replace_all(body, '\\n', '\n>')}",
+        "-------------------------", .sep = "\n")
+
+      # Schedule
+      r2 <- httr2::request("https://slack.com/api/") |>
+        httr2::req_url_path_append("chat.postMessage") |>
+        httr2::req_body_json(list(channel = "#admin-scheduled", text = body2)) |>
+        slack_auth() |>
+        httr2::req_perform() |>
+        slack_check(msg = "Scheduled message successfully added to #admin-scheduled")
+    }
   }
 }
 
@@ -89,7 +119,7 @@ slack_scheduled_list <- function() {
     purrr::list_rbind()
 
   cols <- c("channel", "scheduled_local", "text", "date_created_dt",
-  "channel_id", "id", "post_at", "date_created")
+            "channel_id", "id", "post_at", "date_created")
 
   if(nrow(r_list) == 0) {
     r_list <- dplyr::tibble(x = cols, y = NA) |>
