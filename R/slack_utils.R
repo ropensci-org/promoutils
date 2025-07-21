@@ -47,7 +47,7 @@ slack_paginate <- function(req) {
 
 slack_error_info <- function(resp) {
   if("retry-after" %in% names(resp$headers)) {
-    return(paste("Slack rate limits: Retry after", resp$headers$`retry-after`, "seconds"))
+    return(glue::glue("Slack rate limits: Retry after {resp$headers$`retry-after`} seconds"))
   } else "Slack API error"
 }
 

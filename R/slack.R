@@ -155,7 +155,7 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
       slack_auth() |>
       httr2::req_perform() |>
       slack_check(
-        msg = paste("Message", i, "successfully removed from scheduled queue for", c))
+        msg = glue::glue("Message {i} successfully removed from scheduled queue for {c}"))
 
     admin_ts <- slack_messages(channel_id = slack_admin())|>
       dplyr::filter(stringr::str_detect(.data$text, i)) |>
@@ -317,7 +317,7 @@ slack_message_rm <- function(channel_id, ts) {
     slack_auth() |>
     httr2::req_perform() |>
     slack_check(
-      msg = paste("Message", ts, "successfully removed from ", channel_id))
+      msg = glue::glue("Message {ts} successfully removed from {channel_id}"))
 }
 
 #' Format markdown urls to Slack format

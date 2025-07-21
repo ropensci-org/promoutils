@@ -241,7 +241,7 @@ yaml_extract <- function(yaml, trim = "~~~") {
 escape_linkedin_chars <- function(x) {
   chars <- c("\\|", "\\{", "\\}", "\\@", "\\[", "\\]", "\\(", "\\)", "\\<", "\\>",
              "\\#", "\\\\", "\\*", "\\_", "\\~")
-  p <- stats::setNames(paste0("\\", chars), chars)
+  p <- stats::setNames(glue::glue("\\{chars}"), chars)
   stringr::str_replace_all(x, p)
 }
 
@@ -266,16 +266,16 @@ masto2user <- function(x) {
     n <- stringr::str_remove(x, "http(s?)://") |>
       stringr::str_split("/", simplify = TRUE) |>
       as.vector()
-    n <- paste0(n[2], "@", n[1])
+    n <- glue::glue("{n[2]}@{n[1]}")
   } else n <- x
   n
 }
 
 template <- function(name) {
   name <- stringr::str_remove(name, "\\.txt$")
-  system.file("extdata", "templates", paste0(name, ".txt"), package = "promoutils") |>
+  system.file("extdata", "templates", glue::glue("{name}.txt"), package = "promoutils") |>
     readLines() |>
-    paste0(collapse = "\n")
+    glue::glue_collapse(sep = "\n")
 }
 
 copy <- function(body, what, print = FALSE) {

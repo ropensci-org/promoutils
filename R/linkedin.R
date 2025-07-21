@@ -107,7 +107,7 @@ li_urn_me <- function() {
     httr2::req_perform() |>
     httr2::resp_body_json() |>
     unlist()
-  paste0("urn:li:person:", id)
+  glue::glue("urn:li:person:{id}")
 }
 
 #' Create authorization for rOpenSci on LinkedIn
@@ -191,11 +191,11 @@ li_auth <- function() {
     auth_url = auth_url,
     redirect_uri = "http://localhost:1444/",
     # These scopes allow reading and writing posts (personal and organizational)
-    scope = paste("w_member_social",       # write posts on behalf of your id
-                  "w_organization_social", # write posts on behalf of rOpenSci
-                  "r_organization_social", # read posts on behalf of rOpenSci
-                  "r_organization_admin",  # read admin on behalf of rOpenSci
-                  "r_basicprofile"),
+    scope = glue::glue("w_member_social",       # write posts on behalf of your id
+                       "w_organization_social", # write posts on behalf of rOpenSci
+                       "r_organization_social", # read posts on behalf of rOpenSci
+                       "r_organization_admin",  # read admin on behalf of rOpenSci
+                       "r_basicprofile", .sep = " "),
     pkce = FALSE
   )
 }
