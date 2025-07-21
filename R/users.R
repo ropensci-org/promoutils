@@ -180,13 +180,16 @@ ro_masto <- function(name) {
   name <- stringr::str_replace_all(name, " ", "-")
   name <- tolower(name)
 
-  t <- try(gh_cache("/repos/ropensci/roweb3/contents/content/author/{name}/_index.md",
-                  name = name)[["html_url"]], silent = TRUE)
-  if(class(t) %in% "try-error") return(NA_character_)
+  t <- tryCatch(
+    gh_cache("/repos/ropensci/roweb3/contents/content/author/{name}/_index.md",
+             name = name)[["html_url"]],
+    error = function(e) NA_character_
+  )
 
   # In case of accents, need to use the HTML encoding with the download origin
-  t <- paste0("https://raw.githubusercontent.com/",
-         stringr::str_remove_all(t, "(https://github.com/)|(blob/)")) |>
+  t <- t |>
+    stringr::str_remove_all("blob/") |>
+    stringr::str_replace("https://github.com/", "https://raw.githubusercontent.com/") |>
     httr2::request() |>
     httr2::req_perform() |>
     httr2::resp_body_string() |>
