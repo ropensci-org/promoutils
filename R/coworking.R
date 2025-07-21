@@ -203,7 +203,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
 
   if(!tz %in% OlsonNames()) cli::cli_abort("Couldn't detect timezone")
 
-  cli::cli_h2("Timezone: {tz}")
+  cli::cli_h1("Coworking - Timezone: {tz}")
 
   slug <- stringr::str_subset(event$content[[1]], "slug") |>
     stringr::str_extract("coworking-\\d*-\\d*(-\\d*)?")

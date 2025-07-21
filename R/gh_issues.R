@@ -4,23 +4,26 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
   if(missing(title)) cli::cli_abort("Require a title for this issue")
   if(missing(body)) cli::cli_abort("Require a body for this issue")
 
-  if(avoid_dups) {
-    current <- gh_issue_fetch(state = "all") |>
-      gh_issue_fmt(which = c("title", "body", "labels")) |>
-      tidyr::unnest("labels")
-
-    if(title %in% current$title) {
-      if(any(labels[!labels %in% c("draft", "needs-review")] %in%
-             current$labels[current$title == title])) {
-        cli::cli_inform(
-          "Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
-        return()
-      }
-    }
-  }
+  cli::cli_h2("Post to {labels[labels %in% c('mastodon', 'linkedin', 'coworking')]} {if(dry_run) '[DRY RUN]'}")
 
   if(!dry_run) {
-    cli::cli_inform("Posting issue - {title}\n(labels: {labels})")
+
+    if(avoid_dups) {
+      current <- gh_issue_fetch(state = "all") |>
+        gh_issue_fmt(which = c("title", "body", "labels")) |>
+        tidyr::unnest("labels")
+
+      if(title %in% current$title) {
+        if(any(labels[!labels %in% c("draft", "needs-review")] %in%
+               current$labels[current$title == title])) {
+          cli::cli_text(
+            "Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
+          return()
+        }
+      }
+    }
+
+    cli::cli_text("Posting issue - {title}\n(labels: {labels})")
     r <- gh_cache("POST /repos/{owner}/{repo}/issues",
                   title = title, body = body, labels = as.list(labels),
                   owner = owner, repo = repo)

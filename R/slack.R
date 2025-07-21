@@ -52,7 +52,7 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
   body <- fmt_slack_urls(body)
 
   if(dry_run) {
-    cli::cli_h1("Dry Run")
+    cli::cli_h2("Slack Dry Run")
     cli::cli_ul()
     cli::cli_li("When: {when}")
     cli::cli_li("Where: {channel}")

@@ -101,10 +101,6 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
       "{body}",  .sep = "\n", trim = FALSE) |>
     stringr::str_replace("\n\n", "\n")
 
-  if(dry_run & verbose) {
-    cli::cli_h2("Dry Run - Post to {where}")
-  }
-
   gh_issue_post(title, body,
                 labels = labels,
                 owner = "rosadmin", repo = "scheduled_socials",
