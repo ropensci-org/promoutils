@@ -190,7 +190,7 @@ slack_cleanup <- function() {
     tidyr::drop_na("id") # Ignore non-scheduled messages
 
   if(nrow(sched) == 0 & nrow(admin) == 0) {
-    rlang::inform("Nothing to clean up")
+    cli::cli_inform("Nothing to clean up")
     return(invisible())
   }
 
@@ -205,7 +205,7 @@ slack_cleanup <- function() {
     purrr::map(admin_rm$ts, \(x) slack_message_rm(channel_id = slack_admin(), ts = x))
   }
 
-  rlang::inform("Channel #admin-scheduled cleaned up")
+  cli::cli_inform("Channel #admin-scheduled cleaned up")
 }
 
 

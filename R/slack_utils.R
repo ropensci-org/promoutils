@@ -4,12 +4,13 @@ slack_auth <- function(resp) {
 }
 
 
-slack_check <- function(resp, msg = "Successful", element = NULL, paginate = FALSE) {
+slack_check <- function(resp, msg = "Successful", element = NULL, paginate = FALSE,
+                        call = rlang::caller_env()) {
 
   if(paginate) {
     problems <- httr2::resps_failures(resp)
     if(length(problems) > 0) {
-      rlang::abort("Errors in pagination", call = NULL)
+      cli::cli_abort("Errors in pagination", call = call)
     } else if(!is.null(msg)) rlang::inform(msg)
 
     r <- httr2::resps_data(resp, \(x) httr2::resp_body_json(x)[[element]])
@@ -22,16 +23,13 @@ slack_check <- function(resp, msg = "Successful", element = NULL, paginate = FAL
     r$error |>
       stringr::str_replace_all("_", " ") |>
       tools::toTitleCase() |>
-      rlang::abort(call = NULL)
+      cli::cli_abort()
   }
 
   if(!is.null(msg)) rlang::inform(msg)
 
   r
 }
-
-
-
 
 
 slack_admin <- function() {

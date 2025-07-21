@@ -30,13 +30,14 @@ socials_post_issue <- function(time, tz = "America/Winnipeg",
                                title, body, where = "mastodon",
                                avoid_dups = TRUE, add_hash = TRUE,
                                dry_run = FALSE, open_browser = TRUE,
-                               over_char_limit = stop, verbose = FALSE) {
+                               over_char_limit = cli::cli_abort,
+                               verbose = FALSE) {
 
   if(!all(where %in% c("mastodon", "linkedin"))) {
-    stop("'where' must be one of 'mastodon' or 'linkedin'", call. = FALSE)
+    cli::cli_abort("'where' must be one of 'mastodon' or 'linkedin'")
   }
 
-  if(!tz %in% OlsonNames()) stop("Couldn't detect timezone", call. = FALSE)
+  if(!tz %in% OlsonNames()) cli::cli_abort("Couldn't detect timezone")
 
   date <- lubridate::as_date(time)
   title <- glue::glue("[Post] - {title} - {date}")
@@ -67,7 +68,8 @@ socials_post_issue <- function(time, tz = "America/Winnipeg",
 
 socials_post_single <- function(time, tz, title, body, where, avoid_dups,
                                 add_hash, dry_run, open_browser,
-                                over_char_limit = stop, verbose) {
+                                over_char_limit = cli::cli_abort, verbose,
+                                call = rlang::caller_env()) {
 
   labels <- c(where, "draft", "needs-review")
 
@@ -77,23 +79,25 @@ socials_post_single <- function(time, tz, title, body, where, avoid_dups,
     body <- glue::glue("{body}\n{hash}")
   }
 
-
   if(where == "mastodon" & (n <- calc_chars(body)) >= 490) {
     over_char_limit("Very close or over the character limit of 500\n",
-                    "(this message has ", n, " including hashtags)",
-                    call. = FALSE)
+                    "(this message has {n} including hashtags)",
+                    call = call)
   }
 
   body <- glue::glue(
       "~~~",
       "time: {time}",
       "tz: {tz}",
-      "~~~\n",
+      "~~~",
+      "",
       "{body}",  .sep = "\n", trim = FALSE) |>
     stringr::str_replace("\n\n", "\n")
 
   if(dry_run & verbose) {
-    message("labels: ", paste0(labels, collapse = ", ") , "\n\n", title, "\n\n", body)
+    cli::cli_h2("Dry Run - Post to {where}")
+    cli::cli_par()
+    cli::cli_text("{body}")
   }
 
   gh_issue_post(title, body,

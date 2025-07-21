@@ -160,7 +160,7 @@ nth_day <- function(x) {
 #' next_date("2023-11-01", n = 5)
 #' }
 #'
-next_date <- function(month, which = "Tues", n = 1) {
+next_date <- function(month, which = "Tues", n = 1, call = rlang::caller_env()) {
   month <- lubridate::as_date(month) + lubridate::period("1 month")
 
   d <- month |>
@@ -171,8 +171,9 @@ next_date <- function(month, which = "Tues", n = 1) {
   d <- d + lubridate::weeks(n - 1)
 
   if(lubridate::month(d) != lubridate::month(month)) {
-    stop("There are not ", n, " ", format(d, "%A"), "s in ", format(month, "%B %Y"),
-         call. = FALSE)
+    cli::cli_abort(
+      "There are not {n} {format(d, '%A')}s in {format(month, '%B %Y')}",
+      call = call)
   }
   d
 }

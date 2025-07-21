@@ -1,8 +1,8 @@
 gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
                           dry_run = FALSE, open_browser = TRUE) {
 
-  if(missing(title)) stop("Require a title for this issue", call. = FALSE)
-  if(missing(body)) stop("Require a body for this issue", call. = FALSE)
+  if(missing(title)) cli::cli_abort("Require a title for this issue")
+  if(missing(body)) cli::cli_abort("Require a body for this issue")
 
   if(avoid_dups) {
     current <- gh_issue_fetch(state = "all") |>
@@ -10,18 +10,14 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
       tidyr::unnest("labels")
 
     if(title %in% current$title) {
-
       if(any(labels[!labels %in% c("draft", "needs-review")] %in% current$labels[current$title == title])) {
-        message("Skipping duplicate - ", title,
-                " (labels: ", paste0(labels, collapse = ", "), ")",
-                dplyr::if_else(dry_run, " [DRY-RUN]", ""))
+        cli::cli_inform("Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
         return()
       }
     }
   }
 
-  message("Posting issue - ", title, " (labels: ", paste0(labels, collapse = ", "), ")",
-          dplyr::if_else(dry_run, " [DRY-RUN]", ""))
+  cli::cli_inform("Posting issue - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
 
   if(!dry_run) {
     r <- gh_cache("POST /repos/{owner}/{repo}/issues",
@@ -30,9 +26,10 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
 
     if(open_browser) utils::browseURL(r$html_url)
   } else {
-    message(paste0("title: ", title, "\n",
-                   "labels: ", paste0(labels, collapse = ", "), "\n",
-                   "body: \n\n", body))
+    cli::cli_text("Message to be posted: ")
+    cli::cli_text("{.strong title}: {title}")
+    cli::cli_text("{.strong labels}: {labels}")
+    cli::cli_text("{.strong body}: {body}")
   }
 }
 
@@ -55,7 +52,7 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
 gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
                            owner = "rosadmin", repo = "scheduled_socials",
                            issue = NULL, verbose = FALSE) {
-  if(verbose) message("owner: ", owner, "; repo: ", repo)
+  if(verbose) cli::cli_alert_info("owner: {owner}; repo: {repo}")
 
   if(!is.null(since)) since <- format(lubridate::as_datetime(since), "%Y-%m-%dT%H:%M:%SZ")
 
