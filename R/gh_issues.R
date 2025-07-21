@@ -10,27 +10,29 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
       tidyr::unnest("labels")
 
     if(title %in% current$title) {
-      if(any(labels[!labels %in% c("draft", "needs-review")] %in% current$labels[current$title == title])) {
-        cli::cli_inform("Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
+      if(any(labels[!labels %in% c("draft", "needs-review")] %in%
+             current$labels[current$title == title])) {
+        cli::cli_inform(
+          "Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
         return()
       }
     }
   }
 
-  cli::cli_inform("Posting issue - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
-
   if(!dry_run) {
+    cli::cli_inform("Posting issue - {title}\n(labels: {labels})")
     r <- gh_cache("POST /repos/{owner}/{repo}/issues",
                   title = title, body = body, labels = as.list(labels),
                   owner = owner, repo = repo)
 
     if(open_browser) utils::browseURL(r$html_url)
   } else {
-    cli::cli_text("Message to be posted: ")
     cli::cli_text("{.strong title}: {title}")
     cli::cli_text("{.strong labels}: {labels}")
-    cli::cli_text("{.strong body}: {body}")
+    cli::cli_text("{.strong body}:")
+    purrr::walk(stringr::str_split_1(body, "\\\n"), cli::cli_text)
   }
+  return(invisible())
 }
 
 #' Fetch issues from a GH repository
