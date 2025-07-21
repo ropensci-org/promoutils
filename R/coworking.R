@@ -39,9 +39,9 @@ cw_issue <- function(date = NULL, tz = NULL, theme = "XXXX", cohost = "XXXX",
   }
 
   if(is.null(tz)) {
-    tz <- which(t$tz == c("Australia", "Europe", "America")) + 1
+    tz <- which(t$tz == cw_tz()$tz_nice) + 1
     if(tz > 3) tz <- tz - 3
-    tz <- c("Australia", "Europe", "America")[tz]
+    tz <- cw_tz()$tz_nice[tz]
   }
 
   # Prepare details
@@ -101,10 +101,7 @@ cw_event <- function(date, dry_run = FALSE) {
 }
 
 cw_times <- function(details) {
-  dates <- data.frame(
-    tz = c("America/Vancouver", "Australia/Perth", "Europe/Paris"),
-    time = c(9, 9, 14),
-    tz_nice = c("Americas Pacific", "Australian Western", "European Central"))
+  dates <- cw_tz()
 
   details <- details |>
     dplyr::mutate(
@@ -200,8 +197,9 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
 
   tz <- stringr::str_extract(
     event$content[[1]],
-    "(America/Vancouver)|(Europe/Paris)|(Australia/Perth)") |>
-    stats::na.omit()
+    glue::glue_collapse(cw_tz()$tz_nice, sep = "|")) |> # Match tz
+    stats::na.omit() |>
+    cw_tz() # Convert tz to Olson Names
 
   if(!tz %in% OlsonNames()) cli::cli_abort("Couldn't detect timezone")
 
@@ -227,9 +225,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
       action1 = purrr::map(event$content, ~.x[stringr::str_which(.x, "### Cowork") + 1:2]),
       action1 = purrr::map_chr(.data$action1, ~glue::glue_collapse(.x, sep = "\n")),
       tz = .env$tz,
-      tz_txt = dplyr::case_when(.data$tz == "America/Vancouver" ~ "Americas Pacific",
-                                .data$tz == "Europe/Paris" ~ "European Central",
-                                .data$tz == "Australia/Perth" ~ "Australian Western"),
+      tz_txt = cw_tz(.data$tz), # Convert to pretty tz
       date_UTC = lubridate::as_datetime(.data$date_UTC),
       date_local = lubridate::with_tz(.data$date_UTC, tz = .env$tz),
       month = lubridate::month(.data$date_local, label = TRUE, abbr = TRUE),
@@ -426,7 +422,7 @@ cw_details <- function(which = "next") {
 
   dplyr::mutate(
     d,
-    tz = stringr::str_extract(.data$body, "America|Europe|Australia"),
+    tz = stringr::str_extract(.data$body, glue::glue_collapse(cw_tz()$tz_pretty, sep = "|")),
     theme = stringr::str_subset(stringr::str_split(.data$body, "\n", simplify = TRUE),
                                 "Theme"),
     theme = stringr::str_remove(.data$theme, "\\*\\*Theme\\*\\*: "),
@@ -458,3 +454,41 @@ cw_checkin <- function(which = "next", names = NULL, notes_link, slides_link) {
   body <- glue::glue(template("cw_checkin"))
   copy(body, "Checkin message")
 }
+
+#' Work with Coworking timezones
+#'
+#' Transform or return coworking timezones.
+#'
+#' @param tz Character. Timezone to switch the display type of. If NULL, return
+#'   all timezones.
+#'
+#' @returns Character of the opposite timezone display type, or a vector of all
+#'   timezones.
+#'
+#' @examples
+#' cw_tz()
+#' cw_tz("Americas Pacific")
+#' cw_tz("America/Vancouver")
+#' cw_tz("Europe Central")
+
+cw_tz <- function(tz = NULL) {
+  if(is.null(tz)) {
+    return({
+      data.frame(
+        tz = c("America/Vancouver", "Australia/Perth", "Europe/Paris"),
+        time = c(9, 9, 14),
+        tz_nice = c("Americas Pacific", "Australian Western", "European Central"))
+    })
+  }
+
+  dplyr::case_match(
+    tz,
+    "Americas Pacific" ~ "America/Vancouver",
+    "America/Vancouver" ~ "Americas Pacific",
+    "Europe Central" ~ "Europe/Paris",
+    "Europe/Paris" ~ "Europe Central",
+    "Australia West" ~ "Australia/Perth",
+    "Australia/Perth" ~ "Australia West"
+  )
+}
+
