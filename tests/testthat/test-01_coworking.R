@@ -16,12 +16,13 @@ test_that("cw_issue()", {
       data.frame(title = "[Coworking]",
                  body = "Theme...",
                  date = "2025-01-01",
-                 tz = "America",
+                 tz = "Americas Pacific",
                  theme = "Test theme",
                  cohost = "Best ever")
     },
     code = {
-      expect_message(cw_issue("2025-01-01", dry_run = TRUE), "Posting issue") %>%
+      expect_message(
+        cw_issue("2025-01-01", dry_run = TRUE), "Post") %>%
         suppressMessages()
     })
 })
@@ -46,9 +47,10 @@ test_that("cw_event()", {
 
 test_that("cw_socials()", {
   skip_on_ci()
-  l <- cw_socials("2023-10-03", "@Drmowinckels@fosstodon.org ", "@Mo (Athanasia Mowinckel)", "", dry_run = TRUE) |>
-    expect_message("Timezone: Europe/Paris") |>
+  l <- cw_socials("2025-07-01", "Test ", "@test", "", dry_run = TRUE) |>
+    expect_message("Timezone: America/Vancouver") |>
     suppressMessages()
 
   expect_type(l, "list")
 })
+
