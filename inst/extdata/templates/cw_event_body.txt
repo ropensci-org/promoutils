@@ -10,19 +10,15 @@ Come for the full 2 hrs or only as long as you need!
 
 - THEME WORK
 - THEME WORK/LEARN
-- Cowork independently on work related to R
-    - Plan out that package you’ve always wanted to create
-    - Work on packages that tend to be neglected
-    - What ever you need to get done!
+- Cowork independently on something related to R
+- Cowork on whatever you need to get done!
 
 ### Socialize/Network
 
 - Meet community host, **{cohost}**, and discuss THEME.
 - Meet other R users and rOpenSci staff in Zoom
-- Get answers to your questions
-    - Ask your hosts
-    - Ask your fellow coworkers
-    - Discuss your work, best practices, or get advice and resources
+- Get answers to your questions: Ask hosts or coworkers
+- Discuss your work, best practices, or get advice and resources
 - Answer other coworkers' questions!
 
 We host [Social Coworking + Office Hours](/blog/2023/06/21/coworking/)
