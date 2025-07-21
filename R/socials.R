@@ -22,10 +22,17 @@
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
 #' @param open_browser Logical. Whether to open the issue in the browser.
-#' @param over_char_limit Function. Stop or warn if over the character limit?
-#' @param verbose Logical. If dry run, displace draft?
+#' @param over_char_limit Function. Error or warn if over the character limit?
 #'
+#' @inheritParams common_docs
 #' @export
+#'
+#' @examples
+#' socials_post_issue("2025-01-01 00:00:00",
+#'                    title = "test post",
+#'                    body = "Test body",
+#'                    dry_run = TRUE, verbose = TRUE)
+
 socials_post_issue <- function(time, tz = "America/Winnipeg",
                                title, body, where = "mastodon",
                                avoid_dups = TRUE, add_hash = TRUE,

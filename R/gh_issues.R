@@ -41,13 +41,13 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
 #' @param owner Character. Owner of the repository
 #' @param repo Character. Name of the repository (name of the package)
 #' @param issue Numeric. Specific Issue number to fetch.
-#' @param verbose Logical. Show progress messages.
 #'
 #' @return List of issues
 #' @export
 #'
 #' @examples
 #' i <- gh_issue_fetch()
+#' i <- gh_issue_fetch(verbose = TRUE)
 
 gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
                            owner = "rosadmin", repo = "scheduled_socials",
