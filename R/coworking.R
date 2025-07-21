@@ -225,7 +225,7 @@ cw_socials <- function(date, who_masto, who_slack, who_linkedin,
       action1 = purrr::map(event$content, ~.x[stringr::str_which(.x, "### Cowork") + 1:2]),
       action1 = purrr::map_chr(.data$action1, ~glue::glue_collapse(.x, sep = "\n")),
       tz = .env$tz,
-      tz_txt = cw_tz(.data$tz), # Convert to pretty tz
+      tz_txt = cw_tz(.data$tz), # Convert to nice tz
       date_UTC = lubridate::as_datetime(.data$date_UTC),
       date_local = lubridate::with_tz(.data$date_UTC, tz = .env$tz),
       month = lubridate::month(.data$date_local, label = TRUE, abbr = TRUE),
@@ -422,7 +422,7 @@ cw_details <- function(which = "next") {
 
   dplyr::mutate(
     d,
-    tz = stringr::str_extract(.data$body, glue::glue_collapse(cw_tz()$tz_pretty, sep = "|")),
+    tz = stringr::str_extract(.data$body, glue::glue_collapse(cw_tz()$tz_nice, sep = "|")),
     theme = stringr::str_subset(stringr::str_split(.data$body, "\n", simplify = TRUE),
                                 "Theme"),
     theme = stringr::str_remove(.data$theme, "\\*\\*Theme\\*\\*: "),
