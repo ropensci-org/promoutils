@@ -14,7 +14,7 @@ socials_post_issue(
   add_hash = TRUE,
   dry_run = FALSE,
   open_browser = TRUE,
-  over_char_limit = stop,
+  over_char_limit = cli::cli_abort,
   verbose = FALSE
 )
 }
@@ -45,13 +45,19 @@ display draft if \code{verbose = TRUE}).}
 
 \item{open_browser}{Logical. Whether to open the issue in the browser.}
 
-\item{over_char_limit}{Function. Stop or warn if over the character limit?}
+\item{over_char_limit}{Function. Error or warn if over the character limit?}
 
-\item{verbose}{Logical. If dry run, displace draft?}
+\item{verbose}{Logical. Show extra informative messages.}
 }
 \description{
 Formats the body and title of an issue and posts it on
 "rosadmin/scheduled_socials". The issue will bed opened in a browser for
 editing and confirmation. Note that issues will not be posted until the
 labels "draft" and "needs-review" have been removed.
+}
+\examples{
+socials_post_issue("2025-01-01 00:00:00",
+                   title = "test post",
+                   body = "Test body",
+                   dry_run = TRUE)
 }

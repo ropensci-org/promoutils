@@ -26,8 +26,6 @@ gh_issue_fetch(
 \item{repo}{Character. Name of the repository (name of the package)}
 
 \item{issue}{Numeric. Specific Issue number to fetch.}
-
-\item{verbose}{Logical. Show progress messages.}
 }
 \value{
 List of issues
@@ -37,4 +35,5 @@ Fetch issues from a GH repository
 }
 \examples{
 i <- gh_issue_fetch()
+i <- gh_issue_fetch(verbose = TRUE)
 }

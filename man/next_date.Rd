@@ -4,7 +4,7 @@
 \alias{next_date}
 \title{Find the next date}
 \usage{
-next_date(month, which = "Tues", n = 1)
+next_date(month, which = "Tues", n = 1, call = rlang::caller_env())
 }
 \arguments{
 \item{month}{Character/Date. The current month. Date returned is the next month.}

@@ -4,14 +4,21 @@
 \alias{cw_slack_hour}
 \title{Schedule 1-hour before messages on rOpenSci Slack}
 \usage{
-cw_slack_hour(user = "UNRAUCMTK", dry_run = FALSE)
+cw_slack_hour(
+  user = "UNRAUCMTK",
+  test_run = FALSE,
+  dry_run = FALSE,
+  call = rlang::caller_env()
+)
 }
 \description{
 Will only work if running between the time that the 1-week message was posted
 and the start of the coworking.
 }
 \examples{
+
 \dontrun{
+  cw_slack_hour(test_run = TRUE)
   cw_slack_hour(dry_run = TRUE)
 }
 }
