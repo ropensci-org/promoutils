@@ -189,14 +189,14 @@ next_date <- function(month, which = "Tues", n = 1, call = rlang::caller_env()) 
 #' @export
 #'
 #' @examples
-#' x <- replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
-#' x
+#' replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
+#' replace_emoji(":link:")
 replace_emoji <- function(x) {
   emo <- stringr::str_extract_all(x, "\\:.+\\:") |>
     unlist() |>
     unique()
 
-  if(length(emo) > 1) {
+  if(length(emo) > 0) {
     emo <- stats::setNames(
       purrr::map(emo, ~pandoc::pandoc_convert(
         text = .x, from = "markdown+emoji", to = "plain")) |>

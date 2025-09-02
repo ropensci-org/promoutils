@@ -104,9 +104,8 @@ cw_times <- function(details) {
   dates <- cw_tz()
 
   details <- details |>
-    dplyr::mutate(
-      tz = stringr::str_subset(dates$tz, .data[["tz"]])) |>
-    dplyr::left_join(dates, by = "tz")
+    dplyr::rename(tz_nice = tz) |>
+    dplyr::left_join(dates, by = "tz_nice")
 
   if(!details$tz %in% OlsonNames()) {
     cli::cli_abort("`tz` ({tz}) not in `OlsonNames()`")
@@ -337,15 +336,14 @@ cw_slack_hour <- function(user = "UNRAUCMTK", test_run = FALSE, dry_run = FALSE,
     cli::cli_abort("Either event isn't posted or is passed", call = call)
   }
 
-  msg_link_gen <- cw_slack_msg_link("C026GCWKA", user = user)
-  msg_link_co <- cw_slack_msg_link("C0152F1SKAP",  user = user)
+  msg_links <- c(cw_slack_msg_link("C026GCWKA", user = user),    #general
+                 cw_slack_msg_link("C0152F1SKAP",  user = user)) #coworking
 
   body <- glue::glue(
     "See you in an hour :wink:",
     "",
-    "{msg_link_gen}",
-    "{msg_link_co}",
-    sep = "\n")
+    "{msg_links}",
+    .sep = "\n")
 
   if(test_run) {
     slack_posts_write(body[1], when = dt$date - lubridate::hours(1),
@@ -362,7 +360,6 @@ cw_slack_hour <- function(user = "UNRAUCMTK", test_run = FALSE, dry_run = FALSE,
 }
 
 cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
-
 
   prev_msgs <- slack_messages(channel_id = channel_id) |>
     dplyr::mutate(
@@ -442,14 +439,17 @@ cw_details <- function(which = "next") {
 #'   coworking session, or a Date fetch details for a specific coworking
 #'   session.
 #' @param names Character. Names of cohost if overriding those in the event listing.
-#' @param notes_link Character. Link to the Google doc with coworking notes.
-#' @param slides_link Character. Link to the Google slides.
 #'
 #' @export
-cw_checkin <- function(which = "next", names = NULL, notes_link, slides_link) {
+cw_checkin <- function(which = "next", names = NULL) {
+
   if(is.null(which)) cw <- cw_details() else cw <- cw_details(which)
-  if(is.null(names)) names <- cw$cohost
+
+  if(is.null(names)) names <- stringr::str_extract(cw$cohost, "^[^ ]+")
+
   date_nice <- cw_times(cw)$date_nice
+  slides_link <- slides_link()
+  notes_link <- docs_link()
 
   body <- glue::glue(template("cw_checkin"))
   copy(body, "Checkin message")
@@ -477,7 +477,7 @@ cw_tz <- function(tz = NULL) {
       data.frame(
         tz = c("America/Vancouver", "Australia/Perth", "Europe/Paris"),
         time = c(9, 9, 14),
-        tz_nice = c("Americas Pacific", "Australian Western", "European Central"))
+        tz_nice = c("Americas Pacific", "Australia Western", "Europe Central"))
     })
   }
 
@@ -487,8 +487,88 @@ cw_tz <- function(tz = NULL) {
     "America/Vancouver" ~ "Americas Pacific",
     "Europe Central" ~ "Europe/Paris",
     "Europe/Paris" ~ "Europe Central",
-    "Australia West" ~ "Australia/Perth",
-    "Australia/Perth" ~ "Australia West"
+    "Australia Western" ~ "Australia/Perth",
+    "Australia/Perth" ~ "Australia Western"
   )
 }
 
+#' Get link to Coworking docs
+#'
+#' Creates the coworking doc if it doesn't exist and returns a link either way.
+#' Optionally creates PR adds link to event page.
+#'
+#' @param which Character/Date. "next" to fetch details on the next coworking
+#'   session, "last" to fetch details on the last scheduled (in future)
+#'   coworking session, or a Date fetch details for a specific coworking
+#'   session.
+#' @param open_sites Logical. Open websites with relevant details?
+#'
+#' @returns Google Docs link
+#' @export
+docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
+  deets <- promoutils::cw_details(which = which)
+  name <- glue::glue_data(deets, "Coworking - {format(as.Date(date), '%Y-%m')} - {theme}")
+  d <- format(as.Date(deets$date), "%Y-%m")
+  cw <- paste0("coworking-", d)
+  link <- googledrive::drive_ls("co-working", pattern = paste0("Coworking - ", d))
+
+  if(nrow(link) == 0) {
+    link <- googledrive::drive_cp(
+      googledrive::drive_ls("co-working", pattern = "Coworking - XXXX"),
+      name = name) |>
+      googledrive::drive_link()
+  }
+  link <- googledrive::drive_link(link)
+
+  browseURL(paste0("https://ropensci.org/events/", cw))
+  browseURL(link)
+
+  # Add to event page
+  if(add) {
+
+    # Check if already done
+    f <- list.files("content/events", paste0(deets$date, "-coworking"), full.names = TRUE)
+    x <- readLines(f)
+
+    if(!any(stringr::str_detect(x, "notes: "))) {
+
+      # Create PR
+      if(!paste0(cw, "-update") %in% gert::git_branch_list()$name) {
+        usethis::pr_init(paste0(cw, "-update"))
+      } else if(paste0(cw, "-update") != gert::git_branch()) {
+        usethis::pr_resume(paste0(cw, "-update"))
+      }
+
+      # Get file contents for this branch
+      f <- list.files("content/events", paste0(deets$date, "-coworking"), full.names = TRUE)
+      x <- readLines(f)
+
+      if(!any(stringr::str_detect(x, "notes: "))) {
+        # Add notes
+        n <- stringr::str_which(x, "coworking: true")
+        x2 <- c(x[1:n], paste0("notes: ", link), x[(n+1):length(x)])
+        writeLines(x2, f)
+      } else {
+        # Already done, alert
+        cli::cli_alert_info("Coworking notes already added")
+      }
+    } else {
+      # Already done, alert
+      cli::cli_alert_info("Coworking notes already added")
+    }
+  }
+
+  invisible(link)
+}
+
+#' Open and fetch link to coworking slides
+#'
+#' @param open_site Logical. Open slides in browser?
+#'
+#' @returns Link to slides
+#' @export
+slides_link <- function(open_site = TRUE) {
+  slides_link <- "https://docs.google.com/presentation/d/1e53SC_nrBHKBbqegzL3q-89TUJp2SV0T8c2x4q8eQjk/edit?usp=sharing"
+  browseURL(slides_link)
+  invisible(slides_link)
+}

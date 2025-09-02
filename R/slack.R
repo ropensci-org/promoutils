@@ -54,7 +54,7 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
   if(dry_run) {
     cli::cli_h2("Slack Dry Run")
     cli::cli_ul()
-    cli::cli_li("When: {when}")
+    cli::cli_li("When: {when} {tz}")
     cli::cli_li("Where: {channel}")
     cli::cli_li("What: {body}")
   } else {

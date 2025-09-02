@@ -4,8 +4,8 @@ I'm excited for coworking with you next week :tada:  ({date_nice})
 
 I've shared two Google docs with you
 
-1. The [coworking document]({notes_link}) - Feel free to add items to the \"Shared\" section, or anywhere else (especially any links you think might be relevant to get started with).
-2. And the [Slides]({slides_link}) - Please fill out the \"{names}'s Spot\" introduction slide (and change the name if you have a different preferred name). If you'd like some inspiration, checkout the other \"Spot\" slides, but any format is good!
+1. The [coworking document]({notes_link}) - Feel free to add items to the "Shared" section, or anywhere else (especially any links you think might be relevant to get started with).
+2. And the [Slides]({slides_link}) - Please fill out the "{names}'s Spot" introduction slide (and change the name if you have a different preferred name). If you'd like some inspiration, checkout the other "Spot" slides at the end of the deck, but any format is good!
 
 Remember that you can always checkout our [Coworking Blog post](https://ropensci.org/blog/2023/06/21/coworking/) for a quick run down of how things work, and of course, ask me any questions you have!
 
