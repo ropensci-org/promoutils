@@ -282,7 +282,7 @@ copy <- function(body, what, print = FALSE) {
   if(interactive()) {
     clipr::write_clip(body)
     cli::cli_alert_success("Copied {what} to clipboard")
-    if(print) cli::cli_text(body)
+    if(print) cli::cat_print(body)
   }
   invisible(FALSE)
 }
