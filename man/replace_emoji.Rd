@@ -16,6 +16,6 @@ Text string with emoji unicodes
 Replaces emoji codes like :tada: with unicode like 🎉.
 }
 \examples{
-x <- replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
-x
+replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
+replace_emoji(":link:")
 }

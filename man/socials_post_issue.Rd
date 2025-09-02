@@ -59,5 +59,5 @@ labels "draft" and "needs-review" have been removed.
 socials_post_issue("2025-01-01 00:00:00",
                    title = "test post",
                    body = "Test body",
-                   dry_run = TRUE)
+                   dry_run = TRUE, verbose = TRUE)
 }

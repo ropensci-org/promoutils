@@ -4,7 +4,7 @@
 \alias{cw_checkin}
 \title{Create draft message for checking in with Cohosts}
 \usage{
-cw_checkin(which = "next", names = NULL, notes_link, slides_link)
+cw_checkin(which = "next", names = NULL)
 }
 \arguments{
 \item{which}{Character/Date. "next" to fetch details on the next coworking
@@ -13,10 +13,6 @@ coworking session, or a Date fetch details for a specific coworking
 session.}
 
 \item{names}{Character. Names of cohost if overriding those in the event listing.}
-
-\item{notes_link}{Character. Link to the Google doc with coworking notes.}
-
-\item{slides_link}{Character. Link to the Google slides.}
 }
 \description{
 The week before, prepare the slides and coworking document, then use this
