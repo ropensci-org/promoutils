@@ -370,7 +370,7 @@ cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
                   .data$time > Sys.Date() - months(1))
 
   if(prev_msgs$hour[1]) {
-    cli_cli_abort("Haven't posted the one-week before announcement yet", call = call)
+    cli::cli_abort("Haven't posted the one-week before announcement yet", call = call)
   }
 
   # Create message link
