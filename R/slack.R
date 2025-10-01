@@ -34,10 +34,14 @@
 #' # Dry runs
 #' slack_posts_write("testing on Tuesday", dry_run = TRUE)
 #' slack_posts_write("testing [this cool link](https://mycoolsite.com)", dry_run = TRUE)
-slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
-                              channel = "#testing-api", dry_run = FALSE) {
-
-  if(is.character(when) && when == "now") {
+slack_posts_write <- function(
+  body,
+  when = "now",
+  tz = "America/Winnipeg",
+  channel = "#testing-api",
+  dry_run = FALSE
+) {
+  if (is.character(when) && when == "now") {
     end <- "chat.postMessage"
     post_at <- NULL
     type <- "posted"
@@ -51,34 +55,44 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
   # Fix formatting of links
   body <- fmt_slack_urls(body)
 
-  if(dry_run) {
+  if (dry_run) {
     cli::cli_h2("Slack Dry Run")
     cli::cli_ul()
     cli::cli_li("When: {when} {tz}")
     cli::cli_li("Where: {channel}")
     cli::cli_li("What: {body}")
   } else {
-
     # Check if already scheduled
     msgs <- slack_scheduled_list()
-    if(nrow(msgs) > 0 && any(post_at == msgs$post_at &
-           stringr::str_detect(msgs$text, body) &
-           msgs$channel == stringr::str_remove(channel, "#"))) {
+    if (
+      nrow(msgs) > 0 &&
+        any(
+          post_at == msgs$post_at &
+            stringr::str_detect(msgs$text, body) &
+            msgs$channel == stringr::str_remove(channel, "#")
+        )
+    ) {
       cli::cli_alert_warning(
-        "Same message already scheduled in Slack channel for the same time, skipping...")
+        "Same message already scheduled in Slack channel for the same time, skipping..."
+      )
       return(invisible())
     }
 
     # Post now or Schedule
     r <- httr2::request("https://slack.com/api/") |>
       httr2::req_url_path_append(end) |>
-      httr2::req_body_json(list(channel = channel, text = body, post_at = post_at)) |>
+      httr2::req_body_json(list(
+        channel = channel,
+        text = body,
+        post_at = post_at
+      )) |>
       slack_auth() |>
       httr2::req_perform() |>
-      slack_check(msg = glue::glue("Slack message {type} successfully to {channel}"))
+      slack_check(
+        msg = glue::glue("Slack message {type} successfully to {channel}")
+      )
 
-    if(type == "scheduled") {
-
+    if (type == "scheduled") {
       # Post to #admin-scheduled to keep track of scheduled messages
       local_time <- lubridate::with_tz(when, Sys.timezone())
       body2 <- glue::glue(
@@ -87,15 +101,22 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
         ":bookmark: CHANNEL: {channel}",
         ":id: MESSAGE ID: {r$scheduled_message_id}",
         "\n> {stringr::str_replace_all(body, '\\n', '\n>')}",
-        "-------------------------", .sep = "\n")
+        "-------------------------",
+        .sep = "\n"
+      )
 
       # Schedule
       r2 <- httr2::request("https://slack.com/api/") |>
         httr2::req_url_path_append("chat.postMessage") |>
-        httr2::req_body_json(list(channel = "#admin-scheduled", text = body2)) |>
+        httr2::req_body_json(list(
+          channel = "#admin-scheduled",
+          text = body2
+        )) |>
         slack_auth() |>
         httr2::req_perform() |>
-        slack_check(msg = "Scheduled message successfully added to #admin-scheduled")
+        slack_check(
+          msg = "Scheduled message successfully added to #admin-scheduled"
+        )
     }
   }
 }
@@ -109,8 +130,9 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
 #' slack_scheduled_list()
 
 slack_scheduled_list <- function() {
-
-  r_list <- httr2::request("https://slack.com/api/chat.scheduledMessages.list") |>
+  r_list <- httr2::request(
+    "https://slack.com/api/chat.scheduledMessages.list"
+  ) |>
     slack_auth() |>
     httr2::req_perform() |>
     httr2::resp_body_json() |>
@@ -118,10 +140,18 @@ slack_scheduled_list <- function() {
     purrr::map(dplyr::as_tibble) |>
     purrr::list_rbind()
 
-  cols <- c("channel", "scheduled_local", "text", "date_created_dt",
-            "channel_id", "id", "post_at", "date_created")
+  cols <- c(
+    "channel",
+    "scheduled_local",
+    "text",
+    "date_created_dt",
+    "channel_id",
+    "id",
+    "post_at",
+    "date_created"
+  )
 
-  if(nrow(r_list) == 0) {
+  if (nrow(r_list) == 0) {
     r_list <- dplyr::tibble(x = cols, y = NA) |>
       tidyr::pivot_wider(names_from = x, values_from = y) |>
       dplyr::as_tibble(.rows = 0)
@@ -132,9 +162,14 @@ slack_scheduled_list <- function() {
     dplyr::mutate(
       scheduled = lubridate::as_datetime(.data$post_at),
       scheduled_local = lubridate::with_tz(.data$scheduled, Sys.timezone()),
-      date_created_dt = lubridate::as_datetime(.data$date_created)) |>
-    dplyr::mutate(channel = purrr::map_chr(
-      .data$channel_id, \(x) slack_channel(channel_id = x)$channel)) |>
+      date_created_dt = lubridate::as_datetime(.data$date_created)
+    ) |>
+    dplyr::mutate(
+      channel = purrr::map_chr(
+        .data$channel_id,
+        \(x) slack_channel(channel_id = x)$channel
+      )
+    ) |>
     dplyr::select(dplyr::all_of(cols))
 }
 
@@ -169,9 +204,8 @@ slack_scheduled_list <- function() {
 #' }
 
 slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
-
-  if(!is.null(msg)) {
-    if(nrow(msg) == 0) {
+  if (!is.null(msg)) {
+    if (nrow(msg) == 0) {
       rlang::inform("No messages to remove")
       return(invisible())
     }
@@ -185,13 +219,16 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
       slack_auth() |>
       httr2::req_perform() |>
       slack_check(
-        msg = glue::glue("Message {i} successfully removed from scheduled queue for {c}"))
+        msg = glue::glue(
+          "Message {i} successfully removed from scheduled queue for {c}"
+        )
+      )
 
-    admin_ts <- slack_messages(channel_id = slack_admin())|>
+    admin_ts <- slack_messages(channel_id = slack_admin()) |>
       dplyr::filter(stringr::str_detect(.data$text, i)) |>
       dplyr::pull(ts)
 
-    if(length(admin_ts) > 0) slack_message_rm(slack_admin(), admin_ts)
+    if (length(admin_ts) > 0) slack_message_rm(slack_admin(), admin_ts)
   })
 }
 
@@ -212,32 +249,38 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
 #'
 #' slack_cleanup()
 slack_cleanup <- function() {
-
   sched <- slack_scheduled_list()
   admin <- slack_messages(channel_id = slack_admin()) |>
-    dplyr::mutate(id = stringr::str_extract(
-      .data$text, "(?<=MESSAGE ID: )[\\S]+(?=\\n)")) |>
+    dplyr::mutate(
+      id = stringr::str_extract(
+        .data$text,
+        "(?<=MESSAGE ID: )[\\S]+(?=\\n)"
+      )
+    ) |>
     tidyr::drop_na("id") # Ignore non-scheduled messages
 
-  if(nrow(sched) == 0 & nrow(admin) == 0) {
+  if (nrow(sched) == 0 & nrow(admin) == 0) {
     cli::cli_inform("Nothing to clean up")
     return(invisible())
   }
 
   # If none scheduled, remove all from admin-scheduled
-  if(nrow(sched) == 0 & nrow(admin) > 0) {
-    purrr::map(admin$ts, \(x) slack_message_rm(channel_id = slack_admin(), ts = x))
+  if (nrow(sched) == 0 & nrow(admin) > 0) {
+    purrr::map(admin$ts, \(x) {
+      slack_message_rm(channel_id = slack_admin(), ts = x)
+    })
   }
 
   # Otherwise remove any that are not currently scheduled
   admin_rm <- dplyr::anti_join(admin, sched, by = c("id"))
-  if(nrow(admin_rm) > 0) {
-    purrr::map(admin_rm$ts, \(x) slack_message_rm(channel_id = slack_admin(), ts = x))
+  if (nrow(admin_rm) > 0) {
+    purrr::map(admin_rm$ts, \(x) {
+      slack_message_rm(channel_id = slack_admin(), ts = x)
+    })
   }
 
   cli::cli_inform("Channel #admin-scheduled cleaned up")
 }
-
 
 
 #' Title
@@ -264,22 +307,23 @@ slack_channels <- function(types = c("public_channel", "private_channel")) {
 }
 
 slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
+  if (is.null(channels)) {
+    channels <- slack_channels()
+  }
 
-  if(is.null(channels)) channels <- slack_channels()
-
-  if(!is.null(channel)) {
+  if (!is.null(channel)) {
     chn <- dplyr::filter(
       channels,
-      stringr::str_detect(tolower(.data$channel), tolower(.env$channel)))
-  } else if(!is.null(channel_id)) {
+      stringr::str_detect(tolower(.data$channel), tolower(.env$channel))
+    )
+  } else if (!is.null(channel_id)) {
     chn <- dplyr::filter(
       channels,
-      .data$channel_id == .env$channel_id)
+      .data$channel_id == .env$channel_id
+    )
   }
   chn
 }
-
-
 
 
 #' Fetch details on a specific users
@@ -294,12 +338,14 @@ slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
 #' slack_user("Steffi")
 
 slack_user <- function(name, users = NULL) {
-
-  if(is.null(users)) users <- slack_users()
+  if (is.null(users)) {
+    users <- slack_users()
+  }
 
   dplyr::filter(
     users,
-    stringr::str_detect(tolower(.data$real_name), tolower(.env$name)))
+    stringr::str_detect(tolower(.data$real_name), tolower(.env$name))
+  )
 }
 
 #' Fetch a list of Slack users
@@ -327,8 +373,9 @@ slack_users <- function() {
 #' @examples
 #' slack_messages(channel_id = "C026GCWKA") # General
 slack_messages <- function(channel = NULL, channel_id = NULL) {
-
-  if(is.null(channel_id) & !is.null(channel)) channel_id <- slack_channel(channel)
+  if (is.null(channel_id) & !is.null(channel)) {
+    channel_id <- slack_channel(channel)
+  }
 
   httr2::request("https://slack.com/api/conversations.history") |>
     slack_auth() |>
@@ -336,8 +383,10 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
     httr2::req_perform() |>
     slack_check(msg = NULL) |>
     slack_df("messages", c("ts", "user", "text")) |>
-    dplyr::mutate(time = lubridate::as_datetime(as.numeric(ts)),
-                  time = lubridate::with_tz(time, tz = Sys.timezone())) |>
+    dplyr::mutate(
+      time = lubridate::as_datetime(as.numeric(ts)),
+      time = lubridate::with_tz(time, tz = Sys.timezone())
+    ) |>
     dplyr::relocate(time, .after = "ts")
 }
 
@@ -347,7 +396,8 @@ slack_message_rm <- function(channel_id, ts) {
     slack_auth() |>
     httr2::req_perform() |>
     slack_check(
-      msg = glue::glue("Message {ts} successfully removed from {channel_id}"))
+      msg = glue::glue("Message {ts} successfully removed from {channel_id}")
+    )
 }
 
 #' Format markdown urls to Slack format
@@ -363,5 +413,8 @@ slack_message_rm <- function(channel_id, ts) {
 #' @noRd
 fmt_slack_urls <- function(body) {
   stringr::str_replace_all(
-    body, "\\[(.+)\\]\\((.+)\\)", "<\\2|\\1>")
+    body,
+    "\\[(.+)\\]\\((.+)\\)",
+    "<\\2|\\1>"
+  )
 }

@@ -17,12 +17,14 @@ gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
 #' @examples
 #' pkgs()
 #' pkgs(which = "all", return = "all")
-pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
-                 which = "active", return = "sub") {
-
+pkgs <- function(
+  url = "https://ropensci.github.io/roregistry/registry.json",
+  which = "active",
+  return = "sub"
+) {
   pkgs <- jsonlite::fromJSON(url)$package
 
-   if(which == "active") {
+  if (which == "active") {
      pkgs <- dplyr::filter(pkgs, .data$type == "active")
    } else {
      pkgs <- dplyr::filter(pkgs, .data$type != "archived")
@@ -32,8 +34,16 @@ pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
     dplyr::mutate(
       repo = stringr::str_extract(.data$github, "[[:alnum:].-]+$"),
       owner = stringr::str_remove_all(
-        .data$github, glue::glue("(https://github.com/)|(/{repo})")))
-  if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner", "repo")))
+        .data$github,
+        glue::glue("(https://github.com/)|(/{repo})")
+      )
+    )
+  if (return == "sub") {
+    p <- dplyr::select(
+      p,
+      dplyr::any_of(c("name", "maintainer", "owner", "repo"))
+    )
+  }
 
   p
 }
@@ -50,7 +60,9 @@ pkg_authors <- function(x, pkgs) {
   a <- dplyr::filter(pkgs, .data$name %in% x) |>
     dplyr::pull(.data$maintainer)
 
-  if(length(a) == 0) a <- NA_character_
+  if (length(a) == 0) {
+    a <- NA_character_
+  }
   a
 }
 
@@ -61,16 +73,19 @@ pkg_authors <- function(x, pkgs) {
 #' @return Character of metions
 #' @export
 forum_mention <- function(x) {
-  if(stringr::str_detect(rvest::html_text(x), "@")) {
+  if (stringr::str_detect(rvest::html_text(x), "@")) {
     r <- stringr::str_extract_all(
       # Should get Twitter or Mastodon handles
-      rvest::html_text(x), "@[0-9a-zA-Z]+(@[0-9a-zA-Z.]+)?") |>
+      rvest::html_text(x),
+      "@[0-9a-zA-Z]+(@[0-9a-zA-Z.]+)?"
+    ) |>
       unlist() |>
       stringr::str_subset("rOpenSci", negate = TRUE)
 
     r <- glue::glue_collapse(r, sep = ", ", last = " & ")
-
-  } else r <- ""
+  } else {
+    r <- ""
+  }
   r
 }
 
@@ -109,9 +124,13 @@ forum_resource <- function(x) {
 #' @examples
 #' # forum_post(3920) # Needs auth
 forum_post <- function(topic_id) {
-  httr2::request(glue::glue("https://discuss.ropensci.org/t/{topic_id}.json")) |>
-    httr2::req_headers("API-Key" = Sys.getenv("DISCOURSE_API_KEY"),
-                       "Api-Username" = Sys.getenv("DISCOURSE_USERNAME")) |>
+  httr2::request(glue::glue(
+    "https://discuss.ropensci.org/t/{topic_id}.json"
+  )) |>
+    httr2::req_headers(
+      "API-Key" = Sys.getenv("DISCOURSE_API_KEY"),
+      "Api-Username" = Sys.getenv("DISCOURSE_USERNAME")
+    ) |>
     httr2::req_perform() |>
     httr2::resp_body_string() |>
     jsonlite::fromJSON() |>
@@ -123,11 +142,12 @@ forum_post <- function(topic_id) {
 
 
 nth_day <- function(x) {
-
-  th <- dplyr::case_when(x %in% c(1, 21, 31) ~ "st",
+  th <- dplyr::case_when(
+    x %in% c(1, 21, 31) ~ "st",
                          x %in% c(2, 22) ~ "nd",
                          x %in% c(3, 23) ~ "rd",
-                         TRUE ~ "th")
+    TRUE ~ "th"
+  )
 
   paste0(x, th)
 }
@@ -160,20 +180,29 @@ nth_day <- function(x) {
 #' next_date("2023-11-01", n = 5)
 #' }
 #'
-next_date <- function(month, which = "Tues", n = 1, call = rlang::caller_env()) {
+next_date <- function(
+  month,
+  which = "Tues",
+  n = 1,
+  call = rlang::caller_env()
+) {
   month <- lubridate::as_date(month) + lubridate::period("1 month")
 
   d <- month |>
     lubridate::floor_date(unit = "months") |>
-    lubridate::ceiling_date(unit = "weeks", week_start = which,
-                            change_on_boundary = FALSE)
+    lubridate::ceiling_date(
+      unit = "weeks",
+      week_start = which,
+      change_on_boundary = FALSE
+    )
 
   d <- d + lubridate::weeks(n - 1)
 
-  if(lubridate::month(d) != lubridate::month(month)) {
+  if (lubridate::month(d) != lubridate::month(month)) {
     cli::cli_abort(
       "There are not {n} {format(d, '%A')}s in {format(month, '%B %Y')}",
-      call = call)
+      call = call
+    )
   }
   d
 }
@@ -196,12 +225,19 @@ replace_emoji <- function(x) {
     unlist() |>
     unique()
 
-  if(length(emo) > 0) {
+  if (length(emo) > 0) {
     emo <- stats::setNames(
-      purrr::map(emo, ~pandoc::pandoc_convert(
-        text = .x, from = "markdown+emoji", to = "plain")) |>
+      purrr::map(
+        emo,
+        ~ pandoc::pandoc_convert(
+          text = .x,
+          from = "markdown+emoji",
+          to = "plain"
+        )
+      ) |>
         unlist(),
-      nm = emo)
+      nm = emo
+    )
 
     x <- stringr::str_replace_all(x, emo)
   }
@@ -225,22 +261,39 @@ replace_emoji <- function(x) {
 yaml_extract <- function(yaml, trim = "~~~") {
   y <- stringr::str_remove_all(yaml, trim) %>%
     yaml::yaml.load() %>%
-    purrr::map_if(is.null,  ~"") %>%
+    purrr::map_if(is.null, ~"") %>%
     data.frame()
 
   # Catch common typos
   names(y) <- tolower(names(y))
-  names(y) <- stringr::str_replace_all(names(y),
+  names(y) <- stringr::str_replace_all(
+    names(y),
                                        "(reocuring)|(reoccuring)|(reocurring)",
-                                       "reoccurring")
+    "reoccurring"
+  )
   y
 }
 
 
 # LinkedIn Chars to escape
 escape_linkedin_chars <- function(x) {
-  chars <- c("\\|", "\\{", "\\}", "\\@", "\\[", "\\]", "\\(", "\\)", "\\<", "\\>",
-             "\\#", "\\\\", "\\*", "\\_", "\\~")
+  chars <- c(
+    "\\|",
+    "\\{",
+    "\\}",
+    "\\@",
+    "\\[",
+    "\\]",
+    "\\(",
+    "\\)",
+    "\\<",
+    "\\>",
+    "\\#",
+    "\\\\",
+    "\\*",
+    "\\_",
+    "\\~"
+  )
   p <- stats::setNames(glue::glue("\\{chars}"), chars)
   stringr::str_replace_all(x, p)
 }
@@ -260,29 +313,36 @@ escape_linkedin_chars <- function(x) {
 #' masto2user(NA)
 
 masto2user <- function(x) {
-  if(is.na(x) || stringr::str_count(x, "@") > 1) {
+  if (is.na(x) || stringr::str_count(x, "@") > 1) {
     n <- x
-  } else if(stringr::str_detect(x, "http|@")) {
+  } else if (stringr::str_detect(x, "http|@")) {
     n <- stringr::str_remove(x, "http(s?)://") |>
       stringr::str_split("/", simplify = TRUE) |>
       as.vector()
     n <- glue::glue("{n[2]}@{n[1]}")
-  } else n <- x
+  } else {
+    n <- x
+  }
   n
 }
 
 template <- function(name) {
   name <- stringr::str_remove(name, "\\.txt$")
-  system.file("extdata", "templates", glue::glue("{name}.txt"), package = "promoutils") |>
+  system.file(
+    "extdata",
+    "templates",
+    glue::glue("{name}.txt"),
+    package = "promoutils"
+  ) |>
     readLines() |>
     glue::glue_collapse(sep = "\n")
 }
 
 copy <- function(body, what, print = FALSE) {
-  if(interactive()) {
+  if (interactive()) {
     clipr::write_clip(body)
     cli::cli_alert_success("Copied {what} to clipboard")
-    if(print) cli::cat_print(body)
+    if (print) cli::cat_print(body)
   }
   invisible(FALSE)
 }
