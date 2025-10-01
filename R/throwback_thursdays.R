@@ -30,7 +30,7 @@ tt_post <- function(
   date,
   title,
   url,
-                    blurb = "<-- Interesting description/blurb mentioning the author -->",
+  blurb = "<-- Interesting description/blurb mentioning the author -->",
   dry_run = FALSE,
   print = FALSE
 ) {
@@ -46,11 +46,7 @@ tt_post <- function(
     )
   }
 
-  if(!stringr::str_detect(url, "https://ropensci.org/blog")) {
-    url <- glue::glue("https://ropensci.org/blog/{lubridate::year(date)}/",
-                      "{stringr::str_pad(lubridate::month(date), 2, pad = 0)}/",
-                      "{stringr::str_pad(lubridate::day(date), 2, pad = 0)}/{url}")
-  }
+  url <- url_from_path(url, date)
 
   # Get the first Thursday of the relevant month in future
   time_post <- date |>

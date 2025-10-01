@@ -25,10 +25,10 @@ pkgs <- function(
   pkgs <- jsonlite::fromJSON(url)$package
 
   if (which == "active") {
-     pkgs <- dplyr::filter(pkgs, .data$type == "active")
-   } else {
-     pkgs <- dplyr::filter(pkgs, .data$type != "archived")
-   }
+    pkgs <- dplyr::filter(pkgs, .data$type == "active")
+  } else {
+    pkgs <- dplyr::filter(pkgs, .data$type != "archived")
+  }
 
   p <- pkgs |>
     dplyr::mutate(
@@ -144,8 +144,8 @@ forum_post <- function(topic_id) {
 nth_day <- function(x) {
   th <- dplyr::case_when(
     x %in% c(1, 21, 31) ~ "st",
-                         x %in% c(2, 22) ~ "nd",
-                         x %in% c(3, 23) ~ "rd",
+    x %in% c(2, 22) ~ "nd",
+    x %in% c(3, 23) ~ "rd",
     TRUE ~ "th"
   )
 
@@ -268,7 +268,7 @@ yaml_extract <- function(yaml, trim = "~~~") {
   names(y) <- tolower(names(y))
   names(y) <- stringr::str_replace_all(
     names(y),
-                                       "(reocuring)|(reoccuring)|(reocurring)",
+    "(reocuring)|(reoccuring)|(reocurring)",
     "reoccurring"
   )
   y
@@ -345,4 +345,60 @@ copy <- function(body, what, print = FALSE) {
     if (print) cli::cat_print(body)
   }
   invisible(FALSE)
+}
+
+#' Create url from content date and slug
+#'
+#' @param path Character. Slug, URL, or path to file in repository
+#' @param date Character. Date for event, used to create link (otherwise extracted from slug)
+#' @param where Character. 'blog' or 'event' depending on the content type.
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+#' url_from_path("my-post", date = "2025-01-01")
+#' url_from_path("2025-01-01-my-post/index.es.md")
+#' url_from_path("content/blog/2025-09-29-news-september-2025/index.md")
+#' url_from_path("content/blog/2025-09-29-news-september-2025/index.Rmd")
+url_from_path <- function(
+  path,
+  date = NULL,
+  lang = NULL,
+  where = "blog",
+  base_url = "https://ropensci.org"
+) {
+  # If this is a url already, skip
+  if (!stringr::str_detect(path, glue::glue("{base_url}/{where}"))) {
+    # If this is a repository path
+    if (stringr::str_detect(path, "index")) {
+      slug <- stringr::str_remove_all(
+        path,
+        glue::glue("(content\\/{where}\\/)|(\\/index\\.([a-z]*\\.)?(R?)md)")
+      )
+      date <- stringr::str_extract(slug, "\\d{4}-\\d{2}-\\d{2}")
+      slug <- stringr::str_remove(slug, glue::glue("{date}\\-"))
+      lang <- stringr::str_extract(path, "(?<=index\\.)([a-z]*)?(?=\\.)")
+    } else {
+      slug <- path
+    }
+
+    if (where == "event") {
+      url <- glue::glue("{base_url}/event/{slug}")
+    }
+
+    if (!(is.na(lang) || is.null(lang))) {
+      base_url <- glue::glue("{base_url}/{lang}")
+    }
+
+    if (where == "blog") {
+      url <- glue::glue(
+        "{base_url}/{where}/{lubridate::year(date)}/",
+        "{stringr::str_pad(lubridate::month(date), 2, pad = 0)}/",
+        "{stringr::str_pad(lubridate::day(date), 2, pad = 0)}/",
+        "{slug}/"
+      )
+    }
+  }
+  url
 }
