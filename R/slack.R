@@ -61,7 +61,7 @@ slack_posts_write <- function(body, when = "now", tz = "America/Winnipeg",
 
     # Check if already scheduled
     msgs <- slack_scheduled_list()
-    if(any(post_at == msgs$post_at &
+    if(nrow(msgs) > 0 && any(post_at == msgs$post_at &
            stringr::str_detect(msgs$text, body) &
            msgs$channel == stringr::str_remove(channel, "#"))) {
       cli::cli_alert_warning(
