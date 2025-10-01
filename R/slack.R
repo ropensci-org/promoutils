@@ -63,7 +63,11 @@ slack_posts_write <- function(
     cli::cli_li("What: {body}")
   } else {
     # Check if already scheduled
-    msgs <- slack_scheduled_list()
+
+    msgs <- slack_scheduled_list() |>
+      dplyr::mutate(
+        text = stringr::str_replace_all(text, "<(http[a-zA-Z:./0-9]+)>", "\\1")
+      )
     if (
       nrow(msgs) > 0 &&
         any(
