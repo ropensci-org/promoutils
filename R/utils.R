@@ -402,3 +402,46 @@ url_from_path <- function(
   }
   url
 }
+
+#' List PRs
+#'
+#' List open PRs by url, title and number, optionally matching to a title or branch name (ref)
+#'
+#' @param match Character. String to match in the title or branch name
+#' @param owner Character. GitHub owner of the repository (defaults to 'ropensci')
+#' @param repo Character. GitHub repository name (defaults to 'roweb3')
+#'
+#' @returns Data frame with PR url, number, title, and branch name ('ref')
+#' @export
+#' @examples
+#' prs_list("coworking") # List all coworking related (open) PRs
+
+prs_list <- function(match = NULL, owner = "ropensci", repo = "roweb3") {
+  pr <- gh::gh(
+    "GET /repos/{owner}/{repo}/pulls",
+    owner = owner,
+    repo = repo,
+    .limit = Inf
+  ) |>
+    purrr::map(\(x) {
+      dplyr::tibble(
+        html_url = x$html_url,
+        number = x$number,
+        title = x$title,
+        open = is.null(x$merged_at) & is.null(x$closed_at),
+        ref = x$head$ref
+      )
+    }) |>
+    purrr::list_rbind() |>
+    dplyr::filter(.data$open) |>
+    dplyr::select(-"open")
+
+  if (!is.null(match)) {
+    pr <- dplyr::filter(
+      pr,
+      stringr::str_detect(.data$ref, .env$match) |
+        stringr::str_detect(.data$title, .env$match)
+    )
+  }
+  pr
+}
