@@ -1,0 +1,11 @@
+Hi {names}!
+
+Here is the [draft event]({link_event}) for our upcoming coworking session.
+
+I've tried to keep the theme pretty general, but it may be overlay vague in places. Feel free to suggest more specific nuances if there's something in particular you'd like to focus on. Coworking is pretty casual and fluid, so even if you have a specific theme, you definitely don't have to keep to it.
+
+Check how I've described you, it may or may not be how you wish to be described, so feel free to make changes! 
+
+I've also added an [rOpenSci author file for you]({link_author}), and pre-filled it with your contact information (it grabs the profile photo from your GitHub). Note that we can also add other profiles (e.g., a Website, Gitlab, Keybase, Mastodon, ORCid) if you have others you want to include.
+
+Feel free to send me your comments/edits here, or make them directly on the [PR]({link_pr}), whichever you prefer!

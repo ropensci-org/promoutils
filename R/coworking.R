@@ -617,6 +617,53 @@ cw_checkin <- function(which = "next", names = NULL) {
   copy(body, "Checkin message")
 }
 
+#' Create draft message for checking in with Cohosts about the Event review
+#'
+#' When an event has been drafted use this
+#' draft text to invite the cohost(s) to review via Slack or Email.
+#'
+#' @param which Character/Date. "next" to fetch details on the next coworking
+#'   session, "last" to fetch details on the last scheduled (in future)
+#'   coworking session, or a Date fetch details for a specific coworking
+#'   session.
+#' @param names Character. Names of cohost if overriding those in the event listing.
+#'
+#' @export
+#' @examples
+#' cw_checkin_event("2025-12-02")
+
+cw_checkin_event <- function(which = "next", names = NULL) {
+  if (is.null(which)) {
+    cw <- cw_details()
+  } else {
+    cw <- cw_details(which)
+  }
+
+  if (is.null(names)) {
+    author <- cw$cohost
+    names <- stringr::str_extract(cw$cohost, "^[^ ]+")
+  } else {
+    author <- names
+  }
+
+  author <- stringr::str_to_lower(author) |>
+    stringr::str_replace_all(" ", "-")
+
+  event_ref <- glue::glue("coworking-{format(as.Date(cw$date), '%Y-%m')}")
+
+  pr <- prs_list(event_ref)
+
+  link_event <- glue::glue(
+    "https://deploy-preview-{pr$number}--ropensci.netlify.app/events/{event_ref}"
+  )
+  link_author <- glue::glue(
+    "https://deploy-preview-{pr$number}--ropensci.netlify.app/authors/{author}/"
+  )
+  link_pr <- pr$html_url
+  body <- glue::glue(template("cw_checkin_event"))
+  copy(body, "Checkin message")
+}
+
 #' Work with Coworking timezones
 #'
 #' Transform or return coworking timezones.
