@@ -390,8 +390,8 @@ cw_social_hour <- function(x, where, dry_run) {
 cw_slack_week <- function(x, posters_tz, test_run = FALES, dry_run = FALSE) {
   time_post <- x |>
     dplyr::mutate(
-      time_post = .data$date_local - lubridate::weeks(2),
-      time_post = lubridate::with_tz(.data$time_post, .env$posters_tz)
+      time_post = .data$date_local - lubridate::weeks(1),
+      time_post = lubridate::with_tz(.data$time_post, .env$posters_tz),
     ) |>
     dplyr::pull(time_post)
 
@@ -420,7 +420,7 @@ cw_slack_week <- function(x, posters_tz, test_run = FALES, dry_run = FALSE) {
   }
 
   copy(body_sister, "Sister-Slack messages")
-  cli::cli_alert_info("Post on {time_post}")
+  cli::cli_alert_info("Post on {time_post - lubridate::weeks(1)}")
 }
 
 #' Schedule 1-hour before messages on rOpenSci Slack
@@ -781,7 +781,7 @@ docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
     }
   }
 
-  invisible(link)
+  if (add) invisible(f) else invisible(link)
 }
 
 #' Open and fetch link to coworking slides

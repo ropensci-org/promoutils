@@ -361,6 +361,8 @@ copy <- function(body, what, print = FALSE) {
 #' url_from_path("2025-01-01-my-post/index.es.md")
 #' url_from_path("content/blog/2025-09-29-news-september-2025/index.md")
 #' url_from_path("content/blog/2025-09-29-news-september-2025/index.Rmd")
+#' url_from_path("content/blog/2025-09-29-news-september-2025/")
+
 url_from_path <- function(
   path,
   date = NULL,

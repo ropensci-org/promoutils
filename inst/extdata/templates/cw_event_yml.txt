@@ -7,7 +7,7 @@ description: Monthly coworking for productivity, asking questions, socializing
 coworking: true
 location: 'online' # free text
 slug: '{slug}'
-country: '\U0001F310' # emoji
+country: '🌐' # emoji
 ropensci: yes
 outputs:
   - HTML
