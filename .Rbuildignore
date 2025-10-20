@@ -8,3 +8,5 @@
 ^docs$
 ^pkgdown$
 ^vignettes/articles$
+^\.vscode$
+^[.]?air[.]toml$
