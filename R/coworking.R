@@ -133,26 +133,28 @@ cw_times <- function(details) {
   dates <- cw_tz()
 
   details <- details |>
-    dplyr::rename(tz_nice = tz) |>
+    dplyr::rename("tz_nice" = "tz") |>
     dplyr::left_join(dates, by = "tz_nice")
 
   if (!details$tz %in% OlsonNames()) {
-    cli::cli_abort("`tz` ({tz}) not in `OlsonNames()`")
+    cli::cli_abort("`tz` ({details$tz}) not in `OlsonNames()`")
   }
 
   details |>
     dplyr::mutate(
-      tz_nice = stats::setNames(tz_nice, tz),
-      time = stats::setNames(time, tz),
-      date = lubridate::ymd_h(paste(date, time), tz = tz),
-      date_utc = lubridate::with_tz(date, "UTC"),
-      date_utc_end = lubridate::format_ISO8601(date_utc + lubridate::hours(2)),
+      tz_nice = stats::setNames(.data$tz_nice, .data$tz),
+      time = stats::setNames(.data$time, .data$tz),
+      date = lubridate::ymd_h(paste(.data$date, .data$time), tz = .data$tz),
+      date_utc = lubridate::with_tz(.data$date, "UTC"),
+      date_utc_end = lubridate::format_ISO8601(
+        .data$date_utc + lubridate::hours(2)
+      ),
       date_nice = glue::glue(
         "{format(date, '%A %B %d, %H:00')} ",
-        "{tz_nice[[tz]]} ({format(date_utc, '%H')}:00 UTC)"
+        "{.data$tz_nice[[.data$tz]]} ({format(.data$date_utc, '%H')}:00 UTC)"
       ),
-      date_utc = lubridate::format_ISO8601(date_utc),
-      slug = glue::glue("coworking-{format(date, '%Y-%m')}")
+      date_utc = lubridate::format_ISO8601(.data$date_utc),
+      slug = glue::glue("coworking-{format(.data$date, '%Y-%m')}")
     )
 }
 
@@ -182,11 +184,11 @@ cw_times <- function(details) {
 #' cw_socials("2023-07-04",
 #'            who_masto = "@cohost@mastodon.org",
 #'            who_linkedin = "Cohost the Best",
-#'            who_slack = "<UXXXXX>",
+#'            who_slack = "<UXXXXXXX>",
 #'            dry_run = TRUE)
 #'
 #' \dontrun{
-#' cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXX>")
+#' cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXXXX>")
 #' }
 
 cw_socials <- function(
@@ -387,7 +389,7 @@ cw_social_hour <- function(x, where, dry_run) {
   )
 }
 
-cw_slack_week <- function(x, posters_tz, test_run = FALES, dry_run = FALSE) {
+cw_slack_week <- function(x, posters_tz, test_run = FALSE, dry_run = FALSE) {
   time_post <- x |>
     dplyr::mutate(
       time_post = .data$date_local - lubridate::weeks(1),
@@ -561,7 +563,7 @@ cw_details <- function(which = "next") {
       cli::cli_abort("No details found")
     }
     cli::cli_abort(c(
-      "Mulitple event details selected:",
+      "Multiple event details selected:",
       rlang::set_names(d$title, "*")
     ))
   }

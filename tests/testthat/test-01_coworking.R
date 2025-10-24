@@ -13,18 +13,23 @@ test_that("cw_issue()", {
 
   with_mocked_bindings(
     cw_details = function(...) {
-      data.frame(title = "[Coworking]",
-                 body = "Theme...",
-                 date = "2025-01-01",
-                 tz = "Americas Pacific",
-                 theme = "Test theme",
-                 cohost = "Best ever")
+      data.frame(
+        title = "[Coworking]",
+        body = "Theme...",
+        date = "2025-01-01",
+        tz = "Americas Pacific",
+        theme = "Test theme",
+        cohost = "Best ever"
+      )
     },
     code = {
       expect_message(
-        cw_issue("2025-01-01", dry_run = TRUE), "Post") %>%
+        cw_issue("2025-01-01", dry_run = TRUE),
+        "Post"
+      ) %>%
         suppressMessages()
-    })
+    }
+  )
 })
 
 test_that("cw_event()", {
@@ -32,17 +37,39 @@ test_that("cw_event()", {
 
   with_mocked_bindings(
     cw_details = function(...) {
-      data.frame(title = "[Coworking]",
-                 body = "Theme...",
-                 date = "2025-01-01",
-                 tz = "America",
-                 theme = "Test theme",
-                 cohost = "Best ever")
+      data.frame(
+        title = "[Coworking]",
+        body = "Theme...",
+        date = "2025-01-01",
+        tz = "Americas Pacific",
+        theme = "Test theme",
+        cohost = "Best ever"
+      )
     },
     code = {
       expect_silent(e <- cw_event("2025-01", dry_run = TRUE))
       expect_true(is.character(e))
-    })
+    }
+  )
+
+  with_mocked_bindings(
+    cw_details = function(...) {
+      data.frame(
+        title = "[Coworking]",
+        body = "Theme...",
+        date = "2025-01-01",
+        tz = "Americas",
+        theme = "Test theme",
+        cohost = "Best ever"
+      )
+    },
+    code = {
+      expect_error(
+        cw_event("2025-01", dry_run = TRUE),
+        "`tz` \\(NA\\) not in `OlsonNames\\(\\)`"
+      )
+    }
+  )
 })
 
 test_that("cw_socials()", {
@@ -53,4 +80,3 @@ test_that("cw_socials()", {
 
   expect_type(l, "list")
 })
-
