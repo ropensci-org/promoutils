@@ -339,10 +339,10 @@ template <- function(name) {
 }
 
 copy <- function(body, what, print = FALSE) {
-  if (interactive()) {
-    clipr::write_clip(body)
-    cli::cli_alert_success("Copied {what} to clipboard")
-    if (print) cli::cat_print(body)
+  clipr::write_clip(body)
+  cli::cli_alert_success("Copied {what} to clipboard")
+  if (print) {
+    cli::cat_print(body)
   }
   invisible(FALSE)
 }
@@ -371,12 +371,15 @@ url_from_path <- function(
   base_url = "https://ropensci.org"
 ) {
   # If this is a url already, skip
+
   if (!stringr::str_detect(path, glue::glue("{base_url}/{where}"))) {
     # If this is a repository path
-    if (stringr::str_detect(path, "index")) {
+    if (stringr::str_detect(path, "content\\/|index")) {
       slug <- stringr::str_remove_all(
         path,
-        glue::glue("(content\\/{where}\\/)|(\\/index\\.([a-z]*\\.)?(R?)md)")
+        glue::glue(
+          "(content\\/{where}\\/)|(\\/index\\.([a-z]*\\.)?(R?)md)|\\/$"
+        )
       )
       date <- stringr::str_extract(slug, "\\d{4}-\\d{2}-\\d{2}")
       slug <- stringr::str_remove(slug, glue::glue("{date}\\-"))
@@ -394,6 +397,9 @@ url_from_path <- function(
     }
 
     if (where == "blog") {
+      if (is.null(date)) {
+        cli::cli_abort("For blog slugs, must also provide a date")
+      }
       url <- glue::glue(
         "{base_url}/{where}/{lubridate::year(date)}/",
         "{stringr::str_pad(lubridate::month(date), 2, pad = 0)}/",
@@ -401,6 +407,8 @@ url_from_path <- function(
         "{slug}/"
       )
     }
+  } else {
+    url <- path
   }
   url
 }

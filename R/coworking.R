@@ -445,6 +445,7 @@ cw_slack_hour <- function(
   dry_run = FALSE,
   call = rlang::caller_env()
 ) {
+  # Get date of upcoming coworking session
   dt <- cw_details() |>
     cw_times() |>
     dplyr::select(date, tz)
@@ -455,8 +456,8 @@ cw_slack_hour <- function(
 
   msg_links <- c(
     cw_slack_msg_link("C026GCWKA", user = user), #general
-    cw_slack_msg_link("C0152F1SKAP", user = user)
-  ) #coworking
+    cw_slack_msg_link("C0152F1SKAP", user = user) #coworking
+  )
 
   body <- glue::glue(
     "See you in an hour :wink:",
@@ -479,7 +480,11 @@ cw_slack_hour <- function(
       channel = "#testing-api"
     )
   } else {
-    slack_cleanup() # Remove previously scheduled posts from #admin-scheduled
+    # Remove previously scheduled posts from #admin-scheduled
+    if (!dry_run) {
+      slack_cleanup()
+    }
+
     slack_posts_write(
       body[1],
       when = dt$date - lubridate::hours(1),
@@ -487,6 +492,7 @@ cw_slack_hour <- function(
       channel = "#general",
       dry_run = dry_run
     )
+
     slack_posts_write(
       body[2],
       when = dt$date - lubridate::hours(1),
@@ -634,7 +640,7 @@ cw_checkin <- function(which = "next", names = NULL) {
 #' @examples
 #' cw_checkin_event("2025-12-02")
 
-cw_checkin_event <- function(which = "next", names = NULL) {
+cw_checkin_event <- function(which = "next", names = NULL, print = FALSE) {
   if (is.null(which)) {
     cw <- cw_details()
   } else {
@@ -663,7 +669,7 @@ cw_checkin_event <- function(which = "next", names = NULL) {
   )
   link_pr <- pr$html_url
   body <- glue::glue(template("cw_checkin_event"))
-  copy(body, "Checkin message")
+  copy(body, "Checkin message", print = print)
 }
 
 #' Work with Coworking timezones

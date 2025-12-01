@@ -46,7 +46,7 @@ tt_post <- function(
     )
   }
 
-  url <- url_from_path(url, date)
+  url <- purrr::map2_chr(url, date, \(u, d) url_from_path(u, d))
 
   # Get the first Thursday of the relevant month in future
   time_post <- date |>

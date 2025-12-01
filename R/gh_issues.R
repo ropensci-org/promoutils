@@ -1,34 +1,56 @@
-gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
-                          dry_run = FALSE, open_browser = TRUE) {
+gh_issue_post <- function(
+  title,
+  body,
+  labels,
+  owner,
+  repo,
+  avoid_dups = TRUE,
+  dry_run = FALSE,
+  open_browser = TRUE
+) {
+  if (missing(title)) {
+    cli::cli_abort("Require a title for this issue")
+  }
+  if (missing(body)) {
+    cli::cli_abort("Require a body for this issue")
+  }
 
-  if(missing(title)) cli::cli_abort("Require a title for this issue")
-  if(missing(body)) cli::cli_abort("Require a body for this issue")
+  cli::cli_h2(
+    "Post to {labels[labels %in% c('mastodon', 'linkedin', 'coworking')]} {if(dry_run) '[DRY RUN]'}"
+  )
 
-  cli::cli_h2("Post to {labels[labels %in% c('mastodon', 'linkedin', 'coworking')]} {if(dry_run) '[DRY RUN]'}")
-
-  if(!dry_run) {
-
-    if(avoid_dups) {
+  if (!dry_run) {
+    if (avoid_dups) {
       current <- gh_issue_fetch(state = "all") |>
         gh_issue_fmt(which = c("title", "body", "labels")) |>
         tidyr::unnest("labels")
 
-      if(title %in% current$title) {
-        if(any(labels[!labels %in% c("draft", "needs-review")] %in%
-               current$labels[current$title == title])) {
+      if (title %in% current$title) {
+        if (
+          any(
+            labels[!labels %in% c("draft", "needs-review")] %in%
+              current$labels[current$title == title]
+          )
+        ) {
           cli::cli_text(
-            "Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}")
+            "Skipping duplicate - {title} (labels: {labels}) {if(dry_run) '[DRY-RUN]'}"
+          )
           return()
         }
       }
     }
 
     cli::cli_text("Posting issue - {title}\n(labels: {labels})")
-    r <- gh_cache("POST /repos/{owner}/{repo}/issues",
-                  title = title, body = body, labels = as.list(labels),
-                  owner = owner, repo = repo)
+    r <- gh_cache(
+      "POST /repos/{owner}/{repo}/issues",
+      title = title,
+      body = body,
+      labels = as.list(labels),
+      owner = owner,
+      repo = repo
+    )
 
-    if(open_browser) utils::browseURL(r$html_url)
+    if (open_browser) utils::browseURL(r$html_url)
   } else {
     cli::cli_text("{.strong title}: {title}")
     cli::cli_text("{.strong labels}: {labels}")
@@ -54,21 +76,40 @@ gh_issue_post <- function(title, body, labels, owner, repo, avoid_dups = TRUE,
 #' i <- gh_issue_fetch()
 #' i <- gh_issue_fetch(verbose = TRUE)
 
-gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
-                           owner = "rosadmin", repo = "scheduled_socials",
-                           issue = NULL, verbose = FALSE) {
-  if(verbose) cli::cli_alert_info("owner: {owner}; repo: {repo}")
+gh_issue_fetch <- function(
+  state = "open",
+  labels = NULL,
+  since = NULL,
+  owner = "rosadmin",
+  repo = "scheduled_socials",
+  issue = NULL,
+  verbose = FALSE
+) {
+  if (verbose) {
+    cli::cli_alert_info("owner: {owner}; repo: {repo}")
+  }
 
-  if(!is.null(since)) since <- format(lubridate::as_datetime(since), "%Y-%m-%dT%H:%M:%SZ")
+  if (!is.null(since)) {
+    since <- format(lubridate::as_datetime(since), "%Y-%m-%dT%H:%M:%SZ")
+  }
 
   r <- "/repos/{owner}/{repo}/issues"
-  if(!is.null(issue) && is.numeric(issue)) r <- "repos/{owner}/{repo}/issues/{issue}"
+  if (!is.null(issue) && is.numeric(issue)) {
+    r <- "repos/{owner}/{repo}/issues/{issue}"
+  }
 
-  gh_cache(r,
-           state = state, labels = labels,
-           since = since, issue = issue,
-           sort = "created", direction = "desc",
-           owner = owner, repo = repo, .limit = Inf)
+  gh_cache(
+    r,
+    state = state,
+    labels = labels,
+    since = since,
+    issue = issue,
+    sort = "created",
+    direction = "desc",
+    owner = owner,
+    repo = repo,
+    .limit = Inf
+  )
 }
 
 
@@ -83,28 +124,41 @@ gh_issue_fetch <- function(state = "open", labels = NULL, since = NULL,
 #' @examples
 #' i <- gh_issue_fetch()
 #' i <- gh_issue_fmt(i, which = "title")
-gh_issue_fmt <- function(i, which = c("title", "number", "body", "labels", "url",
-                                  "created", "updated", "gh_user_issue")) {
-
-  df <- dplyr::tibble(url = purrr::map_chr(i, "url"),
-                      number = purrr::map_dbl(i, "number"),
-                      labels = purrr::map(i, "labels"),
-                      title = purrr::map_chr(i, "title"),
-                      created = purrr::map_chr(i, "created_at"),
-                      updated = purrr::map_chr(i, "updated_at"),
-                      body = purrr::map_chr(i, "body", .default = ""),
-                      gh_user_issue = purrr::map_chr(i, \(x) x[["user"]]$login)) |>
+gh_issue_fmt <- function(
+  i,
+  which = c(
+    "title",
+    "number",
+    "body",
+    "labels",
+    "url",
+    "created",
+    "updated",
+    "gh_user_issue"
+  )
+) {
+  df <- dplyr::tibble(
+    url = purrr::map_chr(i, "url"),
+    number = purrr::map_dbl(i, "number"),
+    labels = purrr::map(i, "labels"),
+    title = purrr::map_chr(i, "title"),
+    created = purrr::map_chr(i, "created_at"),
+    updated = purrr::map_chr(i, "updated_at"),
+    body = purrr::map_chr(i, "body", .default = ""),
+    gh_user_issue = purrr::map_chr(i, \(x) x[["user"]]$login)
+  ) |>
     dplyr::select(dplyr::any_of(which))
 
-
-  if("labels" %in% which) {
-    df <- dplyr::mutate(df, labels = purrr::map_depth(.data$labels, 2, "name"),
-                        n_labels = purrr::map_int(.data$labels, length))
+  if ("labels" %in% which) {
+    df <- dplyr::mutate(
+      df,
+      labels = purrr::map_depth(.data$labels, 2, "name"),
+      n_labels = purrr::map_int(.data$labels, length)
+    )
   }
 
   df
 }
-
 
 
 #' Extract information on help-wanted labels for issues
@@ -124,54 +178,81 @@ gh_issue_fmt <- function(i, which = c("title", "number", "body", "labels", "url"
 #' i <- gh_issue_labels(i)
 
 gh_issue_labels <- function(
-    i,
-    labels_help = "(help)|(help wanted)|(help-wanted)|(help_wanted)",
-    labels_first = "(good first issue)|(beginner)|(good-first-issue)") {
-
+  i,
+  labels_help = "(help)|(help wanted)|(help-wanted)|(help_wanted)",
+  labels_first = "(good first issue)|(beginner)|(good-first-issue)"
+) {
   i |>
     dplyr::mutate(
-      info = stringr::str_remove_all(.data$url, "(https://api.github.com/repos/)|(/issues/\\d+)"),
+      info = stringr::str_remove_all(
+        .data$url,
+        "(https://api.github.com/repos/)|(/issues/\\d+)"
+      ),
       owner = stringr::str_extract(.data$info, "^[^/]*"),
       repo = stringr::str_extract(.data$info, "[^/]*$"),
       labels_help = purrr::map_lgl(
         .data$labels,
-        \(x) any(stringr::str_detect(tolower(x), .env$labels_help))),
+        \(x) any(stringr::str_detect(tolower(x), .env$labels_help))
+      ),
       labels_first = purrr::map_lgl(
         .data$labels,
-        \(x) any(stringr::str_detect(tolower(x), .env$labels_first)))) |>
+        \(x) any(stringr::str_detect(tolower(x), .env$labels_first))
+      )
+    ) |>
     dplyr::filter(.data$labels_help) |>
     dplyr::mutate(
       events = purrr::pmap(
         list(.data$owner, .data$repo, .data$number),
-        \(x, y, z) gh_label_events(x, y, z, labels = .env$labels_help))) |>
+        \(x, y, z) gh_label_events(x, y, z, labels = .env$labels_help)
+      )
+    ) |>
     tidyr::unnest("events", keep_empty = TRUE)
-
 }
 
 
+#' Fetch details of specific labels for issues
+#'
+#' @param owner Character. Owner of the repository
+#' @param repo Character. Name of the repository (name of the package)
+#' @param issue Numeric. Specific Issue number to fetch.
+#' @param labels Character vector. Fetch only these labels.
+#'
+#' @returns tibble with gh user name for the labeller and the date the label was
+#' created.
+#'
+#' @examples
+#' gh_label_events("ropensci", "weathercan", issue = 149, labels = "help wanted")
 
 gh_label_events <- function(owner, repo, issue, labels) {
-  events <- gh_cache(endpoint = "/repos/{owner}/{repo}/issues/{issue}/events",
-                     owner = owner, repo = repo, issue = issue)
+  events <- gh_cache(
+    endpoint = "/repos/{owner}/{repo}/issues/{issue}/events",
+    owner = owner,
+    repo = repo,
+    issue = issue
+  )
 
-  e <- dplyr::tibble(event = purrr::map_dbl(events, "id"),
-                     type = purrr::map_chr(events, "event"),
-                     label = purrr::map(events, "label"),
-                     gh_user = purrr::map_chr(events, ~.[["actor"]]$login),
-                     label_created = purrr::map_chr(events, "created_at")) |>
+  e <- dplyr::tibble(
+    event = purrr::map_dbl(events, "id"),
+    type = purrr::map_chr(events, "event"),
+    label = purrr::map(events, "label"),
+    gh_user = purrr::map_chr(events, ~ .[["actor"]]$login),
+    label_created = purrr::map_chr(events, "created_at")
+  ) |>
     dplyr::filter(.data$type == "labeled") |>
     tidyr::unnest("label")
 
   # Get only the events reflecting a specific 'label' pattern
-  if(nrow(e) > 0) {
-   e <- e |>
+  if (nrow(e) > 0) {
+    e <- e |>
       tidyr::unnest(.data$label) |>
       dplyr::filter(stringr::str_detect(.data$label, .env$labels)) |>
       dplyr::mutate(label_created = lubridate::ymd_hms(.data$label_created)) |>
       dplyr::arrange(dplyr::desc(.data$label_created)) |>
       dplyr::slice(1) |>
       dplyr::select("gh_user_labelled" = "gh_user", "label_created")
-  } else e <- data.frame()
+  } else {
+    e <- data.frame()
+  }
 
   e
 }

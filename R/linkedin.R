@@ -10,8 +10,8 @@
 #'   - https://learn.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/posts-api
 #'
 #' @examples
-#'
-#' li_posts_read(ro_urn)
+#' li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
+
 li_posts_read <- function(author) {
   li_req_posts() |>
     httr2::req_url_query(author = author, q = "author") |>
@@ -45,26 +45,29 @@ li_posts_read <- function(author) {
 #'   body = "Testing out the LinkedIn API via R and httr2!")
 #' }
 
-
 li_posts_write <- function(author, body, dry_run = FALSE) {
-
   # Need to escape () around links in the body or we lose them and everything following
   body <- escape_linkedin_chars(body)
 
   r <- li_req_posts() |>
     httr2::req_headers("Content-Type" = "application/json") |>
-    httr2::req_body_json(list(
-      author = author,
-      commentary = body,
-      visibility = "PUBLIC",
-      distribution = list("feedDistribution" = "MAIN_FEED",
-                          "targetEntities" = list(),
-                          "thirdPartyDistributionChannels" = list()),
-      lifecycleState = "PUBLISHED",
-      isReshareDisabledByAuthor = FALSE
-    ), auto_unbox = TRUE)
+    httr2::req_body_json(
+      list(
+        author = author,
+        commentary = body,
+        visibility = "PUBLIC",
+        distribution = list(
+          "feedDistribution" = "MAIN_FEED",
+          "targetEntities" = list(),
+          "thirdPartyDistributionChannels" = list()
+        ),
+        lifecycleState = "PUBLISHED",
+        isReshareDisabledByAuthor = FALSE
+      ),
+      auto_unbox = TRUE
+    )
 
-  if(dry_run) {
+  if (dry_run) {
     httr2::req_dry_run(r)
   } else {
     httr2::req_perform(r) |>
@@ -81,10 +84,11 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
 li_req_posts <- function() {
   httr2::request(base_url = "https://api.linkedin.com/rest/posts") |>
     li_req_auth() |>
-    httr2::req_headers("LinkedIn-Version" = "202411",
-                       "X-Restli-Protocol-Version" = "2.0.0")
+    httr2::req_headers(
+      "LinkedIn-Version" = "202411",
+      "X-Restli-Protocol-Version" = "2.0.0"
+    )
 }
-
 
 
 #' Fetch your personal URN number
@@ -120,9 +124,9 @@ li_req_auth <- function(req) {
   # Define authorization
   httr2::req_oauth_refresh(
     req,
-    client = li_client())
+    client = li_client()
+  )
 }
-
 
 
 #' Setup rOpenSci client id for LinkedIn API
@@ -137,7 +141,8 @@ li_client <- function() {
     name = "rOpenSci_linkedIn",
     id = "78su90mmb4rsd4",
     token_url = "https://www.linkedin.com/oauth/v2/accessToken",
-    secret = Sys.getenv("LINKEDIN_SECRET"))
+    secret = Sys.getenv("LINKEDIN_SECRET")
+  )
 }
 
 #' Authorize rOpenSci client with LinkedIn
@@ -191,11 +196,14 @@ li_auth <- function() {
     auth_url = auth_url,
     redirect_uri = "http://localhost:1444/",
     # These scopes allow reading and writing posts (personal and organizational)
-    scope = glue::glue("w_member_social",       # write posts on behalf of your id
-                       "w_organization_social", # write posts on behalf of rOpenSci
-                       "r_organization_social", # read posts on behalf of rOpenSci
-                       "r_organization_admin",  # read admin on behalf of rOpenSci
-                       "r_basicprofile", .sep = " "),
+    scope = glue::glue(
+      "w_member_social", # write posts on behalf of your id
+      "w_organization_social", # write posts on behalf of rOpenSci
+      "r_organization_social", # read posts on behalf of rOpenSci
+      "r_organization_admin", # read admin on behalf of rOpenSci
+      "r_basicprofile",
+      .sep = " "
+    ),
     pkce = FALSE
   )
 }
