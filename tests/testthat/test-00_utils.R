@@ -85,3 +85,28 @@ test_that("escape_linkedin_chars()", {
   expect_silent(xx <- escape_linkedin_chars(x))
   expect_true(stringr::str_detect(xx, "\\\\\\("))
 })
+
+
+test_that("fmt_slack_urls()", {
+  input <- "[My awesome page](https://my-awesome.html)"
+  expected <- "<https://my-awesome.html|My awesome page>"
+  result <- fmt_slack_urls(input)
+  expect_equal(result, expected)
+
+  # Multiple links
+  input <- "Check [link one](https://one.com) and [link two](https://two.com)!"
+  expected <- "Check <https://one.com|link one> and <https://two.com|link two>!"
+  result <- fmt_slack_urls(input)
+  expect_equal(result, expected)
+
+  # No links
+  input <- "This is just plain text"
+  result <- fmt_slack_urls(input)
+  expect_equal(result, input)
+
+  # Complex links
+  input <- "[A link with spaces and-dashes](https://example.com/path/to/page)"
+  expected <- "<https://example.com/path/to/page|A link with spaces and-dashes>"
+  result <- fmt_slack_urls(input)
+  expect_equal(result, expected)
+})
