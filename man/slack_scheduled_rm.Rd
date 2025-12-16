@@ -15,8 +15,11 @@ deleted.}
 
 \item{id}{Character. If no msg, the ID of the message to be deleted.}
 }
+\value{
+Nothing
+}
 \description{
-Delete a scheduled message
+Removes a currently scheduled messages.
 }
 \examples{
 # Schedule message

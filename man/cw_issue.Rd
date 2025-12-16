@@ -24,6 +24,9 @@ cw_issue(
 
 \item{repo}{Character. GitHub repository including owner (e.g.,
 \code{rosadmin/comms})}
+
+\item{dry_run}{Logical. Whether to really create the issue or just return the
+text.}
 }
 \value{
 Nothing

@@ -6,6 +6,9 @@
 \usage{
 slack_messages(channel = NULL, channel_id = NULL)
 }
+\value{
+Data frame. Messages and details
+}
 \description{
 Get the last 100 messages from a channel
 }

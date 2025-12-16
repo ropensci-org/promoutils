@@ -11,6 +11,8 @@
 #' @param cohost Character. Name of cohost, if unknown, uses XXXX placeholder
 #' @param repo Character. GitHub repository including owner (e.g.,
 #'   `rosadmin/comms`)
+#' @param dry_run Logical. Whether to really create the issue or just return the
+#'   text.
 #'
 #' @return Nothing
 #'
@@ -274,7 +276,7 @@ cw_socials <- function(
     purrr::keep_at(c("title", "dateStart", "date", "title", "author")) |>
     dplyr::as_tibble() |>
     dplyr::summarize(
-      author = paste0(author, collapse = ", "),
+      author = paste0(.data$author, collapse = ", "),
       .by = c("title", "dateStart", "date")
     ) |>
     dplyr::rename("date_UTC" = "dateStart", "theme" = "title") |>
@@ -430,11 +432,16 @@ cw_slack_week <- function(x, posters_tz, test_run = FALSE, dry_run = FALSE) {
 #' Will only work if running between the time that the 1-week message was posted
 #' and the start of the coworking.
 #'
-#' @returns
+#' @param user Character. Slack user id.
+#' @param test_run Logical. Whether to run a test of this message posting to the
+#' test channel.
+#' @param dry_run Logical. Whether to do a dry run, print the message only.
+#' @param call Environment. Parent environment for messaging.
+#'
+#' @returns Nothing
 #' @export
 #'
 #' @examples
-#'
 #' \dontrun{
 #'   cw_slack_hour(test_run = TRUE)
 #'   cw_slack_hour(dry_run = TRUE)
@@ -448,7 +455,7 @@ cw_slack_hour <- function(
   # Get date of upcoming coworking session
   dt <- cw_details() |>
     cw_times() |>
-    dplyr::select(date, tz)
+    dplyr::select("date", "tz")
 
   if (is.null(dt$date) | dt$date < Sys.Date()) {
     cli::cli_abort("Either event isn't posted or is passed", call = call)
@@ -635,6 +642,7 @@ cw_checkin <- function(which = "next", names = NULL) {
 #'   coworking session, or a Date fetch details for a specific coworking
 #'   session.
 #' @param names Character. Names of cohost if overriding those in the event listing.
+#' @param print Logical. Whether to print the copied text to the console.
 #'
 #' @export
 #' @examples
@@ -745,8 +753,8 @@ docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
   }
   link <- googledrive::drive_link(link)
 
-  browseURL(paste0("https://ropensci.org/events/", cw))
-  browseURL(link)
+  utils::browseURL(paste0("https://ropensci.org/events/", cw))
+  utils::browseURL(link)
 
   # Add to event page
   if (add) {
@@ -800,6 +808,6 @@ docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
 #' @export
 slides_link <- function(open_site = TRUE) {
   slides_link <- "https://docs.google.com/presentation/d/1e53SC_nrBHKBbqegzL3q-89TUJp2SV0T8c2x4q8eQjk/edit?usp=sharing"
-  browseURL(slides_link)
+  utils::browseURL(slides_link)
   invisible(slides_link)
 }

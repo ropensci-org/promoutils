@@ -34,15 +34,25 @@ Create Throwback Thursday \code{socials_post_issue()} command
 }
 \examples{
 # Standard
-tt_post("2019-05-14", "POWER to the People", "https://ropensci.org/blog/2019/05/14/nasapower/", print = TRUE)
+tt_post(
+  "2019-05-14",
+  "POWER to the People",
+  "https://ropensci.org/blog/2019/05/14/nasapower/",
+  print = TRUE
+)
 
 # Double throwback
-tt_post(c("2017-08-22", "2017-08-22"),
-        c("So you (don’t) think you can review a package",
-          "Onboarding visdat, a tool for preliminary visualisation of whole dataframes"),
-        url = c("https://ropensci.org/blog/2017/08/22/first-package-review/",
-                "https://ropensci.org/blog/2017/08/22/visdat/"),
-        print = TRUE)
+tt_post(
+  c("2017-08-22", "2017-08-22"),
+  c("So you (don’t) think you can review a package",
+    "Onboarding visdat, a tool for preliminary visualisation of whole dataframes"
+  ),
+  url = c(
+    "https://ropensci.org/blog/2017/08/22/first-package-review/",
+    "https://ropensci.org/blog/2017/08/22/visdat/"
+  ),
+  print = TRUE
+)
 
 # Slug only
 tt_post("2019-05-14", "POWER to the People", "nasapower", print = TRUE)

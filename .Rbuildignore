@@ -12,3 +12,4 @@
 ^[.]?air[.]toml$
 ^codecov\.yml$
 ^\.github$
+^RELEASE.R$

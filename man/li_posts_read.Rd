@@ -16,8 +16,7 @@ list of posts
 Get a list of recent posts by rOpenSci
 }
 \examples{
-
-li_posts_read(ro_urn)
+li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
 }
 \references{
 \itemize{

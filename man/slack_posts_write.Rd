@@ -47,7 +47,10 @@ slack_posts_write(
 
 # Dry runs
 slack_posts_write("testing on Tuesday", dry_run = TRUE)
-slack_posts_write("testing [this cool link](https://mycoolsite.com)", dry_run = TRUE)
+slack_posts_write(
+  "testing [this cool link](https://mycoolsite.com)",
+  dry_run = TRUE
+)
 }
 \references{
 \itemize{

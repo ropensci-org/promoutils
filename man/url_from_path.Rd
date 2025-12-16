@@ -19,6 +19,9 @@ url_from_path(
 
 \item{where}{Character. 'blog' or 'event' depending on the content type.}
 }
+\value{
+Full url
+}
 \description{
 Create url from content date and slug
 }

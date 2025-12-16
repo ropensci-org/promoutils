@@ -14,18 +14,29 @@
 #'
 #' @examples
 #' # Standard
-#' tt_post("2019-05-14", "POWER to the People", "https://ropensci.org/blog/2019/05/14/nasapower/", print = TRUE)
+#' tt_post(
+#'   "2019-05-14",
+#'   "POWER to the People",
+#'   "https://ropensci.org/blog/2019/05/14/nasapower/",
+#'   print = TRUE
+#' )
 #'
 #' # Double throwback
-#' tt_post(c("2017-08-22", "2017-08-22"),
-#'         c("So you (don’t) think you can review a package",
-#'           "Onboarding visdat, a tool for preliminary visualisation of whole dataframes"),
-#'         url = c("https://ropensci.org/blog/2017/08/22/first-package-review/",
-#'                 "https://ropensci.org/blog/2017/08/22/visdat/"),
-#'         print = TRUE)
+#' tt_post(
+#'   c("2017-08-22", "2017-08-22"),
+#'   c("So you (don’t) think you can review a package",
+#'     "Onboarding visdat, a tool for preliminary visualisation of whole dataframes"
+#'   ),
+#'   url = c(
+#'     "https://ropensci.org/blog/2017/08/22/first-package-review/",
+#'     "https://ropensci.org/blog/2017/08/22/visdat/"
+#'   ),
+#'   print = TRUE
+#' )
 #'
 #' # Slug only
 #' tt_post("2019-05-14", "POWER to the People", "nasapower", print = TRUE)
+
 tt_post <- function(
   date,
   title,
@@ -52,12 +63,12 @@ tt_post <- function(
   time_post <- date |>
     lubridate::ymd() |>
     lubridate::floor_date(unit = "month") |>
-    update(
+    stats::update(
       year = lubridate::year(Sys.Date()) +
         as.numeric(m < lubridate::month(Sys.Date()))
     ) |>
     lubridate::ceiling_date(unit = "week", week_start = "Thursday") |>
-    update(hour = 8, tz = "America/Vancouver") |>
+    stats::update(hour = 8, tz = "America/Vancouver") |>
     unique()
 
   date_pretty <- format(as.Date(date), "%B %e, %Y") |>

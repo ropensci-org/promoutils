@@ -6,6 +6,9 @@
 \usage{
 slack_users()
 }
+\value{
+Data frame of Slack users including names and ids
+}
 \description{
 Fetch a list of Slack users
 }

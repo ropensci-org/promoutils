@@ -33,7 +33,11 @@
 #'
 #' # Dry runs
 #' slack_posts_write("testing on Tuesday", dry_run = TRUE)
-#' slack_posts_write("testing [this cool link](https://mycoolsite.com)", dry_run = TRUE)
+#' slack_posts_write(
+#'   "testing [this cool link](https://mycoolsite.com)",
+#'   dry_run = TRUE
+#' )
+
 slack_posts_write <- function(
   body,
   when = "now",
@@ -66,7 +70,11 @@ slack_posts_write <- function(
 
     msgs <- slack_scheduled_list() |>
       dplyr::mutate(
-        text = stringr::str_replace_all(text, "<(http[a-zA-Z:./0-9]+)>", "\\1")
+        text = stringr::str_replace_all(
+          .data$text,
+          "<(http[a-zA-Z:./0-9]+)>",
+          "\\1"
+        )
       )
     if (
       nrow(msgs) > 0 &&
@@ -125,9 +133,12 @@ slack_posts_write <- function(
   }
 }
 
-#' Title
+#' List currently scheduled messages
 #'
-#' @returns
+#' Returns the currently scheduled messages with added details regarding
+#' timezones, etc.
+#'
+#' @returns Data frame of currently scheduled messages
 #' @export
 #'
 #' @examples
@@ -157,7 +168,7 @@ slack_scheduled_list <- function() {
 
   if (nrow(r_list) == 0) {
     r_list <- dplyr::tibble(x = cols, y = NA) |>
-      tidyr::pivot_wider(names_from = x, values_from = y) |>
+      tidyr::pivot_wider(names_from = "x", values_from = "y") |>
       dplyr::as_tibble(.rows = 0)
     return(r_list)
   }
@@ -179,13 +190,15 @@ slack_scheduled_list <- function() {
 
 #' Delete a scheduled message
 #'
+#' Removes a currently scheduled messages.
+#'
 #' @param msg Data frame. Output of `slack_list_scheduled()` containing messages
 #'   to remove. Should contain columns "channel" and "id"
 #' @param channel Character. If no msg, the Channel of the message to be
 #'   deleted.
 #' @param id Character. If no msg, the ID of the message to be deleted.
 #'
-#' @returns
+#' @returns Nothing
 #' @export
 #'
 #' @examples
@@ -230,7 +243,7 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
 
     admin_ts <- slack_messages(channel_id = slack_admin()) |>
       dplyr::filter(stringr::str_detect(.data$text, i)) |>
-      dplyr::pull(ts)
+      dplyr::pull(.data$ts)
 
     if (length(admin_ts) > 0) slack_message_rm(slack_admin(), admin_ts)
   })
@@ -241,11 +254,10 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
 #' Removes previously scheduled messages from `#admin-scheduled` if after the
 #' posting date.
 #'
-#' @returns
+#' @returns Nothing
 #' @export
 #'
 #' @examples
-#'
 #' slack_posts_write("testing cleanup",
 #'                   when = Sys.time() + lubridate::seconds(600),
 #'                   tz = Sys.timezone())
@@ -287,18 +299,26 @@ slack_cleanup <- function() {
 }
 
 
-#' Title
+#' List channels and their ids
 #'
-#' @param channel
 #'
-#' @returns
+#' @param channel Character. Channel Name.
+#' @param type Character. Type of channels, one or both of "public_channel" or
+#' "private_channel"
+#'
+#' @returns Data frame of channel names and ids, or if `channel` provided, a
+#' single channel id.
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' slack_channels()
 #' slack_channels("general")
 #' chn <- slack_channels(types = "private_channel")
-slack_channels <- function(types = c("public_channel", "private_channel")) {
+
+slack_channels <- function(
+  channel = NULL,
+  types = c("public_channel", "private_channel")
+) {
   types <- paste(types, collapse = ",")
   r <- httr2::request("https://slack.com/api/conversations.list") |>
     httr2::req_url_query(types = types, exclude_archived = TRUE) |>
@@ -306,8 +326,16 @@ slack_channels <- function(types = c("public_channel", "private_channel")) {
     slack_paginate() |>
     slack_check(element = "channels", paginate = TRUE)
 
-  slack_df(r, "channels", c("name", "id")) |>
+  c <- slack_df(r, "channels", c("name", "id")) |>
     dplyr::rename("channel" = "name", "channel_id" = "id")
+
+  if (!is.null(channel)) {
+    id <- dplyr::filter(c, .data$channel %in% .env$channel) |>
+      dplyr::pull(.data$channel_id)
+    return(id)
+  }
+
+  c
 }
 
 slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
@@ -354,7 +382,7 @@ slack_user <- function(name, users = NULL) {
 
 #' Fetch a list of Slack users
 #'
-#' @returns
+#' @returns Data frame of Slack users including names and ids
 #' @export
 #'
 #' @examples
@@ -371,7 +399,7 @@ slack_users <- function() {
 
 #' Get the last 100 messages from a channel
 #'
-#' @returns
+#' @returns Data frame. Messages and details
 #' @export
 #'
 #' @examples
@@ -388,10 +416,10 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
     slack_check(msg = NULL) |>
     slack_df("messages", c("ts", "user", "text")) |>
     dplyr::mutate(
-      time = lubridate::as_datetime(as.numeric(ts)),
-      time = lubridate::with_tz(time, tz = Sys.timezone())
+      time = lubridate::as_datetime(as.numeric(.data$ts)),
+      time = lubridate::with_tz(.data$time, tz = Sys.timezone())
     ) |>
-    dplyr::relocate(time, .after = "ts")
+    dplyr::relocate(.data$time, .after = "ts")
 }
 
 slack_message_rm <- function(channel_id, ts) {
@@ -402,23 +430,4 @@ slack_message_rm <- function(channel_id, ts) {
     slack_check(
       msg = glue::glue("Message {ts} successfully removed from {channel_id}")
     )
-}
-
-#' Format markdown urls to Slack format
-#'
-#' @param body Character. Text to check
-#'
-#' @returns Character.
-#'
-#' @examples
-#'
-#' fmt_slack_urls("[My awesome page](https://my-awesome.html)")
-#'
-#' @noRd
-fmt_slack_urls <- function(body) {
-  stringr::str_replace_all(
-    body,
-    "\\[(.+)\\]\\((.+)\\)",
-    "<\\2|\\1>"
-  )
 }

@@ -50,10 +50,10 @@ schedule).
 cw_socials("2023-07-04",
            who_masto = "@cohost@mastodon.org",
            who_linkedin = "Cohost the Best",
-           who_slack = "<UXXXXX>",
+           who_slack = "<UXXXXXXX>",
            dry_run = TRUE)
 
 \dontrun{
-cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXX>")
+cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXXXX>")
 }
 }
