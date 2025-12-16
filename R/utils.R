@@ -36,12 +36,13 @@ pkgs <- function(
       owner = stringr::str_remove_all(
         .data$github,
         glue::glue("(https://github.com/)|(/{repo})")
-      )
+      ),
+      docs = glue::glue("https://docs.ropensci.org/{name}")
     )
   if (return == "sub") {
     p <- dplyr::select(
       p,
-      dplyr::any_of(c("name", "maintainer", "owner", "repo"))
+      dplyr::any_of(c("name", "maintainer", "owner", "repo", "docs"))
     )
   }
 
@@ -353,7 +354,7 @@ copy <- function(body, what, print = FALSE) {
 #' @param date Character. Date for event, used to create link (otherwise extracted from slug)
 #' @param where Character. 'blog' or 'event' depending on the content type.
 #'
-#' @returns
+#' @returns Full url
 #'
 #' @export
 #' @examples
@@ -454,4 +455,28 @@ prs_list <- function(match = NULL, owner = "ropensci", repo = "roweb3") {
     )
   }
   pr
+}
+
+
+#' Format markdown urls to Slack format
+#'
+#' Such that `[My awesome page](https://my-awesome.html)` becomes
+#' `<https://my-awesome.html|My awesome page>`.
+#'
+#' @param body Character. Text to check
+#'
+#' @returns Character.
+#'
+#' @examples
+#'
+#' fmt_slack_urls("[My awesome page](https://my-awesome.html)")
+#' fmt_slack_urls("[My awesome page](https://my-awesome.html) and this [email](mailto:mail@mail.com)")
+#'
+#' @noRd
+fmt_slack_urls <- function(body) {
+  stringr::str_replace_all(
+    body,
+    "\\[(.+?)\\]\\((.+?)\\)",
+    "<\\2|\\1>"
+  )
 }
