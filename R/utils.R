@@ -5,6 +5,63 @@
 #' @export
 gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
 
+#' List of packages and details from R-Universe API
+#'
+#' @param universe Character. Universe to collect details from.
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+#' pkgs_ru()
+
+pkgs_ru <- function(universe = "ropensci") {
+  pkgs <- httr2::request("https://ropensci.r-universe.dev/api/packages") |>
+    httr2::req_user_agent("promoutils") |>
+    httr2::req_perform() |>
+    httr2::resp_body_json()
+
+  pkgs |>
+    purrr::map(\(x) {
+      if (!is.null(x[["_contributors"]])) {
+        cc <- purrr::map(x[["_contributors"]], data.frame) |>
+          purrr::list_rbind() |>
+          dplyr::select(-dplyr::any_of("uuid")) |>
+          dplyr::rename_with(\(n) {
+            stringr::str_replace(n, "^user$", "github")
+          }) |>
+          dplyr::rename_with(\(n) paste0("contributor_", n))
+      } else {
+        cc <- NULL
+      }
+
+      m <- x[["_maintainer"]]
+      m <- rlang::set_names(m, paste0("maintainer_", names(m)))
+
+      cols <- c("Package", "Title", "_owner", "_devurl", "_pkgdown")
+      xx <- append(x[names(x) %in% cols], m)
+
+      for (n in c(cols, "maintainer_login")) {
+        if (!n %in% names(xx)) {
+          xx[[n]] <- NA
+        }
+      }
+
+      xx |>
+        dplyr::as_tibble() |>
+        dplyr::mutate(contributors = list(cc)) |>
+        dplyr::rename_with(tolower) |>
+        dplyr::rename(
+          "maintainer_github" = "maintainer_login",
+          "owner" = "_owner",
+          "url" = "_devurl",
+          "docs" = "_pkgdown"
+        )
+    }) |>
+    purrr::list_rbind()
+}
+
+
 #' Return a data frame of rOpenSci packages
 #'
 #' @param url Character. Registry url
@@ -479,4 +536,72 @@ fmt_slack_urls <- function(body) {
     "\\[(.+?)\\]\\((.+?)\\)",
     "<\\2|\\1>"
   )
+}
+
+#' Arrange by platform
+#'
+#' Arranges data in long by platform (linkedin and mastodon).
+#'
+#' @param df Data frame. Formatted data including social media handles.
+#'
+#' @returns Data frame arranged by platform on which to advertise.
+#'
+#' @export
+#' @examples
+#' u <- uc_fetch() |>
+#'   uc_fmt("2025-01-01") |>
+#'   uc_handles() |>
+#'   by_platform()
+
+by_platform <- function(df) {
+  if (nrow(df) == 0) {
+    return(data.frame())
+  }
+
+  df |>
+    tidyr::pivot_longer(
+      cols = dplyr::matches("linkedin|mastodon"),
+      names_to = c("role", "platform"),
+      names_sep = "_",
+      values_to = "handle"
+    ) |>
+    tidyr::pivot_wider(
+      names_from = "role",
+      values_from = "handle"
+    )
+}
+
+#' Get the next post date/time
+#'
+#' Finds the next date/time to post by day of the week and hour.
+#'
+#' @param day Character. Day of the week (e.g., "Monday")
+#' @param hour Numeric. Hour at which to post (e.g., 8)
+#'
+#' @returns Date time as character (without timezone)
+#'
+#' @export
+#' @examples
+#' post_time("Wednesday", 8)
+
+post_time <- function(day, hour) {
+  day_of_week <- c(
+    "Monday" = 1,
+    "Tuesday" = 2,
+    "Wednesday" = 3,
+    "Thursday" = 4,
+    "Friday" = 5,
+    "Saturday" = 6,
+    "Sunday" = 7
+  )[day]
+
+  date_time <- lubridate::ceiling_date(
+    Sys.Date(),
+    "weeks",
+    week_start = day_of_week
+  )
+  date_time <- date_time + lubridate::hours(hour)
+  date_time <- as.character(date_time)
+
+  date_time
 }
