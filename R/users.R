@@ -228,3 +228,120 @@ ro_masto <- function(name) {
   }
   t
 }
+
+
+#' Add in author and maintainer social media handles
+#'
+#' @param df Data frame with `maintainer_name` and `author_github`
+#'
+#' @returns Data frame with added names and social media handles.
+#'
+#' @export
+#' @examples
+#' u <- uc_fetch() |>
+#'   uc_fmt("2025-01-01") |>
+#'   add_names()
+
+add_names <- function(df) {
+  if (nrow(df) == 0) {
+    return(data.frame())
+  }
+
+  # Fetch maintainer socials we have
+  df <- df |>
+    dplyr::mutate(
+      maintainer_github = monarch::fetch(
+        .data$maintainer_name,
+        type = "github"
+      ),
+      maintainer_mastodon = monarch::fetch(
+        .data$maintainer_github,
+        type = "mastodon"
+      )
+    )
+
+  # Get missing maintainer GH usename
+  nms_miss <- dplyr::select(
+    df,
+    "maintainer_name",
+    "maintainer_github",
+    "resource"
+  ) |>
+    dplyr::distinct()
+
+  purrr::pwalk(
+    nms_miss,
+    \(maintainer_name, maintainer_github, resource, ...) {
+      if (is.na(maintainer_github) & !is.na(maintainer_name)) {
+        monarch::socials_fetch(name = maintainer_name, pkg = resource) |>
+          monarch::cocoon_update()
+      }
+    }
+  )
+
+  # Get missing maintainer socials - Only if we already have a GH username
+  nms_miss <- dplyr::select(
+    df,
+    "maintainer_mastodon",
+    "maintainer_github"
+  ) |>
+    dplyr::distinct()
+
+  purrr::pwalk(nms_miss, \(maintainer_mastodon, maintainer_github, ...) {
+    if (is.na(maintainer_mastodon) & !is.na(maintainer_github)) {
+      monarch::socials_fetch(github = maintainer_github) |>
+        monarch::cocoon_update()
+    }
+  })
+
+  # Update maintainer socials
+  # Fetch author socials we have
+  df <- df |>
+    dplyr::mutate(
+      maintainer_github = monarch::fetch(
+        .data$maintainer_name,
+        type = "github"
+      ),
+      maintainer_mastodon = monarch::fetch(.data$maintainer_github),
+      author_name = monarch::fetch(.data$author_github, type = "name"),
+      author_mastodon = monarch::fetch(.data$author_github)
+    )
+
+  # Get missing author socials
+  purrr::pwalk(df, \(author_mastodon, author_name, author_github, ...) {
+    if (is.na(author_mastodon) | is.na(author_name)) {
+      monarch::socials_fetch(github = author_github) |>
+        monarch::cocoon_update()
+    }
+  })
+
+  # Add in any we recently retrieved
+  df <- df |>
+    dplyr::mutate(
+      author_name = monarch::fetch(.data$author_github, type = "name"),
+      author_mastodon = monarch::fetch(.data$author_github)
+    )
+
+  # Put in placeholders for missing
+  df <- df |>
+    dplyr::mutate(
+      author_linkedin = dplyr::if_else(
+        is.na(author_name),
+        author_github,
+        author_name
+      ),
+      author_mastodon = dplyr::if_else(
+        is.na(author_mastodon),
+        author_name,
+        author_mastodon
+      ),
+      maintainer_mastodon = dplyr::if_else(
+        is.na(maintainer_mastodon),
+        maintainer_name,
+        maintainer_mastodon
+      ),
+      maintainer_linkedin = maintainer_name
+    )
+
+  df
+}
