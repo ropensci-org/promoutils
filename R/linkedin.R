@@ -79,9 +79,10 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
 #'
 #' @noRd
 li_req_posts <- function() {
+  v <- getOption("promoutils.linkedin_version") %||% "202510"
   httr2::request(base_url = "https://api.linkedin.com/rest/posts") |>
     li_req_auth() |>
-    httr2::req_headers("LinkedIn-Version" = "202411",
+    httr2::req_headers("LinkedIn-Version" = v,
                        "X-Restli-Protocol-Version" = "2.0.0")
 }
 
