@@ -15,7 +15,7 @@
 li_posts_read <- function(author) {
   li_req_posts() |>
     httr2::req_url_query(author = author, q = "author") |>
-    httr2::req_perform() |>
+    li_req_perform() |>
     httr2::resp_body_json()
 }
 
@@ -70,22 +70,26 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
   if (dry_run) {
     httr2::req_dry_run(r)
   } else {
-    httr2::req_perform(r) |>
+    li_req_perform() |>
       httr2::resp_header("x-restli-id")
   }
 }
 
 #' Setup API request for Posts endpoint
 #'
+#' Can set local linkedin API version with option "promoutils.linkedin_version"
+#'
 #' @references
 #'  - https://learn.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/posts-api
+#' - Latest API Version: https://learn.microsoft.com/en-us/linkedin/talent/versioning?#latest-version
 #'
 #' @noRd
 li_req_posts <- function() {
+  v <- getOption("promoutils.linkedin_version") %||% "202510"
   httr2::request(base_url = "https://api.linkedin.com/rest/posts") |>
     li_req_auth() |>
     httr2::req_headers(
-      "LinkedIn-Version" = "202411",
+      "LinkedIn-Version" = v,
       "X-Restli-Protocol-Version" = "2.0.0"
     )
 }
@@ -108,7 +112,7 @@ li_urn_me <- function() {
   id <- httr2::request(base_url = "https://api.linkedin.com/v2/me") |>
     li_req_auth() |>
     httr2::req_url_query(projection = "(id)") |>
-    httr2::req_perform() |>
+    li_req_perform() |>
     httr2::resp_body_json() |>
     unlist()
   glue::glue("urn:li:person:{id}")
@@ -206,4 +210,16 @@ li_auth <- function() {
     ),
     pkce = FALSE
   )
+}
+
+li_req_perform <- function(req) {
+  req |>
+    httr2::req_error(
+      body = \(r) {
+        if (httr2::resp_status(r) == 426) {
+          "promoutils: Time to update LinkedIn API in `li_req_posts()`"
+        }
+      }
+    ) |>
+    httr2::req_perform()
 }
