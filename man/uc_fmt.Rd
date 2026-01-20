@@ -11,7 +11,7 @@ uc_fmt(uc, min_date, pkgs = NULL)
 
 \item{min_date}{Character/Date. Minimum date of usecases to retain.}
 
-\item{pkgs}{Data frame. Optional data frame of package details (defaults to \code{pkgs()}).}
+\item{pkgs}{Data frame. Optional data frame of package details (defaults to \code{pkgs_ru()}).}
 }
 \value{
 Data frame of formatted use cases.

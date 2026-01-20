@@ -4,13 +4,13 @@
 \alias{uc_post}
 \title{Create use case \code{socials_post_issue()} command}
 \usage{
-uc_post(uc, date = NULL, dry_run = FALSE, print = FALSE)
+uc_post(uc, date_time = NULL, dry_run = FALSE, print = FALSE)
 }
 \arguments{
 \item{uc}{Data frame. Formatted use cases including social media handles
 and arranged by platform upon which to post, output of \code{uc_platform()}.}
 
-\item{date}{Character/Date. When to post. Defaults to next Wednesday.}
+\item{date_time}{Character/Date. When to post. Defaults to next Wednesday if \code{NULL}.}
 
 \item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
 }
@@ -23,8 +23,8 @@ Create use case \code{socials_post_issue()} command
 \examples{
 u <- uc_fetch() |>
   uc_fmt("2025-01-01") |>
-  uc_names() |>
-  uc_platform()
+  uc_handles() |>
+  by_platform()
 
 uc_post(u, dry_run = TRUE)
 }
