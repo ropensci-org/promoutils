@@ -646,7 +646,8 @@ cw_checkin <- function(which = "next", names = NULL) {
 #'
 #' @export
 #' @examples
-#' cw_checkin_event("2025-12-02")
+#' # cw_checkin_event("2025-12-02")
+#' cw_checkin_event("2026-04-07")
 
 cw_checkin_event <- function(which = "next", names = NULL, print = FALSE) {
   if (is.null(which)) {
