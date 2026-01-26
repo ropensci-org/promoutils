@@ -40,7 +40,7 @@ slack_posts_write(
   "",
   ":grey_exclamation: Theme: TESTING",
   ":hourglass_flowing_sand: When: TODAY!",
-  ":cookie: Hosted by: USER! and community host HOST",
+  ":cookie: Hosted by: USER! and cohost HOST",
   "",
   "You can use this time for...",
   "- General coworking", sep = "\n"), when = "now")
