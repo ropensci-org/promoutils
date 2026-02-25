@@ -36,6 +36,7 @@ Suggests:
     httpuv,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/ropensci/maintainer: staff
 Depends: 
     R (>= 4.0.0)
 URL: https://github.com/ropensci-org/promoutils
