@@ -1,3 +1,6 @@
+# 0.4.5
+- Update LinkedIn API version
+
 # 0.4.4
 - Preliminary workflows for automatic Slack message scheduling
 
