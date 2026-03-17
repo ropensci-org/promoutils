@@ -1,7 +1,15 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
-[![Codecov test coverage](https://codecov.io/gh/ropensci-org/promoutils/graph/badge.svg)](https://app.codecov.io/gh/ropensci-org/promoutils)
+
+[![Code Coverage:
+52%](https://img.shields.io/badge/code_coverage-52%yellow)](#code-coverage)
+[![R-CMD-check](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## promoutils
 
-Utility functions for gathering and formating rOpenSci-related items to be advertised and promoted through social media and other communication channels etc.
+Utility functions for gathering and formating rOpenSci-related items to
+be advertised and promoted through social media and other communication
+channels etc.

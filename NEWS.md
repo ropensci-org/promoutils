@@ -1,5 +1,11 @@
 # 0.4.5
 - Update LinkedIn API version
+- Use templates
+- Use R Universe for packages
+- Move Usecases etc. workflows to promoutils
+- Use cli
+- Add consistency
+- 
 
 # 0.4.4
 - Preliminary workflows for automatic Slack message scheduling

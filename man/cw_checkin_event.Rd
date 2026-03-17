@@ -21,5 +21,6 @@ When an event has been drafted use this
 draft text to invite the cohost(s) to review via Slack or Email.
 }
 \examples{
-cw_checkin_event("2025-12-02")
+# cw_checkin_event("2025-12-02")
+cw_checkin_event("2026-04-07")
 }

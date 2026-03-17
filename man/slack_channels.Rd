@@ -20,7 +20,7 @@ single channel id.
 List channels and their ids
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_channels()
 slack_channels("general")
 chn <- slack_channels(types = "private_channel")

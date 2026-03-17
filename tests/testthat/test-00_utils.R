@@ -4,7 +4,7 @@ test_that("pkgs_ru() & pkg_authors()", {
   expect_all_true(
     c("package", "title", "owner", "maintainer_name") %in% names(p)
   )
-  expect_silent(a <- pkg_authors("weathercan", pkgs_ru))
+  expect_silent(a <- pkg_authors("weathercan", p))
   expect_equal(a, "Steffi LaZerte")
 })
 

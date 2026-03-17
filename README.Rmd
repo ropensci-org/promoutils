@@ -1,0 +1,47 @@
+---
+output: github_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+```{r, echo = FALSE, message=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "fig/README-"
+)
+
+# Get coverage for badge and browsable report
+library(covr)
+coverage_detail <- covr::package_coverage(
+  function_exclusions = "^li_auth$|^discourse_user$|^cw_checkin|^docs_link|^forum",
+  line_exclusions = "R/zzz.R"
+)
+# Get coverage for badge
+coverage <- percent_coverage(coverage_detail) |>
+  round(0)
+
+cov_col <- cut(
+  coverage,
+  breaks = c(-Inf, 25, 50, 70, 85, 90, 100),
+  c("red", "orange", "yellow", "yellowgreen", "green", "brightgreen")
+)
+
+# Create local code coverage report for detailed exploration
+covr::report(coverage_detail, file = "covr/cov_report.html")
+```
+
+
+<!-- badges: start -->
+[![Code Coverage: `r coverage`%](https://img.shields.io/badge/code_coverage-`r coverage`%`r cov_col`)](#code-coverage)
+[![R-CMD-check](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+
+
+
+## promoutils
+
+Utility functions for gathering and formating rOpenSci-related items to be advertised and promoted through social media and other communication channels etc.
