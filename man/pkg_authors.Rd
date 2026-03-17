@@ -4,16 +4,19 @@
 \alias{pkg_authors}
 \title{Get package author names}
 \usage{
-pkg_authors(x, pkgs)
+pkg_authors(package, pkgs)
 }
 \arguments{
-\item{x}{Character. Package name}
-
 \item{pkgs}{Data frame. Packages returned by \code{pkgs()}.}
+
+\item{x}{Character. Package name}
 }
 \value{
 Character name of maintainer
 }
 \description{
 Get package author names
+}
+\examples{
+pkg_authors("weathercan", pkgs_ru())
 }

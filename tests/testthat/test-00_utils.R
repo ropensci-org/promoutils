@@ -1,13 +1,13 @@
-test_that("pkgs() & pkg_authors()", {
-  expect_silent(p <- pkgs())
+test_that("pkgs_ru() & pkg_authors()", {
+  expect_silent(p <- pkgs_ru())
   expect_s3_class(p, "data.frame")
-  expect_named(p, c("name", "maintainer", "owner", "repo"))
-
-  expect_silent(p <- pkgs(which = "all", return = "all"))
-
-  expect_silent(a <- pkg_authors("weathercan", p))
+  expect_all_true(
+    c("package", "title", "owner", "maintainer_name") %in% names(p)
+  )
+  expect_silent(a <- pkg_authors("weathercan", pkgs_ru))
   expect_equal(a, "Steffi LaZerte")
 })
+
 
 test_that("replace_emoji()", {
   expect_silent(replace_emoji(

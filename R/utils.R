@@ -62,51 +62,6 @@ pkgs_ru <- function(universe = "ropensci") {
 }
 
 
-#' Return a data frame of rOpenSci packages
-#'
-#' @param url Character. Registry url
-#' @param which Character. Status of packages to return ("all" or "active")
-#' @param return Character. Return a subset ("sub") or all ("all") package fields.
-#'
-#' @return data frame
-#' @export
-#'
-#' @examples
-#' pkgs()
-#' pkgs(which = "all", return = "all")
-pkgs <- function(
-  url = "https://ropensci.github.io/roregistry/registry.json",
-  which = "active",
-  return = "sub"
-) {
-  pkgs <- jsonlite::fromJSON(url)$package
-
-  if (which == "active") {
-    pkgs <- dplyr::filter(pkgs, .data$type == "active")
-  } else {
-    pkgs <- dplyr::filter(pkgs, .data$type != "archived")
-  }
-
-  p <- pkgs |>
-    dplyr::mutate(
-      repo = stringr::str_extract(.data$github, "[[:alnum:].-]+$"),
-      owner = stringr::str_remove_all(
-        .data$github,
-        glue::glue("(https://github.com/)|(/{repo})")
-      ),
-      docs = glue::glue("https://docs.ropensci.org/{name}")
-    )
-  if (return == "sub") {
-    p <- dplyr::select(
-      p,
-      dplyr::any_of(c("name", "maintainer", "owner", "repo", "docs"))
-    )
-  }
-
-  p
-}
-
-
 #' Get package author names
 #'
 #' @param x Character. Package name
@@ -114,9 +69,13 @@ pkgs <- function(
 #'
 #' @return Character name of maintainer
 #' @export
-pkg_authors <- function(x, pkgs) {
-  a <- dplyr::filter(pkgs, .data$name %in% x) |>
-    dplyr::pull(.data$maintainer)
+#' @examples
+#' pkg_authors("weathercan", pkgs_ru())
+
+pkg_authors <- function(package, pkgs) {
+  # TODO: Direct call to R Universe API?
+  a <- dplyr::filter(pkgs, .data$package %in% .env$package) |>
+    dplyr::pull(.data$maintainer_name)
 
   if (length(a) == 0) {
     a <- NA_character_
