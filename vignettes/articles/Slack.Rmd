@@ -65,14 +65,12 @@ List the currently scheduled messages:
 
 ``` r
 slack_scheduled_list()
-#> # A tibble: 5 × 8
-#>   channel     scheduled_local     text        date_created_dt     channel_id id    post_at date_created
-#>   <chr>       <dttm>              <chr>       <dttm>              <chr>      <chr>   <int>        <int>
-#> 1 co-working  2026-01-06 11:00:00 "Join us f… 2025-11-19 21:19:04 C0152F1SK… Q09T…  1.77e9   1763587144
-#> 2 general     2026-01-06 11:00:00 "Join us f… 2025-11-19 21:19:03 C026GCWKA  Q09U…  1.77e9   1763587143
-#> 3 co-working  2025-12-02 06:00:00 "See you i… 2025-11-25 17:15:10 C0152F1SK… Q09V…  1.76e9   1764090910
-#> 4 general     2025-12-02 06:00:00 "See you i… 2025-11-25 17:15:10 C026GCWKA  Q09V…  1.76e9   1764090910
-#> 5 testing-api 2025-12-02 00:00:00 "Testing s… 2025-12-01 20:28:14 C08RY1PUH… Q0A0…  1.76e9   1764620894
+#> Successful
+#> # A tibble: 2 × 8
+#>   channel    scheduled_local     text    date_created_dt     channel_id id    post_at date_created
+#>   <chr>      <dttm>              <chr>   <dttm>              <chr>      <chr>   <int>        <int>
+#> 1 general    2026-03-31 11:00:00 "Join … 2026-02-02 20:41:11 C026GCWKA  Q0AC…  1.77e9   1770064871
+#> 2 co-working 2026-03-31 11:00:00 "Join … 2026-02-02 20:41:11 C0152F1SK… Q0AC…  1.77e9   1770064871
 ```
 
 Schedule a message for tomorrow (by default all messages are posted in the 
@@ -99,14 +97,12 @@ See the currently scheduled messages according to the Slack API
 
 ``` r
 slack_scheduled_list()
-#> # A tibble: 5 × 8
-#>   channel     scheduled_local     text        date_created_dt     channel_id id    post_at date_created
-#>   <chr>       <dttm>              <chr>       <dttm>              <chr>      <chr>   <int>        <int>
-#> 1 co-working  2026-01-06 11:00:00 "Join us f… 2025-11-19 21:19:04 C0152F1SK… Q09T…  1.77e9   1763587144
-#> 2 general     2026-01-06 11:00:00 "Join us f… 2025-11-19 21:19:03 C026GCWKA  Q09U…  1.77e9   1763587143
-#> 3 co-working  2025-12-02 06:00:00 "See you i… 2025-11-25 17:15:10 C0152F1SK… Q09V…  1.76e9   1764090910
-#> 4 general     2025-12-02 06:00:00 "See you i… 2025-11-25 17:15:10 C026GCWKA  Q09V…  1.76e9   1764090910
-#> 5 testing-api 2025-12-02 00:00:00 "Testing s… 2025-12-01 20:28:52 C08RY1PUH… Q0A0…  1.76e9   1764620932
+#> # A tibble: 3 × 8
+#>   channel     scheduled_local     text   date_created_dt     channel_id id    post_at date_created
+#>   <chr>       <dttm>              <chr>  <dttm>              <chr>      <chr>   <int>        <int>
+#> 1 general     2026-03-31 11:00:00 "Join… 2026-02-02 20:41:11 C026GCWKA  Q0AC…  1.77e9   1770064871
+#> 2 co-working  2026-03-31 11:00:00 "Join… 2026-02-02 20:41:11 C0152F1SK… Q0AC…  1.77e9   1770064871
+#> 3 testing-api 2026-03-31 00:00:00 "Test… 2026-03-30 22:45:03 C08RY1PUH… Q0AP…  1.77e9   1774910703
 ```
 
 
@@ -119,12 +115,12 @@ m <- slack_scheduled_list() |>
   dplyr::filter(text == "Testing schedules in the Vignette!")
 m
 #> # A tibble: 1 × 8
-#>   channel     scheduled_local     text        date_created_dt     channel_id id    post_at date_created
-#>   <chr>       <dttm>              <chr>       <dttm>              <chr>      <chr>   <int>        <int>
-#> 1 testing-api 2025-12-02 00:00:00 Testing sc… 2025-12-01 20:28:52 C08RY1PUH… Q0A0…  1.76e9   1764620932
+#>   channel     scheduled_local     text   date_created_dt     channel_id id    post_at date_created
+#>   <chr>       <dttm>              <chr>  <dttm>              <chr>      <chr>   <int>        <int>
+#> 1 testing-api 2026-03-31 00:00:00 Testi… 2026-03-30 22:45:03 C08RY1PUH… Q0AP…  1.77e9   1774910703
 slack_scheduled_rm(msg = m)
-#> Message Q0A0EAUA2QP successfully removed from scheduled queue for testing-api
-#> Message 1764620932.909919 successfully removed from C08T0PS0QDR
+#> Message Q0APSSHB5ML successfully removed from scheduled queue for testing-api
+#> Message 1774910703.373629 successfully removed from C08T0PS0QDR
 ```
 
 Note that `slack_scheduled_rm()` also removes the message posted to the `#admin-scheduled`
@@ -134,13 +130,11 @@ scheduled via the API.
 
 ``` r
 slack_scheduled_list()
-#> # A tibble: 4 × 8
-#>   channel    scheduled_local     text         date_created_dt     channel_id id    post_at date_created
-#>   <chr>      <dttm>              <chr>        <dttm>              <chr>      <chr>   <int>        <int>
-#> 1 co-working 2026-01-06 11:00:00 "Join us fo… 2025-11-19 21:19:04 C0152F1SK… Q09T…  1.77e9   1763587144
-#> 2 general    2026-01-06 11:00:00 "Join us fo… 2025-11-19 21:19:03 C026GCWKA  Q09U…  1.77e9   1763587143
-#> 3 co-working 2025-12-02 06:00:00 "See you in… 2025-11-25 17:15:10 C0152F1SK… Q09V…  1.76e9   1764090910
-#> 4 general    2025-12-02 06:00:00 "See you in… 2025-11-25 17:15:10 C026GCWKA  Q09V…  1.76e9   1764090910
+#> # A tibble: 2 × 8
+#>   channel    scheduled_local     text    date_created_dt     channel_id id    post_at date_created
+#>   <chr>      <dttm>              <chr>   <dttm>              <chr>      <chr>   <int>        <int>
+#> 1 general    2026-03-31 11:00:00 "Join … 2026-02-02 20:41:11 C026GCWKA  Q0AC…  1.77e9   1770064871
+#> 2 co-working 2026-03-31 11:00:00 "Join … 2026-02-02 20:41:11 C0152F1SK… Q0AC…  1.77e9   1770064871
 ```
 
 However, after posts have been sent, you'll need to clean up `#admin-scheduled`
