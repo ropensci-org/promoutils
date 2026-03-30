@@ -115,7 +115,7 @@ socials_post_single <- function(
     body <- glue::glue("{body}\n{hash}")
   }
 
-  if (where == "mastodon" & (n <- calc_chars(body)) >= 490) {
+  if (where == "mastodon" && (n <- calc_chars(body)) >= 490) {
     over_char_limit(
       "Very close or over the character limit of 500\n",
       "(this message has {n} including hashtags)",

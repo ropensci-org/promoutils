@@ -457,7 +457,7 @@ cw_slack_hour <- function(
     cw_times() |>
     dplyr::select("date", "tz")
 
-  if (is.null(dt$date) | dt$date < Sys.Date()) {
+  if (is.null(dt$date) || dt$date < Sys.Date()) {
     cli::cli_abort("Either event isn't posted or is passed", call = call)
   }
 

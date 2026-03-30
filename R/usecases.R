@@ -86,7 +86,7 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
         paste0(tolower(pkgs$package), collapse = "|")
       ),
       #resource_lst = stringr::str_extract_all(.data$resource, "[^.,;]+"),
-      resource_n = purrr::map_int(.data$resource_lst, length),
+      resource_n = lengths(.data$resource_lst),
       resource = purrr::map(.data$resource_lst, stringr::str_squish)
     ) |>
     tidyr::unnest(resource) |>

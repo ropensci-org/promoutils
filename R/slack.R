@@ -264,6 +264,7 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
 #' slack_scheduled_list()
 #'
 #' slack_cleanup()
+
 slack_cleanup <- function() {
   sched <- slack_scheduled_list()
   admin <- slack_messages(channel_id = slack_admin()) |>
@@ -275,13 +276,13 @@ slack_cleanup <- function() {
     ) |>
     tidyr::drop_na("id") # Ignore non-scheduled messages
 
-  if (nrow(sched) == 0 & nrow(admin) == 0) {
+  if (nrow(sched) == 0 && nrow(admin) == 0) {
     cli::cli_inform("Nothing to clean up")
     return(invisible())
   }
 
   # If none scheduled, remove all from admin-scheduled
-  if (nrow(sched) == 0 & nrow(admin) > 0) {
+  if (nrow(sched) == 0 && nrow(admin) > 0) {
     purrr::map(admin$ts, \(x) {
       slack_message_rm(channel_id = slack_admin(), ts = x)
     })
@@ -405,7 +406,7 @@ slack_users <- function() {
 #' @examples
 #' slack_messages(channel_id = "C026GCWKA") # General
 slack_messages <- function(channel = NULL, channel_id = NULL) {
-  if (is.null(channel_id) & !is.null(channel)) {
+  if (is.null(channel_id) && !is.null(channel)) {
     channel_id <- slack_channel(channel)
   }
 
