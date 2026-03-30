@@ -32,10 +32,8 @@ test_that("tt_post() multiple posts", {
   )
 
   # But only require one blurb
-
-  expect_message(
-    tt_post(date = "2020-01-01", title = "t", url = "u"),
-    "Copied Throwback Thursday"
+  expect_output(
+    tt_post(date = "2020-01-01", title = "t", url = "u", print = TRUE)
   )
 
   # But if more than one blurb, must match the others
