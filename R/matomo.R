@@ -123,7 +123,10 @@ matomo_write <- function(views) {
   if (nrow(views) > 0) {
     cli::cli_inform(c("Writing new Matomo views to: ", matomo_dir()))
     y <- lubridate::year(views$date)[1]
-    readr::write_csv(views, paste0("views/views_", y, ".csv"))
+    readr::write_csv(
+      views,
+      file.path(matomo_dir(), paste0("views_", y, ".csv"))
+    )
   } else {
     cli::cli_inform("No new views to add")
   }
