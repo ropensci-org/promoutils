@@ -703,23 +703,36 @@ cw_checkin_event <- function(which = "next", names = NULL, print = FALSE) {
 #' cw_tz("Americas Pacific")
 #' cw_tz("America/Vancouver")
 #' cw_tz("Europe Central")
+#' cw_tz("European Central")
 
 cw_tz <- function(tz = NULL) {
   if (is.null(tz)) {
     return({
       data.frame(
-        tz = c("America/Vancouver", "Australia/Perth", "Europe/Paris"),
-        time = c(9, 9, 14),
-        tz_nice = c("Americas Pacific", "Australia Western", "Europe Central")
+        tz = c(
+          "America/Los_Angeles",
+          "Australia/Perth",
+          "Europe/Paris",
+          "Europe/Paris"
+        ),
+        time = c(9, 9, 14, 14),
+        tz_nice = c(
+          "Americas Pacific",
+          "Australia Western",
+          "Europe Central",
+          "European Central"
+        )
       )
     })
   }
 
   dplyr::recode_values(
     tz,
-    "Americas Pacific" ~ "America/Vancouver",
+    "Americas Pacific" ~ "America/Los_Angeles",
     "America/Vancouver" ~ "Americas Pacific",
+    "America/Los_Angeles" ~ "Americas Pacific",
     "Europe Central" ~ "Europe/Paris",
+    "European Central" ~ "Europe/Paris",
     "Europe/Paris" ~ "Europe Central",
     "Australia Western" ~ "Australia/Perth",
     "Australia/Perth" ~ "Australia Western"
