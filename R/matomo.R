@@ -101,6 +101,13 @@ matomo_fetch <- function(date_range, host = "https://ropensci.matomo.cloud") {
   views
 }
 
+#' Cache folder to store matomo views
+#'
+#' @returns Character file path
+#'
+#' @export
+#' @examples
+#' matomo_dir()
 matomo_dir <- function() {
   tools::R_user_dir("promoutils") |>
     file.path("views")
@@ -216,6 +223,8 @@ matomo_check_cats <- function() {
 
 #' Formats and filter Matomo views to blogposts
 #'
+#' @param views Data frame from [matomo_read()].
+#'
 #' @returns Data frame of blog post views
 #'
 #' @export
@@ -239,7 +248,7 @@ matomo_blogposts <- function(views) {
       post_month = lubridate::month(.data$post_date)
     ) |>
     dplyr::summarise(
-      nb_visits = sum(nb_visits),
+      nb_visits = sum(.data$nb_visits),
       .by = c("label", "post_month", "post_date")
     )
 

@@ -17,7 +17,11 @@ url_from_path(
 
 \item{date}{Character. Date for event, used to create link (otherwise extracted from slug)}
 
+\item{lang}{Character. Language of blogpost (i.e., \code{en}, \code{es}, \code{fr}, etc.)}
+
 \item{where}{Character. 'blog' or 'event' depending on the content type.}
+
+\item{base_url}{Character. Base url of blog posts.}
 }
 \value{
 Full url

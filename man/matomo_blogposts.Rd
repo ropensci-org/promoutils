@@ -6,6 +6,9 @@
 \usage{
 matomo_blogposts(views)
 }
+\arguments{
+\item{views}{Data frame from \code{\link[=matomo_read]{matomo_read()}}.}
+}
 \value{
 Data frame of blog post views
 }

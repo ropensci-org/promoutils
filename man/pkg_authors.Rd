@@ -7,9 +7,9 @@
 pkg_authors(package, pkgs)
 }
 \arguments{
-\item{pkgs}{Data frame. Packages returned by \code{pkgs()}.}
+\item{package}{Character. Package name}
 
-\item{x}{Character. Package name}
+\item{pkgs}{Data frame. Packages returned by \code{\link[=pkgs_ru]{pkgs_ru()}}.}
 }
 \value{
 Character name of maintainer

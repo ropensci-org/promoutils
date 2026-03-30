@@ -15,6 +15,7 @@ cw_socials(
   posters_tz = "America/Winnipeg",
   test_run = FALSE,
   dry_run = FALSE,
+  print = TRUE,
   branch = NULL
 )
 }
@@ -37,6 +38,13 @@ organizer (i.e., \verb{<@UXXXXXXX>}. Defaults to Steffi's id.}
 \item{posters_tz}{Character. Timezone of poster. Required for getting the
 time at which to post Slack messages as these are posted in the local
 timezone}
+
+\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area)}
+
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
 
 \item{branch}{Character. Branch name if not on main.}
 }

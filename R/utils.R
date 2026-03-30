@@ -1,5 +1,7 @@
 #' Create a cached version of the GH api calls
 #'
+#' @inheritParams gh::gh
+#' @inheritDotParams gh::gh
 #' @details `memoise::memoise(gh::gh)`
 #'
 #' @export
@@ -64,8 +66,8 @@ pkgs_ru <- function(universe = "ropensci") {
 
 #' Get package author names
 #'
-#' @param x Character. Package name
-#' @param pkgs Data frame. Packages returned by `pkgs()`.
+#' @param package Character. Package name
+#' @param pkgs Data frame. Packages returned by [pkgs_ru()].
 #'
 #' @return Character name of maintainer
 #' @export
@@ -104,6 +106,8 @@ nth_day <- function(x) {
 #'   abbreviated English weekday.
 #' @param n Numeric. The nth week to return (i.e. the 1st Tuesday if `n = 1`
 #'   and `which = "Tues"`).
+#' @param call Environment. Calling environment for appropriate messages if used
+#'   within another function.
 #'
 #' @return A date
 #' @export
@@ -294,7 +298,9 @@ copy <- function(body, what, print = FALSE) {
 #'
 #' @param path Character. Slug, URL, or path to file in repository
 #' @param date Character. Date for event, used to create link (otherwise extracted from slug)
+#' @param lang Character. Language of blogpost (i.e., `en`, `es`, `fr`, etc.)
 #' @param where Character. 'blog' or 'event' depending on the content type.
+#' @param base_url Character. Base url of blog posts.
 #'
 #' @returns Full url
 #'

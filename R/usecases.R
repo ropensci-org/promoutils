@@ -67,8 +67,7 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
   min_date <- lubridate::ymd_hms(min_date, truncated = 3)
   pkgs <- pkgs %||% pkgs_ru()
 
-  u <- uc |>
-    dplyr::filter(date >= min_date)
+  u <- dplyr::filter(uc, .data$date >= .env$min_date)
 
   if (nrow(u) == 0) {
     return(data.frame())
@@ -89,7 +88,7 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
       resource_n = lengths(.data$resource_lst),
       resource = purrr::map(.data$resource_lst, stringr::str_squish)
     ) |>
-    tidyr::unnest(resource) |>
+    tidyr::unnest("resource") |>
     dplyr::left_join(
       dplyr::select(
         pkgs,
@@ -168,7 +167,7 @@ uc_post <- function(
     dplyr::left_join(dict_usecases(), by = "category") |>
     dplyr::mutate(
       resource = dplyr::if_else(
-        !is.na(maintainer),
+        !is.na(.data$maintainer),
         glue::glue("{resource} {l_maintained} {maintainer}"),
         glue::glue("{resource}")
       ),
@@ -177,7 +176,7 @@ uc_post <- function(
     dplyr::summarize(
       resource = glue::glue(
         "{unique(l_using)} ",
-        paste0(resource, collapse = " & "),
+        paste0(.data$resource, collapse = " & "),
         "!"
       ),
       .by = c("id", "platform")
@@ -185,13 +184,13 @@ uc_post <- function(
 
   drafts <- uc |>
     dplyr::select(
-      id,
-      date,
-      title,
+      "id",
+      "date",
+      "title",
       "author",
-      platform,
-      url,
-      category
+      "platform",
+      "url",
+      "category"
     ) |>
     dplyr::distinct() |>
     dplyr::left_join(dict_usecases(), by = "category") |>
@@ -206,14 +205,14 @@ uc_post <- function(
     dplyr::summarize(
       opening = dplyr::if_else(
         dplyr::n() > 1,
-        paste0(l_intro_mult[1], "\n\n"),
-        paste0(l_intro_single[1], "\n\n")
+        paste0(.data$l_intro_mult[1], "\n\n"),
+        paste0(.data$l_intro_single[1], "\n\n")
       ),
       draft = paste0(
-        opening,
-        glue::glue_collapse(body, sep = "\n\n"),
+        .data$opening,
+        glue::glue_collapse(.data$body, sep = "\n\n"),
         "\n\n",
-        l_share[1],
+        .data$l_share[1],
         collapse = "\n"
       ),
       .by = c("platform", "category")

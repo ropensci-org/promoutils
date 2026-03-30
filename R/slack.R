@@ -6,8 +6,10 @@
 #' https://docs.slack.dev/messaging/formatting-message-text#mentioning-users
 #'
 #' @param body Character. Text of message to post.
-#' @param when Character or Date/time. When to post message.
-#' @param where Character. Channel to post message to.
+#' @param when Character or Date/time. When to post message (timezone is
+#'   ignored, see `tz`).
+#' @param tz Character. Timezone of `when`.
+#' @param channel Character. Channel to post message to.
 #' @param dry_run Logical. Test run?
 #'
 #' @returns Success message
@@ -304,7 +306,7 @@ slack_cleanup <- function() {
 #'
 #'
 #' @param channel Character. Channel Name.
-#' @param type Character. Type of channels, one or both of "public_channel" or
+#' @param types Character. Type of channels, one or both of "public_channel" or
 #' "private_channel"
 #'
 #' @returns Data frame of channel names and ids, or if `channel` provided, a
@@ -400,14 +402,20 @@ slack_users <- function() {
 
 #' Get the last 100 messages from a channel
 #'
+#' Requires one of `channel` OR `channel_id`
+#'
+#' @param channel Character. Channel Name. Not required if channel_id supplied.
+#' @param channel_id Character. Channel id.
 #' @returns Data frame. Messages and details
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' slack_messages(channel_id = "C026GCWKA") # General
+#' slack_messages(channel = "General")
+
 slack_messages <- function(channel = NULL, channel_id = NULL) {
   if (is.null(channel_id) && !is.null(channel)) {
-    channel_id <- slack_channel(channel)
+    channel_id <- slack_channel(channel)$channel_id
   }
 
   httr2::request("https://slack.com/api/conversations.history") |>

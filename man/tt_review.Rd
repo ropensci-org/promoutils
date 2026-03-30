@@ -4,10 +4,11 @@
 \alias{tt_review}
 \title{Review blogposts views for Throwback Thursday highlights}
 \usage{
-tt_review(which_month = "all")
+tt_review(which_month = NULL)
 }
 \arguments{
-\item{which_month}{}
+\item{which_month}{Numeric. Which month to return? Numeric 1-12 for month.
+Default \code{NULL} returns all.}
 }
 \value{
 Data frame of posts by views with urls

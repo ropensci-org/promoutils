@@ -2,15 +2,22 @@
 % Please edit documentation in R/help_wanted.R
 \name{help_handles}
 \alias{help_handles}
-\title{Title}
+\title{Get social media handles for helpwanted issues}
 \usage{
 help_handles(help, force_masto = FALSE)
 }
 \arguments{
-\item{help}{}
+\item{help}{Data frame of help wanted issues.}
+
+\item{force_masto}{Logical. Passed to \code{\link[monarch:add_handles]{monarch::add_handles()}}. Whether or
+not to force a re-check of mastodon handles (good if you think they've
+changed or they are 'none' and you want to check again.}
+}
+\value{
+Data frame of help wanted issues with social median handles added
 }
 \description{
-Title
+Get social media handles for helpwanted issues
 }
 \examples{
 h <- help_fetch("2025-01-01") |>

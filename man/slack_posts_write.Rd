@@ -15,11 +15,14 @@ slack_posts_write(
 \arguments{
 \item{body}{Character. Text of message to post.}
 
-\item{when}{Character or Date/time. When to post message.}
+\item{when}{Character or Date/time. When to post message (timezone is
+ignored, see \code{tz}).}
+
+\item{tz}{Character. Timezone of \code{when}.}
+
+\item{channel}{Character. Channel to post message to.}
 
 \item{dry_run}{Logical. Test run?}
-
-\item{where}{Character. Channel to post message to.}
 }
 \value{
 Success message

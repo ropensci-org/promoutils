@@ -6,6 +6,11 @@
 \usage{
 help_fetch(min_date, json = "/repos/rosadmin/help-wanted/contents/issues.json")
 }
+\arguments{
+\item{min_date}{Character/Date. Earliest date a help-wanted label was added to an issue to be included.}
+
+\item{json}{Character. Location of the issues.json file to use.}
+}
 \value{
 Data frame of help wanted issues
 }

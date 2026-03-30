@@ -23,6 +23,9 @@ tt_post(
 \item{blurb}{Character. Interesting bit to describe post (optional).}
 
 \item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
 }
 \value{
 Character string of R functions with relevant details (normally

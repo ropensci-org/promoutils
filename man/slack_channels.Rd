@@ -9,7 +9,7 @@ slack_channels(channel = NULL, types = c("public_channel", "private_channel"))
 \arguments{
 \item{channel}{Character. Channel Name.}
 
-\item{type}{Character. Type of channels, one or both of "public_channel" or
+\item{types}{Character. Type of channels, one or both of "public_channel" or
 "private_channel"}
 }
 \value{

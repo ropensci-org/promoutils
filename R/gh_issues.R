@@ -1,3 +1,6 @@
+#' Create a GH issues post
+#'
+#' @noRd
 gh_issue_post <- function(
   title,
   body,
@@ -69,8 +72,10 @@ gh_issue_post <- function(
 #' @param repo Character. Name of the repository (name of the package)
 #' @param issue Numeric. Specific Issue number to fetch.
 #'
+#' @inheritParams common_docs
+#'
 #' @return List of issues
-#' @export
+#' @noRd
 #'
 #' @examples
 #' i <- gh_issue_fetch()
@@ -119,7 +124,7 @@ gh_issue_fetch <- function(
 #' @param which Which fields to includ
 #'
 #' @return Issues formated as a data frame
-#' @export
+#' @noRd
 #'
 #' @examples
 #' i <- gh_issue_fetch()
@@ -153,7 +158,7 @@ gh_issue_fmt <- function(
     df <- dplyr::mutate(
       df,
       labels = purrr::map_depth(.data$labels, 2, "name"),
-      n_labels = purrr::map_int(.data$labels, length)
+      n_labels = lengths(.data$labels)
     )
   }
 
@@ -170,7 +175,7 @@ gh_issue_fmt <- function(
 #'   labels.
 #'
 #' @return data frame with added label details
-#' @export
+#' @noRd
 #'
 #' @examples
 #' i <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")
@@ -220,6 +225,8 @@ gh_issue_labels <- function(
 #' @returns tibble with gh user name for the labeller and the date the label was
 #' created.
 #'
+#' @noRd
+#'
 #' @examples
 #' gh_label_events("ropensci", "weathercan", issue = 149, labels = "help wanted")
 
@@ -244,7 +251,7 @@ gh_label_events <- function(owner, repo, issue, labels) {
   # Get only the events reflecting a specific 'label' pattern
   if (nrow(e) > 0) {
     e <- e |>
-      tidyr::unnest(.data$label) |>
+      tidyr::unnest("label") |>
       dplyr::filter(stringr::str_detect(.data$label, .env$labels)) |>
       dplyr::mutate(label_created = lubridate::ymd_hms(.data$label_created)) |>
       dplyr::arrange(dplyr::desc(.data$label_created)) |>

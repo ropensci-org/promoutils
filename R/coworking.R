@@ -179,6 +179,9 @@ cw_times <- function(details) {
 #'   time at which to post Slack messages as these are posted in the local
 #'   timezone
 #' @param branch Character. Branch name if not on main.
+#'
+#' @inheritParams common_docs
+#'
 #' @export
 #'
 #' @examples
@@ -336,6 +339,8 @@ cw_socials <- function(
 
   # Post slack week before message
   cw_slack_week(deets, posters_tz, test_run, dry_run)
+
+  invisible()
 }
 
 
@@ -646,8 +651,7 @@ cw_checkin <- function(which = "next", names = NULL) {
 #' @param print Logical. Whether to print the copied text to the console.
 #'
 #' @export
-#' @examples
-#' # cw_checkin_event("2025-12-02")
+#' @examplesIf interactive()
 #' cw_checkin_event("2026-04-07")
 
 cw_checkin_event <- function(which = "next", names = NULL, print = FALSE) {
@@ -692,6 +696,8 @@ cw_checkin_event <- function(which = "next", names = NULL, print = FALSE) {
 #' @returns Character of the opposite timezone display type, or a vector of all
 #'   timezones.
 #'
+#' @noRd
+#'
 #' @examples
 #' cw_tz()
 #' cw_tz("Americas Pacific")
@@ -709,7 +715,7 @@ cw_tz <- function(tz = NULL) {
     })
   }
 
-  dplyr::case_match(
+  dplyr::recode_values(
     tz,
     "Americas Pacific" ~ "America/Vancouver",
     "America/Vancouver" ~ "Americas Pacific",
@@ -730,6 +736,8 @@ cw_tz <- function(tz = NULL) {
 #'   coworking session, or a Date fetch details for a specific coworking
 #'   session.
 #' @param open_sites Logical. Open websites with relevant details?
+#' @param add Logical. Whether to initialize a PR and add the link to the events
+#' file.
 #'
 #' @returns Google Docs link
 #' @export

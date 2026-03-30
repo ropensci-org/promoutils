@@ -17,6 +17,7 @@ Imports:
     cli,
     clipr,
     dplyr,
+    emo (>= 0.0.0.9000),
     gert (>= 2.1.5),
     gh,
     glue,
@@ -26,15 +27,14 @@ Imports:
     keyring (>= 1.4.1),
     lubridate,
     memoise (>= 2.0.1),
+    monarch (>= 0.1.0),
     pandoc,
     purrr,
     readr,
     rlang,
-    rvest,
     stringr,
     tidyr,
     usethis (>= 3.1.0),
-    xml2 (>= 1.3.8),
     yaml
 Suggests: 
     withr,
@@ -48,4 +48,6 @@ Depends:
 URL: https://github.com/ropensci-org/promoutils
 BugReports: https://github.com/ropensci-org/promoutils/issues
 Remotes:  
-    ebbertd/matomoR
+    ebbertd/matomoR,
+    ropensci-org/monarch,
+    hadley/emo

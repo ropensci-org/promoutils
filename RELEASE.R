@@ -10,7 +10,7 @@ file.edit("NEWS.md")
 devtools::build_readme()
 
 # Precompile Vignettes
-source("vignettes/articles/precompile.R")
+source("vignettes/articles/_PRECOMPILE.R")
 
 # Standard checks ------------------------------------------
 devtools::test() # Use Ctrl-Shift-T to test non-interactively

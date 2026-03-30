@@ -17,15 +17,15 @@ dict_usecases <- function() {
     l_by = c("por", "by"),
     l_maintained = c("mantenido por", "maintained by"),
     l_intro_mult = c(
-      "[casos de uso] ¡Nuevos casos de uso de rOpenSci!",
+      "[casos de uso] \u00A1Nuevos casos de uso de rOpenSci!",
       "[use cases] New rOpenSci usecases!"
     ),
     l_intro_single = c(
-      "[casos de uso] ¡Nuevo caso de uso de rOpenSci!",
+      "[casos de uso] \u00A1Nuevo caso de uso de rOpenSci!",
       "[use cases] Usecase of an rOpenSci resource:"
     ),
     l_share = c(
-      "¡Comparte tu caso de uso!",
+      "\u00A1Comparte tu caso de uso!",
       "Share your usecase too!"
     )
   )
@@ -43,6 +43,7 @@ dict_usecases <- function() {
 #' dict_helpwanted()
 
 dict_helpwanted <- function() {
+  # TODO UPDATE!
   dplyr::tibble(
     # Spanish and English
     category = c("Se busca colaboración", "Help wanted"),
@@ -50,15 +51,15 @@ dict_helpwanted <- function() {
     l_maintainer = c("", "New Maintainer Wanted"),
     l_maintained = c("mantenido por", "maintained by"),
     l_intro_mult = c(
-      "[casos de uso] ¡Nuevos casos de uso de rOpenSci!",
+      "[casos de uso] \u00A1Nuevos casos de uso de rOpenSci!",
       "[use cases] New rOpenSci usecases!"
     ),
     l_intro_single = c(
-      "[casos de uso] ¡Nuevo caso de uso de rOpenSci!",
+      "[casos de uso] \u00A1Nuevo caso de uso de rOpenSci!",
       "[use cases] Usecase of an rOpenSci resource:"
     ),
     l_share = c(
-      "¡Comparte tu caso de uso!",
+      "\u00A1Comparte tu caso de uso!",
       "Share your usecase too!"
     )
   )

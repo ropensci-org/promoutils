@@ -21,6 +21,7 @@ When an event has been drafted use this
 draft text to invite the cohost(s) to review via Slack or Email.
 }
 \examples{
-# cw_checkin_event("2025-12-02")
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 cw_checkin_event("2026-04-07")
+\dontshow{\}) # examplesIf}
 }

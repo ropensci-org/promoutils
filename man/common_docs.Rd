@@ -11,6 +11,9 @@
 \item{quiet}{Logical. Whether to suppress progress messages.}
 
 \item{verbose}{Logical. Show extra informative messages.}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
 }
 \description{
 Common arguments and documentation for various functions

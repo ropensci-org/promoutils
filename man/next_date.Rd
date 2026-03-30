@@ -14,6 +14,9 @@ abbreviated English weekday.}
 
 \item{n}{Numeric. The nth week to return (i.e. the 1st Tuesday if \code{n = 1}
 and \code{which = "Tues"}).}
+
+\item{call}{Environment. Calling environment for appropriate messages if used
+within another function.}
 }
 \value{
 A date

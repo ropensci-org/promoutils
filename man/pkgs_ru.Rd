@@ -9,6 +9,9 @@ pkgs_ru(universe = "ropensci")
 \arguments{
 \item{universe}{Character. Universe to collect details from.}
 }
+\value{
+Data frame of package details
+}
 \description{
 List of packages and details from R-Universe API
 }

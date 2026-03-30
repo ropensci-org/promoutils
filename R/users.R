@@ -245,7 +245,7 @@ add_names <- function(df) {
   purrr::pwalk(
     nms_miss,
     \(maintainer_name, maintainer_github, resource, ...) {
-      if (is.na(maintainer_github) & !is.na(maintainer_name)) {
+      if (is.na(maintainer_github) && !is.na(maintainer_name)) {
         monarch::socials_fetch(name = maintainer_name, pkg = resource) |>
           monarch::cocoon_update()
       }
@@ -261,7 +261,7 @@ add_names <- function(df) {
     dplyr::distinct()
 
   purrr::pwalk(nms_miss, \(maintainer_mastodon, maintainer_github, ...) {
-    if (is.na(maintainer_mastodon) & !is.na(maintainer_github)) {
+    if (is.na(maintainer_mastodon) && !is.na(maintainer_github)) {
       monarch::socials_fetch(github = maintainer_github) |>
         monarch::cocoon_update()
     }
@@ -282,7 +282,7 @@ add_names <- function(df) {
 
   # Get missing author socials
   purrr::pwalk(df, \(author_mastodon, author_name, author_github, ...) {
-    if (is.na(author_mastodon) | is.na(author_name)) {
+    if (is.na(author_mastodon) || is.na(author_name)) {
       monarch::socials_fetch(github = author_github) |>
         monarch::cocoon_update()
     }
@@ -299,21 +299,21 @@ add_names <- function(df) {
   df <- df |>
     dplyr::mutate(
       author_linkedin = dplyr::if_else(
-        is.na(author_name),
-        author_github,
-        author_name
+        is.na(.data$author_name),
+        .data$author_github,
+        .data$author_name
       ),
       author_mastodon = dplyr::if_else(
-        is.na(author_mastodon),
-        author_name,
-        author_mastodon
+        is.na(.data$author_mastodon),
+        .data$author_name,
+        .data$author_mastodon
       ),
       maintainer_mastodon = dplyr::if_else(
-        is.na(maintainer_mastodon),
-        maintainer_name,
-        maintainer_mastodon
+        is.na(.data$maintainer_mastodon),
+        .data$maintainer_name,
+        .data$maintainer_mastodon
       ),
-      maintainer_linkedin = maintainer_name
+      maintainer_linkedin = .data$maintainer_name
     )
 
   df

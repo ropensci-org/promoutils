@@ -14,3 +14,4 @@
 ^\.github$
 ^RELEASE.R$
 ^README.Rmd$
+^covr$

@@ -13,6 +13,9 @@ coworking session, or a Date fetch details for a specific coworking
 session.}
 
 \item{open_sites}{Logical. Open websites with relevant details?}
+
+\item{add}{Logical. Whether to initialize a PR and add the link to the events
+file.}
 }
 \value{
 Google Docs link
