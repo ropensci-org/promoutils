@@ -4,7 +4,8 @@
 #' `tt_review()` summarizes the posts by view and optionally filters to a
 #' specific month.
 #'
-#' @param which_month
+#' @param which_month Numeric. Which month to return? Numeric 1-12 for month.
+#'   Default `NULL` returns all.
 #'
 #' @returns Data frame of posts by views with urls
 #'
@@ -13,7 +14,7 @@
 #' @examplesIf dir.exists(matomo_dir())
 #' tt_review(11)
 
-tt_review <- function(which_month = "all") {
+tt_review <- function(which_month = NULL) {
   blogviews <- matomo_read() |>
     matomo_blogposts() |>
     dplyr::mutate(url = paste0("https://ropensci.org", .data$label)) |>
@@ -23,7 +24,7 @@ tt_review <- function(which_month = "all") {
       !stringr::str_detect(.data$label, "/technotes/")
     )
 
-  if (which_month != "all") {
+  if (!is.null(which_month)) {
     blogviews <- dplyr::filter(
       blogviews,
       lubridate::month(.data$post_date) == .env$which_month

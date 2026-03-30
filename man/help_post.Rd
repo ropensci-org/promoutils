@@ -29,5 +29,5 @@ h <- help_fetch("2025-05-23") |>
   help_handles() |>
   by_platform()
 
-help_post(h)
+help_post(h, print = TRUE)  # For non-interactive examples
 }

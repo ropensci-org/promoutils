@@ -450,6 +450,8 @@ cw_slack_week <- function(
 #' @param dry_run Logical. Whether to do a dry run, print the message only.
 #' @param call Environment. Parent environment for messaging.
 #'
+#' @inheritParams common_docs
+#'
 #' @returns Nothing
 #' @export
 #'

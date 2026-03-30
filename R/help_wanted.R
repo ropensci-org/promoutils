@@ -1,5 +1,8 @@
 #' Fetch help wanted issues
 #'
+#' @param min_date Character/Date. Earliest date a help-wanted label was added to an issue to be included.
+#' @param json Character. Location of the issues.json file to use.
+#'
 #' @returns Data frame of help wanted issues
 #'
 #' @export
@@ -34,7 +37,10 @@ help_fetch <- function(
     )
 
   help |>
-    dplyr::filter(label_created >= .env$min_date, label_created < Sys.Date()) |>
+    dplyr::filter(
+      .data$label_created >= .env$min_date,
+      .data$label_created < Sys.Date()
+    ) |>
     dplyr::rename(
       "labeller_github" = "username",
       "maintainer_name" = "pkg_author"
@@ -44,7 +50,10 @@ help_fetch <- function(
 
 #' Get social media handles for helpwanted issues
 #'
-#' @param help Data frame of help wanted issues
+#' @param help Data frame of help wanted issues.
+#' @param force_masto Logical. Passed to [monarch::add_handles()]. Whether or
+#' not to force a re-check of mastodon handles (good if you think they've
+#' changed or they are 'none' and you want to check again.
 #'
 #' @returns Data frame of help wanted issues with social median handles added
 #'
@@ -86,7 +95,7 @@ help_handles <- function(help, force_masto = FALSE) {
 #'   help_handles() |>
 #'   by_platform()
 #'
-#' help_post(h)
+#' help_post(h, print = TRUE)  # For non-interactive examples
 
 help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
   #TODO: Use dictionary?
@@ -95,32 +104,33 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     message("No new help-wanted issues to post")
   }
 
+  ei <- emo::ji("idea") # So picked up by namespacing
   h <- help |>
     dplyr::mutate(
       labels_first = dplyr::if_else(
         .data$labels_first,
         glue::glue(
-          "{emo::ji('idea')}",
+          "{ei",
           " A great way to learn with this 'good first issue'! ",
-          "{emo::ji('idea')}\n\n\n"
+          "{ei}\n\n\n"
         ),
         glue::glue("")
       )
     ) |>
-    dplyr::arrange(dplyr::desc(label_created)) |>
+    dplyr::arrange(dplyr::desc(.data$label_created)) |>
     dplyr::mutate(
       type = dplyr::if_else(
-        stringr::str_detect(title, "New Maintainer Wanted"),
+        stringr::str_detect(.data$title, "New Maintainer Wanted"),
         "maintainer",
         "regular"
       ),
-      not_maint = is.na(maintainer_github) |
-        any(maintainer_github != labeller_github)
+      not_maint = is.na(.data$maintainer_github) |
+        any(.data$maintainer_github != .data$labeller_github)
     )
 
   if (any(h$type == "maintainer")) {
     drafts_maintainer <- h |>
-      dplyr::filter(type == "maintainer") |>
+      dplyr::filter(.data$type == "maintainer") |>
       dplyr::select("package", "url", "platform") |>
       dplyr::distinct() |>
       dplyr::mutate(
@@ -161,7 +171,7 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     )
 
     drafts_regular <- h |>
-      dplyr::filter(type == "regular") |>
+      dplyr::filter(.data$type == "regular") |>
       dplyr::mutate(
         pkg = glue::glue("{emo::ji('package')} {package}"),
         body = glue::glue(
@@ -197,9 +207,9 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
         n_post = dplyr::if_else(.data$platform == "linkedin", 1, .data$n_post),
         .by = "platform"
       ) |>
-    dplyr::summarize(
-      body = glue::glue_collapse(.data$body, sep = "\n\n"),
-      draft = glue::glue("{opening}\n{body}"),
+      dplyr::summarize(
+        body = glue::glue_collapse(.data$body, sep = "\n\n"),
+        draft = glue::glue("{opening}\n{body}"),
         .by = c("platform", "n_post")
       ) |>
       dplyr::arrange(.data$platform, .data$n_post)
@@ -225,7 +235,7 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     over_char_limit = cli::cli_warn,
     title = \"help-wanted - maintainer\",
     body = \"{drafts_maintainer$draft}\n\")\n\n",
-      .trim = FALSE
+        .trim = FALSE
       )
     )
   }
@@ -240,7 +250,7 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     over_char_limit = cli::cli_warn,
     title = \"help-wanted\",
     body = \"{drafts_regular$draft}\n\")\n",
-      .trim = FALSE
+        .trim = FALSE
       )
     )
   }

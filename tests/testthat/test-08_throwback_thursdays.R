@@ -5,8 +5,6 @@ test_that("tt_review()", {
 })
 
 test_that("tt_posts()", {
-  withr::local_envvar(list(CLIPR_ALLOW = TRUE))
-
   t <- tt_post(
     "2017-08-22",
     "So you (don't) think you can review a package",
@@ -19,12 +17,10 @@ test_that("tt_posts()", {
   expect_match(t, "promoutils::socials_post_issue")
   expect_match(t, "mastodon|linkedin")
   expect_true(all(stringr::str_detect(t, "mastodon|linkedin")))
-  expect_equal(stringr::str_count(t, "\\:calendar\\:"), 2)
+  expect_equal(stringr::str_count(t, "\\:calendar\\:") |> sum(), 2)
 })
 
 test_that("tt_post() multiple posts", {
-  withr::local_envvar(list(CLIPR_ALLOW = TRUE))
-
   # Error on lengths mismatch
   expect_error(
     tt_post(
@@ -55,8 +51,6 @@ test_that("tt_post() multiple posts", {
 })
 
 test_that("tt_post() allows multiple links", {
-  withr::local_envvar(list(CLIPR_ALLOW = TRUE))
-
   t <- tt_post(
     c("2017-08-22", "2017-08-22"),
     c(
@@ -73,6 +67,6 @@ test_that("tt_post() allows multiple links", {
     expect_output()
 
   expect_match(t, "promoutils::socials_post_issue")
-  expect_equal(stringr::str_count(t, "mastodon|linkedin"), 2)
-  expect_equal(stringr::str_count(t, "\\:calendar\\:"), 4)
+  expect_equal(stringr::str_count(t, "mastodon|linkedin") |> sum(), 2)
+  expect_equal(stringr::str_count(t, "\\:calendar\\:") |> sum(), 4)
 })

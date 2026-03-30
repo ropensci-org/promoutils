@@ -4,7 +4,7 @@
 \alias{cw_checkin}
 \title{Create draft message for checking in with Cohosts}
 \usage{
-cw_checkin(which = "next", names = NULL)
+cw_checkin(which = "next", names = NULL, print = FALSE)
 }
 \arguments{
 \item{which}{Character/Date. "next" to fetch details on the next coworking
@@ -13,6 +13,9 @@ coworking session, or a Date fetch details for a specific coworking
 session.}
 
 \item{names}{Character. Names of cohost if overriding those in the event listing.}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
 }
 \description{
 The week before, prepare the slides and coworking document, then use this

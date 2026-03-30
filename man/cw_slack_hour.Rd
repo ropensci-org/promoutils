@@ -8,6 +8,7 @@ cw_slack_hour(
   user = "UNRAUCMTK",
   test_run = FALSE,
   dry_run = FALSE,
+  print = FALSE,
   call = rlang::caller_env()
 )
 }
@@ -18,6 +19,9 @@ cw_slack_hour(
 test channel.}
 
 \item{dry_run}{Logical. Whether to do a dry run, print the message only.}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
 
 \item{call}{Environment. Parent environment for messaging.}
 }

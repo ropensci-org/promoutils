@@ -46,7 +46,7 @@ dict_helpwanted <- function() {
   # TODO UPDATE!
   dplyr::tibble(
     # Spanish and English
-    category = c("Se busca colaboración", "Help wanted"),
+    category = c("Se busca colaboraci\u00F3n", "Help wanted"),
     l_first = c("", "A great way to learn with this 'good first issue'!"),
     l_maintainer = c("", "New Maintainer Wanted"),
     l_maintained = c("mantenido por", "maintained by"),
