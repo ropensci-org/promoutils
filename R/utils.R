@@ -9,7 +9,7 @@ gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
 #'
 #' @param universe Character. Universe to collect details from.
 #'
-#' @returns
+#' @returns Data frame of package details
 #'
 #' @export
 #' @examples
@@ -513,7 +513,7 @@ fmt_slack_urls <- function(body) {
 #'   by_platform()
 
 by_platform <- function(df) {
-  if (nrow(df) == 0) {
+  if (!is.null(df) && nrow(df) == 0) {
     return(data.frame())
   }
 

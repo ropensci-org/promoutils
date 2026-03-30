@@ -43,7 +43,7 @@ uc_fetch <- function(owner = "ropensci", name = "discussions") {
   u |>
     purrr::pluck("data", "repository", "discussions", "nodes") |>
     purrr::map(\(u) {
-      tibble::as_tibble(u) |> tidyr::unnest(c("author", "category"))
+      dplyr::as_tibble(u) |> tidyr::unnest(c("author", "category"))
     }) |>
     purrr::list_rbind() |>
     dplyr::mutate(date = lubridate::ymd_hms(.data$createdAt)) |>
@@ -116,6 +116,10 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
 #'   uc_handles()
 
 uc_handles <- function(uc) {
+  if (nrow(uc) == 0) {
+    cli::cli_inform("No Usecases")
+    return(data.frame())
+  }
   uc |>
     # Get missing Github by Name and other handles for maintainers
     monarch::add_handles(

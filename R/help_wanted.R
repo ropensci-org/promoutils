@@ -42,11 +42,11 @@ help_fetch <- function(
     dplyr::left_join(pkgs, by = c("package", "maintainer_name"))
 }
 
-#' Title
+#' Get social media handles for helpwanted issues
 #'
-#' @param help
+#' @param help Data frame of help wanted issues
 #'
-#' @returns
+#' @returns Data frame of help wanted issues with social median handles added
 #'
 #' @export
 #' @examples
@@ -143,7 +143,8 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
           glue::glue_collapse(.data$body, sep = "\n")
         ),
         .by = "platform"
-      )
+      ) |>
+      dplyr::arrange(.data$platform)
   } else {
     drafts_maintainer <- data.frame()
   }
@@ -158,7 +159,7 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     opening <- glue::glue(
       "[help wanted] {how_many} looking for some help! {emo::ji('folded hands')}\n\n"
     )
-    browser()
+
     drafts_regular <- h |>
       dplyr::filter(type == "regular") |>
       dplyr::mutate(
