@@ -276,9 +276,9 @@ replace_emoji <- function(x) {
 #' yaml_extract("~~~start: 2023-11-12\nauthor: Steffi\n~~~")
 #'
 yaml_extract <- function(yaml, trim = "~~~") {
-  y <- stringr::str_remove_all(yaml, trim) %>%
-    yaml::yaml.load() %>%
-    purrr::map_if(is.null, ~"") %>%
+  y <- stringr::str_remove_all(yaml, trim) |>
+    yaml::yaml.load() |>
+    purrr::map_if(is.null, \(x) "") |>
     data.frame()
 
   # Catch common typos
