@@ -281,10 +281,11 @@ template <- function(name) {
 }
 
 copy <- function(body, what, print = FALSE) {
-  clipr::write_clip(body)
-  cli::cli_alert_success("Copied {what} to clipboard")
   if (print) {
     cli::cat_print(body)
+  } else {
+    clipr::write_clip(body)
+    cli::cli_alert_success("Copied {what} to clipboard")
   }
   invisible(FALSE)
 }

@@ -204,6 +204,7 @@ cw_socials <- function(
   posters_tz = "America/Winnipeg",
   test_run = FALSE,
   dry_run = FALSE,
+  print = TRUE,
   branch = NULL
 ) {
   if (test_run) {
@@ -423,7 +424,7 @@ cw_slack_week <- function(x, posters_tz, test_run = FALSE, dry_run = FALSE) {
     )
   }
 
-  copy(body_sister, "Sister-Slack messages")
+  copy(body_sister, "Sister-Slack messages", print = print)
   cli::cli_alert_info("Post on {time_post - lubridate::weeks(1)}")
 }
 

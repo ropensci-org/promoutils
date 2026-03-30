@@ -14,8 +14,7 @@ test_that("tt_posts()", {
     blurb = "test",
     print = TRUE
   ) |>
-    expect_message("Copied Throwback Thursday") |>
-    capture_output()
+    expect_output()
 
   expect_match(t, "promoutils::socials_post_issue")
   expect_match(t, "mastodon|linkedin")
@@ -71,8 +70,7 @@ test_that("tt_post() allows multiple links", {
     blurb = "test",
     print = TRUE
   ) |>
-    expect_message("Copied Throwback Thursday") |>
-    capture_output()
+    expect_output()
 
   expect_match(t, "promoutils::socials_post_issue")
   expect_equal(stringr::str_count(t, "mastodon|linkedin"), 2)
