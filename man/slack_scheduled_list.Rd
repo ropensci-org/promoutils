@@ -14,5 +14,7 @@ Returns the currently scheduled messages with added details regarding
 timezones, etc.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_scheduled_list()
+\dontshow{\}) # examplesIf}
 }

@@ -19,7 +19,7 @@
 #'   - https://docs.slack.dev/messaging/sending-and-scheduling-messages
 #'   - https://docs.slack.dev/messaging/sending-and-scheduling-messages#scheduling
 #'
-#' @examples
+#' @examplesIf interactive()
 #' slack_posts_write("testing on Tuesday")
 #' slack_posts_write("testing more and more", when = Sys.time() + 3600, tz = "Europe/Paris")
 #' slack_posts_write(
@@ -143,7 +143,7 @@ slack_posts_write <- function(
 #' @returns Data frame of currently scheduled messages
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' slack_scheduled_list()
 
 slack_scheduled_list <- function() {
@@ -203,7 +203,7 @@ slack_scheduled_list <- function() {
 #' @returns Nothing
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' # Schedule message
 #' slack_posts_write("Testing delete msg", when = (Sys.Date() + lubridate::days(2)))
 #'

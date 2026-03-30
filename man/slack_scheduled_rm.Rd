@@ -22,6 +22,7 @@ Nothing
 Removes a currently scheduled messages.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Schedule message
 slack_posts_write("Testing delete msg", when = (Sys.Date() + lubridate::days(2)))
 
@@ -39,4 +40,5 @@ slack_scheduled_list()
 \dontrun{
 slack_scheduled_rm(channel = "#testing-api", id = "Q08U4S3J6QG")
 }
+\dontshow{\}) # examplesIf}
 }

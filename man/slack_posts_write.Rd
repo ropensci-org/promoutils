@@ -35,6 +35,7 @@ See https://docs.slack.dev/messaging/formatting-message-text#special-mentions
 https://docs.slack.dev/messaging/formatting-message-text#mentioning-users
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_posts_write("testing on Tuesday")
 slack_posts_write("testing more and more", when = Sys.time() + 3600, tz = "Europe/Paris")
 slack_posts_write(
@@ -54,6 +55,7 @@ slack_posts_write(
   "testing [this cool link](https://mycoolsite.com)",
   dry_run = TRUE
 )
+\dontshow{\}) # examplesIf}
 }
 \references{
 \itemize{
