@@ -338,7 +338,7 @@ cw_socials <- function(
   cw_social_hour(deets, where = "linkedin", dry_run = dry_run)
 
   # Post slack week before message
-  cw_slack_week(deets, posters_tz, test_run, dry_run)
+  cw_slack_week(deets, posters_tz, test_run, dry_run, print)
 
   invisible()
 }
@@ -397,7 +397,13 @@ cw_social_hour <- function(x, where, dry_run) {
   )
 }
 
-cw_slack_week <- function(x, posters_tz, test_run = FALSE, dry_run = FALSE) {
+cw_slack_week <- function(
+  x,
+  posters_tz,
+  test_run = FALSE,
+  dry_run = FALSE,
+  print = FALSE
+) {
   time_post <- x |>
     dplyr::mutate(
       time_post = .data$date_local - lubridate::weeks(1),
@@ -456,6 +462,7 @@ cw_slack_hour <- function(
   user = "UNRAUCMTK",
   test_run = FALSE,
   dry_run = FALSE,
+  print = FALSE,
   call = rlang::caller_env()
 ) {
   # Get date of upcoming coworking session
@@ -617,9 +624,10 @@ cw_details <- function(which = "next") {
 #'   coworking session, or a Date fetch details for a specific coworking
 #'   session.
 #' @param names Character. Names of cohost if overriding those in the event listing.
+#' @inheritParams common_docs
 #'
 #' @export
-cw_checkin <- function(which = "next", names = NULL) {
+cw_checkin <- function(which = "next", names = NULL, print = FALSE) {
   if (is.null(which)) {
     cw <- cw_details()
   } else {
@@ -635,7 +643,7 @@ cw_checkin <- function(which = "next", names = NULL) {
   notes_link <- docs_link()
 
   body <- glue::glue(template("cw_checkin"))
-  copy(body, "Checkin message")
+  copy(body, "Checkin message", print = print)
 }
 
 #' Create draft message for checking in with Cohosts about the Event review

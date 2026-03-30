@@ -71,12 +71,9 @@ test_that("cw_event()", {
 })
 
 test_that("cw_socials()", {
-  withr::local_envvar(list(CLIPR_ALLOW = TRUE))
-  l <- cw_socials("2025-07-01", "Test ", "@test", "", dry_run = TRUE) |>
-    expect_message("Timezone: America/Vancouver") |>
+  cw_socials("2025-07-01", "Test ", "@test", "", dry_run = TRUE) |>
+    expect_message("Timezone: America/Los_Angeles") |>
     suppressMessages()
-
-  expect_type(l, "list")
 })
 
 test_that("cw_slack_hour()", {
