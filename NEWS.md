@@ -6,6 +6,7 @@
 - Use cli
 - Add consistency
 - Add Throwback Thursday functions
+- Remove discourse functions
 
 # 0.4.4
 - Preliminary workflows for automatic Slack message scheduling
