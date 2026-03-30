@@ -1,3 +1,41 @@
+#' Review blogposts views for Throwback Thursday highlights
+#'
+#' Use [matomo_update()] and friends to download and update blog post view data.
+#' `tt_review()` summarizes the posts by view and optionally filters to a
+#' specific month.
+#'
+#' @param which_month
+#'
+#' @returns Data frame of posts by views with urls
+#'
+#' @export
+#'
+#' @examplesIf dir.exists(matomo_dir())
+#' tt_review(11)
+
+tt_review <- function(which_month = "all") {
+  blogviews <- matomo_read() |>
+    matomo_blogposts() |>
+    dplyr::mutate(url = paste0("https://ropensci.org", .data$label)) |>
+    dplyr::arrange(dplyr::desc(.data$nb_visits)) |>
+    dplyr::filter(
+      !stringr::str_detect(.data$label, "news-digest|news-"),
+      !stringr::str_detect(.data$label, "/technotes/")
+    )
+
+  if (which_month != "all") {
+    blogviews <- dplyr::filter(
+      blogviews,
+      lubridate::month(.data$post_date) == .env$which_month
+    )
+  }
+
+  blogviews |>
+    dplyr::select(-"label", -"post_month") |>
+    print(n = Inf)
+}
+
+
 #' Create Throwback Thursday `socials_post_issue()` command
 #'
 #' @param date YMD Character. Date of the original post.
@@ -47,7 +85,7 @@ tt_post <- function(
 ) {
   m <- lubridate::month(date)
 
-  if (length(date) > 1 & length(blurb) == 1) {
+  if (length(date) > 1 && length(blurb) == 1) {
     blurb <- rep(blurb, length(date))
   }
 

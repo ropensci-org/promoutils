@@ -5,7 +5,7 @@
 - Move Usecases etc. workflows to promoutils
 - Use cli
 - Add consistency
-- 
+- Add Throwback Thursday functions
 
 # 0.4.4
 - Preliminary workflows for automatic Slack message scheduling
