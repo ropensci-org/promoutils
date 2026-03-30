@@ -187,35 +187,22 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
         ),
         .by = c("platform", "package")
       )
-    # TODO: FIXME!!!!!!!!!!!!!!----------------------------
-    drafts_regular |>
+
+    drafts_regular <- drafts_regular |>
       dplyr::mutate(
-        nchar = nchar(body),
-        cum_char = cumsum(nchar),
-        cum_char_adj = dplyr::if_else(
-          cum_char + nchar(opening) > 500,
-          cum_char - 500,
-          cum_char
-        ),
-        cum_char_adj2 = dplyr::if_else(
-          cum_char_adj + nchar(opening) > 500,
-          cum_char_adj - 500,
-          cum_char_adj
-        ),
-        cum_char_adj3 = dplyr::if_else(
-          cum_char_adj2 + nchar(opening) > 500,
-          cum_char_adj2 - 500,
-          cum_char_adj2
-        ),
-        cum_char_adj3 = cum_char_adj3 + nchar(opening),
-        post_n = ceiling(cum_char_adj3 / 500)
+        nchar = nchar(.data$body),
+        cum_char = cumsum(.data$nchar),
+        n_post = (.data$cum_char + nchar(.env$opening)) / 500,
+        n_post = ceiling(.data$n_post),
+        n_post = dplyr::if_else(.data$platform == "linkedin", 1, .data$n_post),
+        .by = "platform"
       ) |>
-      dplyr::select(-"body")
     dplyr::summarize(
       body = glue::glue_collapse(.data$body, sep = "\n\n"),
       draft = glue::glue("{opening}\n{body}"),
-      .by = "platform"
-    )
+        .by = c("platform", "n_post")
+      ) |>
+      dplyr::arrange(.data$platform, .data$n_post)
   } else {
     drafts_regular <- data.frame()
   }
@@ -229,28 +216,36 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
   )
 
   if (nrow(drafts_maintainer) > 0) {
-    cmd <- glue::glue(
-      "{cmd}## Maintainers\npromoutils::socials_post_issue(
+    cmd <- c(
+      cmd,
+      glue::glue(
+        "## Maintainers - {drafts_maintainer$platform}\npromoutils::socials_post_issue(
     time = \"{date_time}\", tz = \"America/Vancouver\",
     where = \"{drafts_maintainer$platform}\", dry_run = {dry_run},
     over_char_limit = cli::cli_warn,
     title = \"help-wanted - maintainer\",
     body = \"{drafts_maintainer$draft}\n\")\n\n",
       .trim = FALSE
+      )
     )
   }
 
   if (nrow(drafts_regular) > 0) {
-    cmd <- glue::glue(
-      "{cmd}## Regular\npromoutils::socials_post_issue(
+    cmd <- c(
+      cmd,
+      glue::glue(
+        "## Regular - {drafts_regular$platform}\npromoutils::socials_post_issue(
     time = \"{date_time}\", tz = \"America/Vancouver\",
     where = \"{drafts_regular$platform}\", dry_run = {dry_run},
     over_char_limit = cli::cli_warn,
     title = \"help-wanted\",
     body = \"{drafts_regular$draft}\n\")\n",
       .trim = FALSE
+      )
     )
   }
+
+  cmd <- glue::glue_collapse(cmd, "\n")
 
   copy(cmd, "Help-wanted post commands", print = print)
 }
