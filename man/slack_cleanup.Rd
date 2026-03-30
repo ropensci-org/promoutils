@@ -14,10 +14,13 @@ Removes previously scheduled messages from \verb{#admin-scheduled} if after the
 posting date.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+
 slack_posts_write("testing cleanup",
                   when = Sys.time() + lubridate::seconds(600),
                   tz = Sys.timezone())
 slack_scheduled_list()
 
 slack_cleanup()
+\dontshow{\}) # examplesIf}
 }

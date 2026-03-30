@@ -13,5 +13,7 @@ Data frame of Slack users including names and ids
 Fetch a list of Slack users
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 u <- slack_users()
+\dontshow{\}) # examplesIf}
 }

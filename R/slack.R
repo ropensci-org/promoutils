@@ -259,7 +259,8 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
 #' @returns Nothing
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
+#'
 #' slack_posts_write("testing cleanup",
 #'                   when = Sys.time() + lubridate::seconds(600),
 #'                   tz = Sys.timezone())
@@ -369,7 +370,7 @@ slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
 #' @returns Data frame
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' slack_user("Steffi")
 
 slack_user <- function(name, users = NULL) {
@@ -388,7 +389,7 @@ slack_user <- function(name, users = NULL) {
 #' @returns Data frame of Slack users including names and ids
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' u <- slack_users()
 
 slack_users <- function() {
