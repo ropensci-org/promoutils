@@ -104,15 +104,13 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     message("No new help-wanted issues to post")
   }
 
-  ei <- emo::ji("idea") # So picked up by namespacing
+  ei <- emo::ji("idea") # So picked up by namespacing checks
   h <- help |>
     dplyr::mutate(
       labels_first = dplyr::if_else(
         .data$labels_first,
         glue::glue(
-          "{ei",
-          " A great way to learn with this 'good first issue'! ",
-          "{ei}\n\n\n"
+          "{ei} A great way to learn with this 'good first issue'! {ei}\n\n\n"
         ),
         glue::glue("")
       )
