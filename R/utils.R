@@ -244,34 +244,6 @@ escape_linkedin_chars <- function(x) {
   stringr::str_replace_all(x, p)
 }
 
-
-#' Convert a mastodon user link to handle
-#'
-#' @param x Character. Link to user's profile
-#'
-#' @return Character user handle @user@instance
-#' @export
-#'
-#' @examples
-#' masto2user("https://fosstodon.org/@steffilazerte")
-#' masto2user("steffi")
-#' masto2user("@steffilazerte@fosstodon.org")
-#' masto2user(NA)
-
-masto2user <- function(x) {
-  if (is.na(x) || stringr::str_count(x, "@") > 1) {
-    n <- x
-  } else if (stringr::str_detect(x, "http|@")) {
-    n <- stringr::str_remove(x, "http(s?)://") |>
-      stringr::str_split("/", simplify = TRUE) |>
-      as.vector()
-    n <- glue::glue("{n[2]}@{n[1]}")
-  } else {
-    n <- x
-  }
-  n
-}
-
 template <- function(name) {
   name <- stringr::str_remove(name, "\\.txt$")
   system.file(

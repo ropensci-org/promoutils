@@ -28,14 +28,6 @@ test_that("yaml_extract()", {
     expect_equal(data.frame(reoccurring = FALSE))
 })
 
-test_that("masto2user()", {
-  expect <- "@steffilazerte@fosstodon.org"
-  expect_equal(masto2user("https://fosstodon.org/@steffilazerte"), expect)
-  expect_equal(masto2user("steffi"), "steffi")
-  expect_equal(masto2user("@steffilazerte@fosstodon.org"), expect)
-  expect_equal(masto2user(NA), NA)
-})
-
 test_that("url_from_path()", {
   expect_equal(
     url_from_path("my-post", date = "2025-01-01"),
