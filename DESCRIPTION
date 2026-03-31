@@ -37,6 +37,7 @@ Imports:
     usethis (>= 3.1.0),
     yaml
 Suggests: 
+    digest,
     withr,
     httpuv,
     matomoR (>= 0.0.1),
