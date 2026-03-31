@@ -150,7 +150,7 @@ uc_handles <- function(uc) {
 #'   uc_handles() |>
 #'   by_platform()
 #'
-#' uc_post(u, dry_run = TRUE)
+#' uc_post(u, dry_run = TRUE,print = TRUE)
 
 uc_post <- function(
   uc,

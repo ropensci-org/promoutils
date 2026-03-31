@@ -29,5 +29,5 @@ u <- uc_fetch() |>
   uc_handles() |>
   by_platform()
 
-uc_post(u, dry_run = TRUE)
+uc_post(u, dry_run = TRUE,print = TRUE)
 }
