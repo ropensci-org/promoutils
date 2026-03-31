@@ -42,6 +42,7 @@ help_fetch <- function(
       .data$label_created < Sys.Date()
     ) |>
     dplyr::rename(
+      "labeller_name" = "author",
       "labeller_github" = "username",
       "maintainer_name" = "pkg_author"
     ) |>
@@ -51,9 +52,7 @@ help_fetch <- function(
 #' Get social media handles for helpwanted issues
 #'
 #' @param help Data frame of help wanted issues.
-#' @param force_masto Logical. Passed to [monarch::add_handles()]. Whether or
-#' not to force a re-check of mastodon handles (good if you think they've
-#' changed or they are 'none' and you want to check again.
+#' @inheritParams common_docs
 #'
 #' @returns Data frame of help wanted issues with social median handles added
 #'
@@ -63,19 +62,44 @@ help_fetch <- function(
 #'   help_handles()
 
 help_handles <- function(help, force_masto = FALSE) {
-  help |>
-    # Get missing Github by Name and other handles for maintainers
-    monarch::add_handles(
+  if (nrow(help) == 0) {
+    cli::cli_inform("No Help Wanted")
+    return(data.frame())
+  }
+  pkgs <- pkgs_ru()
+
+  help <- help |>
+    dplyr::left_join(
+      dplyr::select(pkgs, "package", "owner"),
+      by = "package"
+    )
+
+  # Get missing Github by Name and other handles for maintainers
+  if (anyNA(help$maintainer_github)) {
+    help <- monarch::add_handles(
+      help,
       primary = "name",
       prefix = "maintainer_",
       pkg_col = "package",
-      force_masto = force_masto
-    ) |>
-    # Get handles by Github for Issue authors
-    monarch::add_handles(
-      prefix = "labeller_",
+      owner_col = "owner",
       force_masto = force_masto
     )
+  } else {
+    help <- monarch::add_handles(
+      help,
+      primary = "github",
+      prefix = "maintainer_",
+      force_masto = force_masto
+    )
+  }
+  # Get handles by Github for Issue authors
+  help <- monarch::add_handles(
+    help,
+    prefix = "labeller_",
+    force_masto = force_masto
+  )
+
+  help
 }
 
 #' Create help-wanted `socials_post_issue()` command

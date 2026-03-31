@@ -105,6 +105,7 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
 #' Add social media handles
 #'
 #' @param uc Data frame. Formatted use cases output of `uc_fmt()`.
+#' @inheritParams common_docs
 #'
 #' @returns Data frame with social media handles appended/filled in
 #'
@@ -114,22 +115,45 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
 #'   uc_fmt("2025-01-01") |>
 #'   uc_handles()
 
-uc_handles <- function(uc) {
+uc_handles <- function(uc, force_masto = FALSE) {
   if (nrow(uc) == 0) {
-    cli::cli_inform("No Usecases")
+    cli::cli_inform("No Use Cases")
     return(data.frame())
   }
-  uc |>
-    # Get missing Github by Name and other handles for maintainers
-    monarch::add_handles(
+  pkgs <- pkgs_ru()
+
+  uc <- uc |>
+    dplyr::left_join(
+      dplyr::select(pkgs, "resource" = "package", "owner"),
+      by = "resource"
+    )
+  # Get missing Github by Name and other handles for maintainers
+  if (anyNA(uc$maintainer_github)) {
+    uc <- monarch::add_handles(
+      uc,
       primary = "name",
       prefix = "maintainer_",
-      pkg_col = "resource"
-    ) |>
-    # Get handles by Github for authors
-    monarch::add_handles(
-      prefix = "author_"
+      pkg_col = "resource",
+      owner_col = "owner",
+      force_masto = force_masto
     )
+  } else {
+    uc <- monarch::add_handles(
+      uc,
+      primary = "github",
+      prefix = "maintainer_",
+      force_masto = force_masto
+    )
+  }
+
+  # Get handles by Github for authors
+  uc <- monarch::add_handles(
+    uc,
+    prefix = "author_",
+    force_masto = force_masto
+  )
+
+  uc
 }
 
 
