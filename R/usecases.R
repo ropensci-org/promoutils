@@ -8,6 +8,7 @@
 #' @export
 #' @examples
 #' u <- uc_fetch()
+#' u
 
 uc_fetch <- function(owner = "ropensci", name = "discussions") {
   u <- gh::gh_gql(
@@ -62,6 +63,7 @@ uc_fetch <- function(owner = "ropensci", name = "discussions") {
 #' @examples
 #' u <- uc_fetch() |>
 #'   uc_fmt("2025-01-01")
+#' u
 
 uc_fmt <- function(uc, min_date, pkgs = NULL) {
   min_date <- lubridate::ymd_hms(min_date, truncated = 3)
@@ -110,7 +112,7 @@ uc_fmt <- function(uc, min_date, pkgs = NULL) {
 #' @returns Data frame with social media handles appended/filled in
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' u <- uc_fetch() |>
 #'   uc_fmt("2025-01-01") |>
 #'   uc_handles()
@@ -168,7 +170,7 @@ uc_handles <- function(uc, force_masto = FALSE) {
 #' @returns Copies commands to clipboard, optionally prints if (`print = TRUE`).
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' u <- uc_fetch() |>
 #'   uc_fmt("2025-01-01") |>
 #'   uc_handles() |>

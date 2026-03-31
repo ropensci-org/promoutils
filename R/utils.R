@@ -411,7 +411,7 @@ fmt_slack_urls <- function(body) {
 #' @returns Data frame arranged by platform on which to advertise.
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' u <- uc_fetch() |>
 #'   uc_fmt("2025-01-01") |>
 #'   uc_handles() |>

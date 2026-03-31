@@ -57,7 +57,7 @@ help_fetch <- function(
 #' @returns Data frame of help wanted issues with social median handles added
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' h <- help_fetch("2025-01-01") |>
 #'   help_handles()
 
@@ -114,7 +114,7 @@ help_handles <- function(help, force_masto = FALSE) {
 #' @returns Copies commands to clipboard, optionally prints if (`print = TRUE`).
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' h <- help_fetch("2025-05-23") |>
 #'   help_handles() |>
 #'   by_platform()
