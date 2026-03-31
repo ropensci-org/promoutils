@@ -1,5 +1,5 @@
 test_that("gh_issue_post()", {
-  # Except actuall posting
+  # Except actual posting
   with_mocked_bindings(
     gh_cache = function(...) cli::cli_inform("Posting!"),
     code = {
@@ -18,7 +18,7 @@ test_that("gh_issue_post()", {
 })
 
 test_that("gh_issue_fetch(), gh_issue_fmt()", {
-  expect_silent(i1 <- gh_issue_fetch())
+  expect_silent(i1 <- gh_issue_fetch(owner = "ropensci", repo = "weathercan"))
   expect_type(i1, "list")
 
   expect_silent(i2 <- gh_issue_fmt(i1))

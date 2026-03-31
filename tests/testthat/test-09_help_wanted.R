@@ -4,14 +4,18 @@ test_that("help_fetch()", {
 })
 
 test_that("help_fetch() |> help_handles()", {
-  expect_silent(h <- help_fetch("2025-01-01") |> help_handles())
+  local_mocked_cocoon()
+
+  expect_silent(h <- help_handles(test_help_data()))
   expect_s3_class(h, "data.frame")
   expect_all_true(c("maintainer_linkedin", "labeller_mastodon") %in% names(h))
 })
 
 test_that("help_fetch() |> help_handles() |> by_platform() then help_post()", {
+  local_mocked_cocoon()
+
   expect_silent(
-    h <- help_fetch("2025-05-23") |>
+    h <- test_help_data() |>
       help_handles() |>
       by_platform()
   )
