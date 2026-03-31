@@ -20,7 +20,6 @@ reference:
   - starts_with("dict")
 - title: Utility functions
   - by_platform
-  - docs_link
   - gh_cache
   - next_date
   - pkg_authors
@@ -28,7 +27,6 @@ reference:
   - post_time
   - prs_list
   - replace_emoji
-  - slides_link
   - socials_post_issue
   - url_from_path
   - yaml_extract

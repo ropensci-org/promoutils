@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # Get coverage for badge and browsable report
 library(covr)
 coverage_detail <- covr::package_coverage(
-  function_exclusions = "^li_auth$|^cw_checkin|^docs_link|^forum",
+  function_exclusions = "^li_auth$|^cw_checkin|^cw_docs_link|^forum",
   line_exclusions = "R/zzz.R"
 )
 # Get coverage for badge

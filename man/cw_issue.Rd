@@ -38,5 +38,7 @@ following an existing coworking issue) and next appropriate timezone (cycling
 through America, Europe, and Australia) automatically.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 cw_issue(dry_run = TRUE)
+\dontshow{\}) # examplesIf}
 }

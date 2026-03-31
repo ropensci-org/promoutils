@@ -110,5 +110,5 @@ test_that("cw_slack_hour()", {
 })
 
 test_that("slides_link()", {
-  expect_silent(slides_link())
+  expect_silent(cw_slides_link())
 })

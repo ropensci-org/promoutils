@@ -128,13 +128,12 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
     message("No new help-wanted issues to post")
   }
 
-  ei <- emo::ji("idea") # So picked up by namespacing checks
   h <- help |>
     dplyr::mutate(
       labels_first = dplyr::if_else(
         .data$labels_first,
         glue::glue(
-          "{ei} A great way to learn with this 'good first issue'! {ei}\n\n\n"
+          "\U1F4A1 A great way to learn with this 'good first issue'! {\U1F4A1}\n\n\n"
         ),
         glue::glue("")
       )
@@ -162,7 +161,7 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
           "rOpenSci packages are"
         ),
         opening = glue::glue(
-          "[help wanted] {how_many} looking for maintainer help {emo::ji('folded hands')}\n\n",
+          "[help wanted] {how_many} looking for maintainer help \U1F64F\n\n",
           "The following packages are looking for a new maintainer (or maintainer team).\n",
           "Check out their issues to see about getting involved\n\n"
         ),
@@ -189,13 +188,13 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
       "rOpenSci packages are"
     )
     opening <- glue::glue(
-      "[help wanted] {how_many} looking for some help! {emo::ji('folded hands')}\n\n"
+      "[help wanted] {how_many} looking for some help! \U1F64F\n\n"
     )
 
     drafts_regular <- h |>
       dplyr::filter(.data$type == "regular") |>
       dplyr::mutate(
-        pkg = glue::glue("{emo::ji('package')} {package}"),
+        pkg = glue::glue("\U1F4E6 {package}"),
         body = glue::glue(
           "'{title}' at {url} (by {labeller}) {labels_first}"
         ),

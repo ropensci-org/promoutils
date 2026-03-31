@@ -33,8 +33,8 @@ Will only work if running between the time that the 1-week message was posted
 and the start of the coworking.
 }
 \examples{
-\dontrun{
-  cw_slack_hour(test_run = TRUE)
-  cw_slack_hour(dry_run = TRUE)
-}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+cw_slack_hour(test_run = TRUE)
+cw_slack_hour(dry_run = TRUE)
+\dontshow{\}) # examplesIf}
 }

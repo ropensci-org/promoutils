@@ -18,7 +18,7 @@
 #'
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' cw_issue(dry_run = TRUE)
 
 cw_issue <- function(
@@ -185,7 +185,6 @@ cw_times <- function(details) {
 #' @export
 #'
 #' @examples
-#'
 #' cw_socials("2023-07-04",
 #'            who_masto = "@cohost@mastodon.org",
 #'            who_linkedin = "Cohost the Best",
@@ -455,11 +454,10 @@ cw_slack_week <- function(
 #' @returns Nothing
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#'   cw_slack_hour(test_run = TRUE)
-#'   cw_slack_hour(dry_run = TRUE)
-#' }
+#' @examplesIf interactive()
+#' cw_slack_hour(test_run = TRUE)
+#' cw_slack_hour(dry_run = TRUE)
+
 cw_slack_hour <- function(
   user = "UNRAUCMTK",
   test_run = FALSE,
@@ -558,7 +556,7 @@ cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
 #'
 #' @return Data frame with coworking event details
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' cw_details()
 #' # cw_details("2023-11") # Only works for events in the future
 
@@ -641,8 +639,8 @@ cw_checkin <- function(which = "next", names = NULL, print = FALSE) {
   }
 
   date_nice <- cw_times(cw)$date_nice
-  slides_link <- slides_link()
-  notes_link <- docs_link()
+  slides_link <- cw_slides_link()
+  notes_link <- cw_docs_link()
 
   body <- glue::glue(template("cw_checkin"))
   copy(body, "Checkin message", print = print)
@@ -764,7 +762,7 @@ cw_tz <- function(tz = NULL) {
 #'
 #' @returns Google Docs link
 #' @export
-docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
+cw_docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
   deets <- promoutils::cw_details(which = which)
   name <- glue::glue_data(
     deets,
@@ -800,6 +798,7 @@ docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
     x <- readLines(f)
 
     if (!any(stringr::str_detect(x, "notes: "))) {
+      rlang::check_installed("usethis")
       # Create PR
       if (!paste0(cw, "-update") %in% gert::git_branch_list()$name) {
         usethis::pr_init(paste0(cw, "-update"))
@@ -839,7 +838,7 @@ docs_link <- function(which = "next", open_sites = TRUE, add = FALSE) {
 #'
 #' @returns Link to slides
 #' @export
-slides_link <- function(open_site = TRUE) {
+cw_slides_link <- function(open_site = TRUE) {
   slides_link <- "https://docs.google.com/presentation/d/1e53SC_nrBHKBbqegzL3q-89TUJp2SV0T8c2x4q8eQjk/edit?usp=sharing"
   utils::browseURL(slides_link)
   invisible(slides_link)

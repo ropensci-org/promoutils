@@ -4,13 +4,27 @@
 \alias{gh_cache}
 \title{Create a cached version of the GH api calls}
 \usage{
-gh_cache(...)
+gh_cache(
+  endpoint,
+  ...,
+  per_page = NULL,
+  .per_page = NULL,
+  .token = NULL,
+  .destfile = NULL,
+  .overwrite = FALSE,
+  .api_url = NULL,
+  .method = "GET",
+  .limit = NULL,
+  .accept = "application/vnd.github.v3+json",
+  .send_headers = NULL,
+  .progress = TRUE,
+  .params = list(),
+  .max_wait = 600,
+  .max_rate = NULL
+)
 }
 \arguments{
-\item{...}{
-  Arguments passed on to \code{\link[gh:gh]{gh::gh}}
-  \describe{
-    \item{\code{endpoint}}{GitHub API endpoint. Must be one of the following forms:
+\item{endpoint}{GitHub API endpoint. Must be one of the following forms:
 \itemize{
 \item \verb{METHOD path}, e.g. \code{GET /rate_limit},
 \item \code{path}, e.g. \verb{/rate_limit},
@@ -20,11 +34,22 @@ gh_cache(...)
 
 If the method is not supplied, will use \code{.method}, which defaults
 to \code{"GET"}.}
+
+\item{...}{
+  Arguments passed on to \code{\link[gh:gh]{gh::gh}}
+  \describe{
     \item{\code{per_page,.per_page}}{Number of items to return per page. If omitted,
 will be substituted by \code{max(.limit, 100)} if \code{.limit} is set,
 otherwise determined by the API (never greater than 100).}
-    \item{\code{.token}}{Authentication token. Defaults to \code{\link[gh:gh_token]{gh_token()}}.}
-    \item{\code{.destfile}}{Path to write response to disk. If \code{NULL} (default),
+  }}
+
+\item{per_page, .per_page}{Number of items to return per page. If omitted,
+will be substituted by \code{max(.limit, 100)} if \code{.limit} is set,
+otherwise determined by the API (never greater than 100).}
+
+\item{.token}{Authentication token. Defaults to \code{\link[gh:gh_token]{gh_token()}}.}
+
+\item{.destfile}{Path to write response to disk. If \code{NULL} (default),
 response will be processed and returned as an object. If path is given,
 response will be written to disk in the form sent. gh writes the
 response to a temporary file, and renames that file to \code{.destfile}
@@ -32,15 +57,19 @@ after the request was successful. The name of the temporary file is
 created by adding a \verb{-<random>.gh-tmp} suffix to it, where \verb{<random>}
 is an ASCII string with random characters. gh removes the temporary
 file on error.}
-    \item{\code{.overwrite}}{If \code{.destfile} is provided, whether to overwrite an
+
+\item{.overwrite}{If \code{.destfile} is provided, whether to overwrite an
 existing file.  Defaults to \code{FALSE}. If an error happens the original
 file is kept.}
-    \item{\code{.api_url}}{Github API url (default: \url{https://api.github.com}). Used
+
+\item{.api_url}{Github API url (default: \url{https://api.github.com}). Used
 if \code{endpoint} just contains a path. Defaults to \code{GITHUB_API_URL}
 environment variable if set.}
-    \item{\code{.method}}{HTTP method to use if not explicitly supplied in the
+
+\item{.method}{HTTP method to use if not explicitly supplied in the
 \code{endpoint}.}
-    \item{\code{.limit}}{Number of records to return. This can be used
+
+\item{.limit}{Number of records to return. This can be used
 instead of manual pagination. By default it is \code{NULL},
 which means that the defaults of the GitHub API are used.
 You can set it to a number to request more (or less)
@@ -48,25 +77,30 @@ records, and also to \code{Inf} to request all records.
 Note, that if you request many records, then multiple GitHub
 API calls are used to get them, and this can take a potentially
 long time.}
-    \item{\code{.accept}}{The value of the \code{Accept} HTTP header. Defaults to
+
+\item{.accept}{The value of the \code{Accept} HTTP header. Defaults to
 \code{"application/vnd.github.v3+json"} . If \code{Accept} is given in
 \code{.send_headers}, then that will be used. This parameter can be used to
 provide a custom media type, in order to access a preview feature of
 the API.}
-    \item{\code{.send_headers}}{Named character vector of header field values
+
+\item{.send_headers}{Named character vector of header field values
 (except \code{Authorization}, which is handled via \code{.token}). This can be
 used to override or augment the default \code{User-Agent} header:
 \code{"https://github.com/r-lib/gh"}.}
-    \item{\code{.progress}}{Whether to show a progress indicator for calls that
+
+\item{.progress}{Whether to show a progress indicator for calls that
 need more than one HTTP request.}
-    \item{\code{.params}}{Additional list of parameters to append to \code{...}.
+
+\item{.params}{Additional list of parameters to append to \code{...}.
 It is easier to use this than \code{...} if you have your parameters in
 a list already.}
-    \item{\code{.max_wait}}{Maximum number of seconds to wait if rate limited.
+
+\item{.max_wait}{Maximum number of seconds to wait if rate limited.
 Defaults to 10 minutes.}
-    \item{\code{.max_rate}}{Maximum request rate in requests per second. Set
+
+\item{.max_rate}{Maximum request rate in requests per second. Set
 this to automatically throttle requests.}
-  }}
 }
 \description{
 Create a cached version of the GH api calls

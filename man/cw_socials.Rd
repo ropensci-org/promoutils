@@ -54,7 +54,6 @@ rosadmin/scheduled_socials) and Slack (by printing the post text and
 schedule).
 }
 \examples{
-
 cw_socials("2023-07-04",
            who_masto = "@cohost@mastodon.org",
            who_linkedin = "Cohost the Best",
