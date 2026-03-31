@@ -5,7 +5,26 @@
 #' @details `memoise::memoise(gh::gh)`
 #'
 #' @export
-gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
+gh_cache <- function(...) {
+  if (testthat::is_checking() || testthat::is_testing()) {
+    g <- gh_cache_file
+  } else {
+    g <- gh_cache_mem
+  }
+  g(...)
+}
+
+gh_cache_file <- memoise::memoise(
+  gh::gh,
+  omit_args = c(".max_rate"),
+  cache = memoise::cache_filesystem(system.file(
+    "extdata",
+    "gh_cache",
+    package = "promoutils"
+  ))
+)
+
+gh_cache_mem <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
 
 #' List of packages and details from R-Universe API
 #'
