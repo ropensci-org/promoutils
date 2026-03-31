@@ -16,8 +16,10 @@ Data frame arranged by platform on which to advertise.
 Arranges data in long by platform (linkedin and mastodon).
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 u <- uc_fetch() |>
   uc_fmt("2025-01-01") |>
   uc_handles() |>
   by_platform()
+\dontshow{\}) # examplesIf}
 }

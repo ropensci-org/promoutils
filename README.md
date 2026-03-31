@@ -4,7 +4,7 @@
 <!-- badges: start -->
 
 [![Code Coverage:
-52%](https://img.shields.io/badge/code_coverage-52%yellow)](#code-coverage)
+63%](https://img.shields.io/badge/code_coverage-63%yellow)](#code-coverage)
 [![R-CMD-check](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 

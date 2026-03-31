@@ -19,4 +19,5 @@ Fetch and format use cases from a GitHub Discussion board
 }
 \examples{
 u <- uc_fetch()
+u
 }

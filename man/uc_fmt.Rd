@@ -22,4 +22,5 @@ Extract out resource information
 \examples{
 u <- uc_fetch() |>
   uc_fmt("2025-01-01")
+u
 }

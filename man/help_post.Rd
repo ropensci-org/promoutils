@@ -25,9 +25,11 @@ Copies commands to clipboard, optionally prints if (\code{print = TRUE}).
 Create help-wanted \code{socials_post_issue()} command
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 h <- help_fetch("2025-05-23") |>
   help_handles() |>
   by_platform()
 
 help_post(h, print = TRUE)  # For non-interactive examples
+\dontshow{\}) # examplesIf}
 }

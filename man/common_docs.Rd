@@ -14,6 +14,10 @@
 
 \item{print}{Logical. Whether to simply print the text to console instead of
 copying to the clipboard.}
+
+\item{force_masto}{Logical. Passed to \code{\link[monarch:add_handles]{monarch::add_handles()}}. Whether or
+not to force a re-check of mastodon handles (good if you think they've
+changed or they are 'none' and you want to check again).}
 }
 \description{
 Common arguments and documentation for various functions

@@ -24,10 +24,12 @@ Copies commands to clipboard, optionally prints if (\code{print = TRUE}).
 Create use case \code{socials_post_issue()} command
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 u <- uc_fetch() |>
   uc_fmt("2025-01-01") |>
   uc_handles() |>
   by_platform()
 
 uc_post(u, dry_run = TRUE,print = TRUE)
+\dontshow{\}) # examplesIf}
 }
