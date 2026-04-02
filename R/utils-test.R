@@ -20,7 +20,7 @@ test_help_data <- function(missing = NULL) {
 
 local_mocked_cocoon <- function(.env = rlang::caller_env()) {
   testthat::local_mocked_bindings(
-    cocoon_fetch = \(x) {
+    cocoon_open = \(x) {
       data.frame(
         type = rep(c("github", "name", "mastodon", "linkedin"), 2),
         value = c(
@@ -36,6 +36,7 @@ local_mocked_cocoon <- function(.env = rlang::caller_env()) {
         github = c(rep("steffilazerte", 4), rep("yabellini", 4))
       )
     },
+    .env = .env,
     .package = "monarch" # Not advised generally, but works for us
   )
 }
