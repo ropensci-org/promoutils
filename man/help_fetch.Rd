@@ -18,5 +18,7 @@ Data frame of help wanted issues
 Fetch help wanted issues
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 h <- help_fetch("2025-01-01")
+\dontshow{\}) # examplesIf}
 }
