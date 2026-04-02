@@ -13,9 +13,6 @@ devtools::build_readme()
 source("vignettes/articles/_PRECOMPILE.R")
 
 # Standard checks ------------------------------------------
-# Use a cache to store values, reset cache to update values
-memoise::forget(gh_cache_file) # Removes all cached to file!
-
 devtools::test() # Use Ctrl-Shift-T to test non-interactively
 devtools::run_examples()
 devtools::check() # Ctrl-Shift-E to check via Terminal
@@ -24,7 +21,6 @@ devtools::check() # Ctrl-Shift-E to check via Terminal
 
 # Checks for good practices, but not code coverage
 goodpractice::gp(checks = all_checks()[all_checks() != "cov"])
-
 
 spelling::spell_check_package() # Check spelling in docs
 urlchecker::url_check() # Check URLs in documentation
