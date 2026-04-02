@@ -35,7 +35,7 @@ covr::report(coverage_detail, file = "covr/cov_report.html")
 
 
 <!-- badges: start -->
-[![Code Coverage: `r coverage`%](https://img.shields.io/badge/code_coverage-`r coverage`%`r cov_col`)](#code-coverage)
+![Code Coverage: `r coverage`%](https://img.shields.io/badge/code_coverage_`r coverage`%-`r cov_col`)
 [![R-CMD-check](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 

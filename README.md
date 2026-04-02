@@ -3,8 +3,8 @@
 
 <!-- badges: start -->
 
-[![Code Coverage:
-64%](https://img.shields.io/badge/code_coverage-64%yellow)](#code-coverage)
+![Code Coverage:
+64%](https://img.shields.io/badge/code_coverage_64%25-yellow)
 [![R-CMD-check](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci-org/promoutils/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
