@@ -6,7 +6,7 @@
 #' @returns Data frame of help wanted issues
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' h <- help_fetch("2025-01-01")
 
 help_fetch <- function(

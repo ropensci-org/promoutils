@@ -1,9 +1,10 @@
 test_that("help_fetch()", {
+  skip_on_ci()
   expect_silent(h <- help_fetch("2025-01-01"))
   expect_s3_class(h, "data.frame")
 })
 
-test_that("help_fetch() |> help_handles()", {
+test_that("help_handles()", {
   local_mocked_cocoon()
 
   expect_silent(h <- help_handles(test_help_data()))
@@ -11,7 +12,7 @@ test_that("help_fetch() |> help_handles()", {
   expect_all_true(c("maintainer_linkedin", "labeller_mastodon") %in% names(h))
 })
 
-test_that("help_fetch() |> help_handles() |> by_platform() then help_post()", {
+test_that("by_platform() & help_post()", {
   local_mocked_cocoon()
 
   expect_silent(

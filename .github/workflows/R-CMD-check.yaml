@@ -27,6 +27,8 @@ jobs:
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      LINKEDIN_SECRET: ${{ secrets.LINKEDIN_SECRET }}
+      MATOMO_TOKEN: ${{ secretes.MATOMO_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:

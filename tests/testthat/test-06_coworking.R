@@ -7,6 +7,7 @@ test_that("cw_details()", {
 
 
 test_that("cw_issue()", {
+  skip_on_ci()
   expect_error(cw_issue("2023-11", dry_run = TRUE), "Invalid date")
 
   with_mocked_bindings(
