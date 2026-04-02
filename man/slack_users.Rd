@@ -6,9 +6,14 @@
 \usage{
 slack_users()
 }
+\value{
+Data frame of Slack users including names and ids
+}
 \description{
 Fetch a list of Slack users
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 u <- slack_users()
+\dontshow{\}) # examplesIf}
 }

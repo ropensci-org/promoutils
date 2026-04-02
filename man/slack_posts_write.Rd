@@ -15,11 +15,14 @@ slack_posts_write(
 \arguments{
 \item{body}{Character. Text of message to post.}
 
-\item{when}{Character or Date/time. When to post message.}
+\item{when}{Character or Date/time. When to post message (timezone is
+ignored, see \code{tz}).}
+
+\item{tz}{Character. Timezone of \code{when}.}
+
+\item{channel}{Character. Channel to post message to.}
 
 \item{dry_run}{Logical. Test run?}
-
-\item{where}{Character. Channel to post message to.}
 }
 \value{
 Success message
@@ -32,8 +35,9 @@ See https://docs.slack.dev/messaging/formatting-message-text#special-mentions
 https://docs.slack.dev/messaging/formatting-message-text#mentioning-users
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_posts_write("testing on Tuesday")
-slack_posts_write("testing more and more", when = "2025-05-22 14:00:00", tz = "Europe/Paris")
+slack_posts_write("testing more and more", when = Sys.time() + 3600, tz = "Europe/Paris")
 slack_posts_write(
   paste(
   "Join us for Social Coworking and office hours next week!",
@@ -44,6 +48,14 @@ slack_posts_write(
   "",
   "You can use this time for...",
   "- General coworking", sep = "\n"), when = "now")
+
+# Dry runs
+slack_posts_write("testing on Tuesday", dry_run = TRUE)
+slack_posts_write(
+  "testing [this cool link](https://mycoolsite.com)",
+  dry_run = TRUE
+)
+\dontshow{\}) # examplesIf}
 }
 \references{
 \itemize{

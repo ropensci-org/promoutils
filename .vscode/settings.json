@@ -1,0 +1,27 @@
+{
+    "[r]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Posit.air-vscode"
+    },
+    "[quarto]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "quarto.quarto"
+    },
+    "cSpell.words": [
+        "checkin",
+        "Cohosts",
+        "comms",
+        "Cowork",
+        "Coworking",
+        "deets",
+        "GCWKA",
+        "googledrive",
+        "httr",
+        "masto",
+        "rosadmin",
+        "roweb",
+        "SKAP",
+        "UNRAUCMTK",
+        "UXXXXXXX"
+    ]
+}

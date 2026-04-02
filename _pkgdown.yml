@@ -2,3 +2,33 @@ url: ~
 template:
   bootstrap: 5
 
+reference:
+- title: Coworking Helpers
+  contents:
+  - starts_with("cw")
+- title: Announcement Helpers
+  contents:
+  - starts_with("uc")
+  - starts_with("help")
+  - starts_with("tt")
+- title: API functions
+  contents:
+  - starts_with("slack")
+  - starts_with("li")
+  - starts_with("matomo")
+- title: Dictionary Helpers (in progress...)
+  - starts_with("dict")
+- title: Utility functions
+  - by_platform
+  - gh_cache
+  - next_date
+  - pkg_authors
+  - pkgs_ru
+  - post_time
+  - prs_list
+  - replace_emoji
+  - socials_post_issue
+  - url_from_path
+  - yaml_extract
+  
+  

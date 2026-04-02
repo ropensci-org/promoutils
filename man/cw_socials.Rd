@@ -13,7 +13,9 @@ cw_socials(
   who_main_slack = "<@UNRAUCMTK>",
   who_main_linkedin = "Steffi LaZerte",
   posters_tz = "America/Winnipeg",
+  test_run = FALSE,
   dry_run = FALSE,
+  print = TRUE,
   branch = NULL
 )
 }
@@ -37,7 +39,12 @@ organizer (i.e., \verb{<@UXXXXXXX>}. Defaults to Steffi's id.}
 time at which to post Slack messages as these are posted in the local
 timezone}
 
+\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area)}
+
 \item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
 
 \item{branch}{Character. Branch name if not on main.}
 }
@@ -47,8 +54,13 @@ rosadmin/scheduled_socials) and Slack (by printing the post text and
 schedule).
 }
 \examples{
+cw_socials("2023-07-04",
+           who_masto = "@cohost@mastodon.org",
+           who_linkedin = "Cohost the Best",
+           who_slack = "<UXXXXXXX>",
+           dry_run = TRUE)
 
 \dontrun{
-cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXX>")
+cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXXXX>")
 }
 }

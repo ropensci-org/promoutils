@@ -1,0 +1,14 @@
+rOpenSci's next Social Coworking and office hours is up in two weeks :tada:
+
+These are casual online events for coworking and socializing generally centred on a theme related to R and tools for open/reproducible science.
+You can work quietly on your own, join in a discussion, or work while listening to the discussion, what ever suits you (and you don't have to follow the theme).
+
+:grey_exclamation: Theme: {theme}
+:hourglass_flowing_sand: When: {time}
+:cookie: Hosted by: @{who_main_linkedin} and community host @{who_linkedin}
+:mag: Details: {event_url}
+
+You can use this time for...
+- General coworking
+{action1}
+- Chat with @{who_linkedin} and other attendees about our theme!

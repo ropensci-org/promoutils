@@ -2,18 +2,27 @@
 % Please edit documentation in R/slack.R
 \name{slack_channels}
 \alias{slack_channels}
-\title{Title}
+\title{List channels and their ids}
 \usage{
-slack_channels(types = c("public_channel", "private_channel"))
+slack_channels(channel = NULL, types = c("public_channel", "private_channel"))
 }
 \arguments{
-\item{channel}{}
+\item{channel}{Character. Channel Name.}
+
+\item{types}{Character. Type of channels, one or both of "public_channel" or
+"private_channel"}
+}
+\value{
+Data frame of channel names and ids, or if \code{channel} provided, a
+single channel id.
 }
 \description{
-Title
+List channels and their ids
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_channels()
 slack_channels("general")
 chn <- slack_channels(types = "private_channel")
+\dontshow{\}) # examplesIf}
 }

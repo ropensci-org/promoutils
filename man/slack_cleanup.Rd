@@ -6,11 +6,15 @@
 \usage{
 slack_cleanup()
 }
+\value{
+Nothing
+}
 \description{
 Removes previously scheduled messages from \verb{#admin-scheduled} if after the
 posting date.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 
 slack_posts_write("testing cleanup",
                   when = Sys.time() + lubridate::seconds(600),
@@ -18,4 +22,5 @@ slack_posts_write("testing cleanup",
 slack_scheduled_list()
 
 slack_cleanup()
+\dontshow{\}) # examplesIf}
 }

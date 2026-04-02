@@ -7,12 +7,12 @@
 cw_event(date, dry_run = FALSE)
 }
 \arguments{
-\item{date}{Character/Date. Date of the coworking event (local)}
+\item{date}{Character/Date. Date of the coworking event to create}
 
 \item{dry_run}{Logical. Whether to really create the event or just return the
 text.}
 }
 \description{
 Creates a draft coworking event for the roweb3 website. All details pulled
-from the coworking todo list issue in \code{rosadmin/comms}.
+from the coworking todo list issue in \code{rosadmin/comms}. See \code{cw_issue()}.
 }

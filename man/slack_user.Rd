@@ -18,5 +18,7 @@ Data frame
 Fetch details on a specific users
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_user("Steffi")
+\dontshow{\}) # examplesIf}
 }

@@ -1,6 +1,6 @@
 Package: promoutils
 Title: Utilities for Promoting rOpenSci on Social Media
-Version: 0.4.4
+Version: 0.4.5
 Authors@R: 
     person(given = "Steffi",
            family = "LaZerte",
@@ -12,32 +12,40 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     cli,
     clipr,
     dplyr,
+    gert (>= 2.1.5),
     gh,
     glue,
+    googledrive (>= 2.1.1),
     httr2 (>= 1.0.0),
     jsonlite,
+    keyring (>= 1.4.1),
     lubridate,
-    magrittr,
     memoise (>= 2.0.1),
-    pandoc,
+    monarch (>= 0.1.0),
     purrr,
     readr,
     rlang,
-    rvest,
     stringr,
     tidyr,
     yaml
 Suggests: 
+    pandoc,
+    withr,
     httpuv,
-    testthat (>= 3.0.0)
+    matomoR (>= 0.0.1),
+    testthat (>= 3.0.0),
+    usethis (>= 3.1.0)
 Config/testthat/edition: 3
 Config/ropensci/maintainer: staff
 Depends: 
-    R (>= 4.0.0)
+    R (>= 4.2.0)
 URL: https://github.com/ropensci-org/promoutils
 BugReports: https://github.com/ropensci-org/promoutils/issues
+Remotes:  
+    ebbertd/matomoR,
+    ropensci-org/monarch

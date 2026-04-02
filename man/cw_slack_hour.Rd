@@ -4,14 +4,37 @@
 \alias{cw_slack_hour}
 \title{Schedule 1-hour before messages on rOpenSci Slack}
 \usage{
-cw_slack_hour(user = "UNRAUCMTK", dry_run = FALSE)
+cw_slack_hour(
+  user = "UNRAUCMTK",
+  test_run = FALSE,
+  dry_run = FALSE,
+  print = FALSE,
+  call = rlang::caller_env()
+)
+}
+\arguments{
+\item{user}{Character. Slack user id.}
+
+\item{test_run}{Logical. Whether to run a test of this message posting to the
+test channel.}
+
+\item{dry_run}{Logical. Whether to do a dry run, print the message only.}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
+
+\item{call}{Environment. Parent environment for messaging.}
+}
+\value{
+Nothing
 }
 \description{
 Will only work if running between the time that the 1-week message was posted
 and the start of the coworking.
 }
 \examples{
-\dontrun{
-  cw_slack_hour(dry_run = TRUE)
-}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+cw_slack_hour(test_run = TRUE)
+cw_slack_hour(dry_run = TRUE)
+\dontshow{\}) # examplesIf}
 }

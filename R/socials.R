@@ -22,90 +22,137 @@
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
 #' @param open_browser Logical. Whether to open the issue in the browser.
-#' @param over_char_limit Function. Stop or warn if over the character limit?
-#' @param verbose Logical. If dry run, displace draft?
+#' @param over_char_limit Function. Error or warn if over the character limit?
 #'
+#' @inheritParams common_docs
 #' @export
-socials_post_issue <- function(time, tz = "America/Winnipeg",
-                               title, body, where = "mastodon",
-                               avoid_dups = TRUE, add_hash = TRUE,
-                               dry_run = FALSE, open_browser = TRUE,
-                               over_char_limit = stop, verbose = FALSE) {
+#'
+#' @examples
+#' socials_post_issue("2025-01-01 00:00:00",
+#'                    title = "test post",
+#'                    body = "Test body",
+#'                    dry_run = TRUE, verbose = TRUE)
 
-  if(!all(where %in% c("mastodon", "linkedin"))) {
-    stop("'where' must be one of 'mastodon' or 'linkedin'", call. = FALSE)
+socials_post_issue <- function(
+  time,
+  tz = "America/Winnipeg",
+  title,
+  body,
+  where = "mastodon",
+  avoid_dups = TRUE,
+  add_hash = TRUE,
+  dry_run = FALSE,
+  open_browser = TRUE,
+  over_char_limit = cli::cli_abort,
+  verbose = FALSE
+) {
+  if (!all(where %in% c("mastodon", "linkedin"))) {
+    cli::cli_abort("'where' must be one of 'mastodon' or 'linkedin'")
   }
 
-  if(!tz %in% OlsonNames()) stop("Couldn't detect timezone", call. = FALSE)
+  if (!tz %in% OlsonNames()) {
+    cli::cli_abort("Couldn't detect timezone")
+  }
 
   date <- lubridate::as_date(time)
   title <- glue::glue("[Post] - {title} - {date}")
 
-  if(file.exists(body)) {
+  if (file.exists(body)) {
     body <- readr::read_lines(body)
     n <- stringr::str_which(body, "--- (Mastodon)|(LinkedIn) ---")
-    if(length(n) == 2) {
+    if (length(n) == 2) {
       where <- c("mastodon", "linkedin")
-      body <- list(body[(n[1]+1):(n[2]-1)],
-                   body[(n[2]+1):(length(body))])
-    } else if(length(n) == 1) {
-      body <- list(body[(n[1]+1):(length(body))])
+      body <- list(body[(n[1] + 1):(n[2] - 1)], body[(n[2] + 1):(length(body))])
+    } else if (length(n) == 1) {
+      body <- list(body[(n[1] + 1):(length(body))])
     } else {
       n <- 0
-      body <- list(body[(n[1]+1):(length(body))])
+      body <- list(body[(n[1] + 1):(length(body))])
     }
     body <- purrr::map(body, \(x) glue::glue_collapse(x, sep = "\n"))
   }
 
-  purrr::map2(body, where, \(x, y) {
-    socials_post_single(time, tz, title, x, y,
-                        avoid_dups, add_hash, dry_run, open_browser,
-                        over_char_limit, verbose)
+  purrr::walk2(body, where, \(x, y) {
+    socials_post_single(
+      time,
+      tz,
+      title,
+      x,
+      y,
+      avoid_dups,
+      add_hash,
+      dry_run,
+      open_browser,
+      over_char_limit,
+      verbose
+    )
   })
 }
 
 
-socials_post_single <- function(time, tz, title, body, where, avoid_dups,
-                                add_hash, dry_run, open_browser,
-                                over_char_limit = stop, verbose) {
-
+socials_post_single <- function(
+  time,
+  tz,
+  title,
+  body,
+  where,
+  avoid_dups,
+  add_hash,
+  dry_run,
+  open_browser,
+  over_char_limit = cli::cli_abort,
+  verbose,
+  call = rlang::caller_env()
+) {
   labels <- c(where, "draft", "needs-review")
 
-  if(add_hash) {
-    hash <- c("mastodon" = "\n#RStats\n@rstats@a.gup.pe", "linkedin" = "\n#RStats")
+  if (add_hash) {
+    hash <- c(
+      "mastodon" = "\n#RStats\n@rstats@a.gup.pe",
+      "linkedin" = "\n#RStats"
+    )
     hash <- hash[where]
     body <- glue::glue("{body}\n{hash}")
   }
 
-
-  if(where == "mastodon" & (n <- calc_chars(body)) >= 490) {
-    over_char_limit("Very close or over the character limit of 500\n",
-                    "(this message has ", n, " including hashtags)",
-                    call. = FALSE)
+  if (where == "mastodon" && (n <- calc_chars(body)) >= 490) {
+    over_char_limit(
+      "Very close or over the character limit of 500\n",
+      "(this message has {n} including hashtags)",
+      call = call
+    )
   }
 
   body <- glue::glue(
-      "~~~",
-      "time: {time}",
-      "tz: {tz}",
-      "~~~\n",
-      "{body}",  .sep = "\n", trim = FALSE) |>
+    "~~~",
+    "time: {time}",
+    "tz: {tz}",
+    "~~~",
+    "",
+    "{body}",
+    .sep = "\n",
+    trim = FALSE
+  ) |>
     stringr::str_replace("\n\n", "\n")
 
-  if(dry_run & verbose) {
-    message("labels: ", paste0(labels, collapse = ", ") , "\n\n", title, "\n\n", body)
-  }
-
-  gh_issue_post(title, body,
-                labels = labels,
-                owner = "rosadmin", repo = "scheduled_socials",
-                avoid_dups = avoid_dups, dry_run = dry_run,
-                open_browser = open_browser)
+  gh_issue_post(
+    title,
+    body,
+    labels = labels,
+    owner = "rosadmin",
+    repo = "scheduled_socials",
+    avoid_dups = avoid_dups,
+    dry_run = dry_run,
+    open_browser = open_browser
+  )
 }
 
 calc_chars <- function(x) {
   stringr::str_remove_all(x, "(?<=\\w)@(\\w|\\.)+") |>
-    stringr::str_replace_all("http(s?)\\:[^ ]+", paste0(rep("Z", 23), collapse = "")) |>
+    stringr::str_replace_all(
+      "http(s?)\\:[^ ]+",
+      paste0(rep("Z", 23), collapse = "")
+    ) |>
     nchar() |>
     sum()
 }

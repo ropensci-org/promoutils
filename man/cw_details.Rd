@@ -19,6 +19,8 @@ Data frame with coworking event details
 Fetch details about coworking sessions
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 cw_details()
-cw_details("2023-11")
+# cw_details("2023-11") # Only works for events in the future
+\dontshow{\}) # examplesIf}
 }

@@ -2,13 +2,19 @@
 % Please edit documentation in R/slack.R
 \name{slack_scheduled_list}
 \alias{slack_scheduled_list}
-\title{Title}
+\title{List currently scheduled messages}
 \usage{
 slack_scheduled_list()
 }
+\value{
+Data frame of currently scheduled messages
+}
 \description{
-Title
+Returns the currently scheduled messages with added details regarding
+timezones, etc.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_scheduled_list()
+\dontshow{\}) # examplesIf}
 }

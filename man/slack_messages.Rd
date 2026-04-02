@@ -6,9 +6,20 @@
 \usage{
 slack_messages(channel = NULL, channel_id = NULL)
 }
+\arguments{
+\item{channel}{Character. Channel Name. Not required if channel_id supplied.}
+
+\item{channel_id}{Character. Channel id.}
+}
+\value{
+Data frame. Messages and details
+}
 \description{
-Get the last 100 messages from a channel
+Requires one of \code{channel} OR \code{channel_id}
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 slack_messages(channel_id = "C026GCWKA") # General
+slack_messages(channel = "General")
+\dontshow{\}) # examplesIf}
 }

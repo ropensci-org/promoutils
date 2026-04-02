@@ -1,133 +1,97 @@
 #' Create a cached version of the GH api calls
 #'
+#' @inheritParams gh::gh
+#' @inheritDotParams gh::gh
 #' @details `memoise::memoise(gh::gh)`
 #'
 #' @export
 gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
 
-#' Return a data frame of rOpenSci packages
+#' List of packages and details from R-Universe API
 #'
-#' @param url Character. Registry url
-#' @param which Character. Status of packages to return ("all" or "active")
-#' @param return Character. Return a subset ("sub") or all ("all") package fields.
+#' @param universe Character. Universe to collect details from.
 #'
-#' @return data frame
+#' @returns Data frame of package details
+#'
 #' @export
-#'
 #' @examples
-#' pkgs()
-#' pkgs(which = "all", return = "all")
-pkgs <- function(url = "https://ropensci.github.io/roregistry/registry.json",
-                 which = "active", return = "sub") {
+#' pkgs_ru()
 
-  pkgs <- jsonlite::fromJSON(url)$package
+pkgs_ru <- function(universe = "ropensci") {
+  pkgs <- httr2::request("https://ropensci.r-universe.dev/api/packages") |>
+    httr2::req_user_agent("promoutils") |>
+    httr2::req_perform() |>
+    httr2::resp_body_json()
 
-   if(which == "active") {
-     pkgs <- dplyr::filter(pkgs, .data$type == "active")
-   } else {
-     pkgs <- dplyr::filter(pkgs, .data$type != "archived")
-   }
+  pkgs |>
+    purrr::map(\(x) {
+      if (!is.null(x[["_contributors"]])) {
+        cc <- purrr::map(x[["_contributors"]], data.frame) |>
+          purrr::list_rbind() |>
+          dplyr::select(-dplyr::any_of("uuid")) |>
+          dplyr::rename_with(\(n) {
+            stringr::str_replace(n, "^user$", "github")
+          }) |>
+          dplyr::rename_with(\(n) paste0("contributor_", n))
+      } else {
+        cc <- NULL
+      }
 
-  p <- pkgs |>
-    dplyr::mutate(
-      repo = stringr::str_extract(.data$github, "[[:alnum:].-]+$"),
-      owner = stringr::str_remove_all(
-        .data$github, glue::glue("(https://github.com/)|(/{repo})")))
-  if(return == "sub") p <- dplyr::select(p, dplyr::any_of(c("name", "maintainer", "owner", "repo")))
+      m <- x[["_maintainer"]]
+      m <- rlang::set_names(m, paste0("maintainer_", names(m)))
 
-  p
+      cols <- c("Package", "Title", "_owner", "_devurl", "_pkgdown")
+      xx <- append(x[names(x) %in% cols], m)
+
+      for (n in c(cols, "maintainer_login")) {
+        if (!n %in% names(xx)) {
+          xx[[n]] <- NA
+        }
+      }
+
+      xx |>
+        dplyr::as_tibble() |>
+        dplyr::mutate(contributors = list(cc)) |>
+        dplyr::rename_with(tolower) |>
+        dplyr::rename(
+          "maintainer_github" = "maintainer_login",
+          "owner" = "_owner",
+          "url" = "_devurl",
+          "docs" = "_pkgdown"
+        )
+    }) |>
+    purrr::list_rbind()
 }
 
 
 #' Get package author names
 #'
-#' @param x Character. Package name
-#' @param pkgs Data frame. Packages returned by `pkgs()`.
+#' @param package Character. Package name
+#' @param pkgs Data frame. Packages returned by [pkgs_ru()].
 #'
 #' @return Character name of maintainer
 #' @export
-pkg_authors <- function(x, pkgs) {
-  a <- dplyr::filter(pkgs, .data$name %in% x) |>
-    dplyr::pull(.data$maintainer)
+#' @examples
+#' pkg_authors("weathercan", pkgs_ru())
 
-  if(length(a) == 0) a <- NA_character_
+pkg_authors <- function(package, pkgs) {
+  # TODO: Direct call to R Universe API?
+  a <- dplyr::filter(pkgs, .data$package %in% .env$package) |>
+    dplyr::pull(.data$maintainer_name)
+
+  if (length(a) == 0) {
+    a <- NA_character_
+  }
   a
 }
 
-#' Extract mentions from forum text
-#'
-#' @param x Forum text
-#'
-#' @return Character of metions
-#' @export
-forum_mention <- function(x) {
-  if(stringr::str_detect(rvest::html_text(x), "@")) {
-    r <- stringr::str_extract_all(
-      # Should get Twitter or Mastodon handles
-      rvest::html_text(x), "@[0-9a-zA-Z]+(@[0-9a-zA-Z.]+)?") |>
-      unlist() |>
-      stringr::str_subset("rOpenSci", negate = TRUE)
-
-    r <- glue::glue_collapse(r, sep = ", ", last = " & ")
-
-  } else r <- ""
-  r
-}
-
-#' Extract resources from forum text
-#'
-#' @param x Forum text
-#'
-#' @return Character vector of resources
-#'
-#' @export
-#'
-#' @examples
-#' # forum_post(3920) |> # Needs auth
-#' #   forum_resource()  # > weatherOz
-
-forum_resource <- function(x) {
-  x |>
-    # https://stackoverflow.com/questions/60137188/xpath-picking-div-after-h4-with-specific-text
-    rvest::html_elements(css = 'h4:contains(resource) + *') |>
-    rvest::html_text2() |>
-    stringr::str_split("\\\n|,( )*|;( )*") |>
-    unlist() |>
-    stringr::str_trim() |>
-    stringr::str_remove_all("(^\\.)|(\\.$)|(\\[.+\\])|(\\{)|(\\})") |>
-    stringr::str_trim() |>
-    unlist()
-}
-
-#' Fetch post text from by topic id
-#'
-#' @param x Topic id
-#'
-#' @return HTML of the post
-#'
-#' @export
-#' @examples
-#' # forum_post(3920) # Needs auth
-forum_post <- function(topic_id) {
-  httr2::request(glue::glue("https://discuss.ropensci.org/t/{topic_id}.json")) |>
-    httr2::req_headers("API-Key" = Sys.getenv("DISCOURSE_API_KEY"),
-                       "Api-Username" = Sys.getenv("DISCOURSE_USERNAME")) |>
-    httr2::req_perform() |>
-    httr2::resp_body_string() |>
-    jsonlite::fromJSON() |>
-    purrr::pluck("post_stream", "posts") |>
-    dplyr::slice(1) |>
-    purrr::pluck("cooked") |>
-    xml2::read_html()
-}
-
-
 nth_day <- function(x) {
-
-  th <- dplyr::case_when(x %in% c(1, 21, 31) ~ "st",
-                         x %in% c(2, 22) ~ "nd",
-                         x %in% c(3, 23) ~ "rd",
-                         TRUE ~ "th")
+  th <- dplyr::case_when(
+    x %in% c(1, 21, 31) ~ "st",
+    x %in% c(2, 22) ~ "nd",
+    x %in% c(3, 23) ~ "rd",
+    TRUE ~ "th"
+  )
 
   paste0(x, th)
 }
@@ -142,6 +106,8 @@ nth_day <- function(x) {
 #'   abbreviated English weekday.
 #' @param n Numeric. The nth week to return (i.e. the 1st Tuesday if `n = 1`
 #'   and `which = "Tues"`).
+#' @param call Environment. Calling environment for appropriate messages if used
+#'   within another function.
 #'
 #' @return A date
 #' @export
@@ -160,19 +126,29 @@ nth_day <- function(x) {
 #' next_date("2023-11-01", n = 5)
 #' }
 #'
-next_date <- function(month, which = "Tues", n = 1) {
+next_date <- function(
+  month,
+  which = "Tues",
+  n = 1,
+  call = rlang::caller_env()
+) {
   month <- lubridate::as_date(month) + lubridate::period("1 month")
 
   d <- month |>
     lubridate::floor_date(unit = "months") |>
-    lubridate::ceiling_date(unit = "weeks", week_start = which,
-                            change_on_boundary = FALSE)
+    lubridate::ceiling_date(
+      unit = "weeks",
+      week_start = which,
+      change_on_boundary = FALSE
+    )
 
   d <- d + lubridate::weeks(n - 1)
 
-  if(lubridate::month(d) != lubridate::month(month)) {
-    stop("There are not ", n, " ", format(d, "%A"), "s in ", format(month, "%B %Y"),
-         call. = FALSE)
+  if (lubridate::month(d) != lubridate::month(month)) {
+    cli::cli_abort(
+      "There are not {n} {format(d, '%A')}s in {format(month, '%B %Y')}",
+      call = call
+    )
   }
   d
 }
@@ -188,19 +164,27 @@ next_date <- function(month, which = "Tues", n = 1) {
 #' @export
 #'
 #' @examples
-#' x <- replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
-#' x
+#' replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
+#' replace_emoji(":link:")
 replace_emoji <- function(x) {
   emo <- stringr::str_extract_all(x, "\\:.+\\:") |>
     unlist() |>
     unique()
 
-  if(length(emo) > 1) {
+  if (length(emo) > 0) {
+    rlang::check_installed("pandoc")
     emo <- stats::setNames(
-      purrr::map(emo, ~pandoc::pandoc_convert(
-        text = .x, from = "markdown+emoji", to = "plain")) |>
+      purrr::map(
+        emo,
+        ~ pandoc::pandoc_convert(
+          text = .x,
+          from = "markdown+emoji",
+          to = "plain"
+        )
+      ) |>
         unlist(),
-      nm = emo)
+      nm = emo
+    )
 
     x <- stringr::str_replace_all(x, emo)
   }
@@ -222,50 +206,267 @@ replace_emoji <- function(x) {
 #' yaml_extract("~~~start: 2023-11-12\nauthor: Steffi\n~~~")
 #'
 yaml_extract <- function(yaml, trim = "~~~") {
-  y <- stringr::str_remove_all(yaml, trim) %>%
-    yaml::yaml.load() %>%
-    purrr::map_if(is.null,  ~"") %>%
+  y <- stringr::str_remove_all(yaml, trim) |>
+    yaml::yaml.load() |>
+    purrr::map_if(is.null, \(x) "") |>
     data.frame()
 
   # Catch common typos
   names(y) <- tolower(names(y))
-  names(y) <- stringr::str_replace_all(names(y),
-                                       "(reocuring)|(reoccuring)|(reocurring)",
-                                       "reoccurring")
+  names(y) <- stringr::str_replace_all(
+    names(y),
+    "(reocuring)|(reoccuring)|(reocurring)",
+    "reoccurring"
+  )
   y
 }
 
 
 # LinkedIn Chars to escape
 escape_linkedin_chars <- function(x) {
-  chars <- c("\\|", "\\{", "\\}", "\\@", "\\[", "\\]", "\\(", "\\)", "\\<", "\\>",
-             "\\#", "\\\\", "\\*", "\\_", "\\~")
-  p <- stats::setNames(paste0("\\", chars), chars)
+  chars <- c(
+    "\\|",
+    "\\{",
+    "\\}",
+    "\\@",
+    "\\[",
+    "\\]",
+    "\\(",
+    "\\)",
+    "\\<",
+    "\\>",
+    "\\#",
+    "\\\\",
+    "\\*",
+    "\\_",
+    "\\~"
+  )
+  p <- stats::setNames(glue::glue("\\{chars}"), chars)
   stringr::str_replace_all(x, p)
 }
 
+template <- function(name) {
+  name <- stringr::str_remove(name, "\\.txt$")
+  system.file(
+    "extdata",
+    "templates",
+    glue::glue("{name}.txt"),
+    package = "promoutils"
+  ) |>
+    readLines() |>
+    glue::glue_collapse(sep = "\n")
+}
 
-#' Convert a mastodon user link to handle
+copy <- function(body, what, print = FALSE) {
+  if (print) {
+    cli::cat_print(body)
+    return(invisible(body))
+  } else {
+    clipr::write_clip(body)
+    cli::cli_alert_success("Copied {what} to clipboard")
+    return(invisible(body))
+  }
+}
+
+#' Create url from content date and slug
 #'
-#' @param x Character. Link to user's profile
+#' @param path Character. Slug, URL, or path to file in repository
+#' @param date Character. Date for event, used to create link (otherwise extracted from slug)
+#' @param lang Character. Language of blogpost (i.e., `en`, `es`, `fr`, etc.)
+#' @param where Character. 'blog' or 'event' depending on the content type.
+#' @param base_url Character. Base url of blog posts.
 #'
-#' @return Character user handle @user@instance
+#' @returns Full url
+#'
 #' @export
+#' @examples
+#' url_from_path("my-post", date = "2025-01-01")
+#' url_from_path("2025-01-01-my-post/index.es.md")
+#' url_from_path("content/blog/2025-09-29-news-september-2025/index.md")
+#' url_from_path("content/blog/2025-09-29-news-september-2025/index.Rmd")
+#' url_from_path("content/blog/2025-09-29-news-september-2025/")
+
+url_from_path <- function(
+  path,
+  date = NULL,
+  lang = NULL,
+  where = "blog",
+  base_url = "https://ropensci.org"
+) {
+  # If this is a url already, skip
+
+  if (!stringr::str_detect(path, glue::glue("{base_url}/{where}"))) {
+    # If this is a repository path
+    if (stringr::str_detect(path, "content\\/|index")) {
+      slug <- stringr::str_remove_all(
+        path,
+        glue::glue(
+          "(content\\/{where}\\/)|(\\/index\\.([a-z]*\\.)?(R?)md)|\\/$"
+        )
+      )
+      date <- stringr::str_extract(slug, "\\d{4}-\\d{2}-\\d{2}")
+      slug <- stringr::str_remove(slug, glue::glue("{date}\\-"))
+      lang <- stringr::str_extract(path, "(?<=index\\.)([a-z]*)?(?=\\.)")
+    } else {
+      slug <- path
+    }
+
+    if (where == "event") {
+      url <- glue::glue("{base_url}/event/{slug}")
+    }
+
+    if (!(is.na(lang) || is.null(lang))) {
+      base_url <- glue::glue("{base_url}/{lang}")
+    }
+
+    if (where == "blog") {
+      if (is.null(date)) {
+        cli::cli_abort("For blog slugs, must also provide a date")
+      }
+      url <- glue::glue(
+        "{base_url}/{where}/{lubridate::year(date)}/",
+        "{stringr::str_pad(lubridate::month(date), 2, pad = 0)}/",
+        "{stringr::str_pad(lubridate::day(date), 2, pad = 0)}/",
+        "{slug}/"
+      )
+    }
+  } else {
+    url <- path
+  }
+  url
+}
+
+#' List PRs
+#'
+#' List open PRs by url, title and number, optionally matching to a title or branch name (ref)
+#'
+#' @param match Character. String to match in the title or branch name
+#' @param owner Character. GitHub owner of the repository (defaults to 'ropensci')
+#' @param repo Character. GitHub repository name (defaults to 'roweb3')
+#'
+#' @returns Data frame with PR url, number, title, and branch name ('ref')
+#' @export
+#' @examples
+#' prs_list("coworking") # List all coworking related (open) PRs
+
+prs_list <- function(match = NULL, owner = "ropensci", repo = "roweb3") {
+  pr <- gh::gh(
+    "GET /repos/{owner}/{repo}/pulls",
+    owner = owner,
+    repo = repo,
+    .limit = Inf
+  ) |>
+    purrr::map(\(x) {
+      dplyr::tibble(
+        html_url = x$html_url,
+        number = x$number,
+        title = x$title,
+        open = is.null(x$merged_at) & is.null(x$closed_at),
+        ref = x$head$ref
+      )
+    }) |>
+    purrr::list_rbind() |>
+    dplyr::filter(.data$open) |>
+    dplyr::select(-"open")
+
+  if (!is.null(match)) {
+    pr <- dplyr::filter(
+      pr,
+      stringr::str_detect(.data$ref, .env$match) |
+        stringr::str_detect(.data$title, .env$match)
+    )
+  }
+  pr
+}
+
+
+#' Format markdown urls to Slack format
+#'
+#' Such that `[My awesome page](https://my-awesome.html)` becomes
+#' `<https://my-awesome.html|My awesome page>`.
+#'
+#' @param body Character. Text to check
+#'
+#' @returns Character.
 #'
 #' @examples
-#' masto2user("https://fosstodon.org/@steffilazerte")
-#' masto2user("steffi")
-#' masto2user("@steffilazerte@fosstodon.org")
-#' masto2user(NA)
+#'
+#' fmt_slack_urls("[My awesome page](https://my-awesome.html)")
+#' fmt_slack_urls("[My awesome page](https://my-awesome.html) and this [email](mailto:mail@mail.com)")
+#'
+#' @noRd
+fmt_slack_urls <- function(body) {
+  stringr::str_replace_all(
+    body,
+    "\\[(.+?)\\]\\((.+?)\\)",
+    "<\\2|\\1>"
+  )
+}
 
-masto2user <- function(x) {
-  if(is.na(x) || stringr::str_count(x, "@") > 1) {
-    n <- x
-  } else if(stringr::str_detect(x, "http|@")) {
-    n <- stringr::str_remove(x, "http(s?)://") |>
-      stringr::str_split("/", simplify = TRUE) |>
-      as.vector()
-    n <- paste0(n[2], "@", n[1])
-  } else n <- x
-  n
+#' Arrange by platform
+#'
+#' Arranges data in long by platform (linkedin and mastodon).
+#'
+#' @param df Data frame. Formatted data including social media handles.
+#'
+#' @returns Data frame arranged by platform on which to advertise.
+#'
+#' @export
+#' @examplesIf interactive()
+#' u <- uc_fetch() |>
+#'   uc_fmt("2025-01-01") |>
+#'   uc_handles() |>
+#'   by_platform()
+
+by_platform <- function(df) {
+  if (!is.null(df) && nrow(df) == 0) {
+    return(data.frame())
+  }
+
+  df |>
+    tidyr::pivot_longer(
+      cols = dplyr::matches("linkedin|mastodon"),
+      names_to = c("role", "platform"),
+      names_sep = "_",
+      values_to = "handle"
+    ) |>
+    tidyr::pivot_wider(
+      names_from = "role",
+      values_from = "handle"
+    )
+}
+
+#' Get the next post date/time
+#'
+#' Finds the next date/time to post by day of the week and hour.
+#'
+#' @param day Character. Day of the week (e.g., "Monday")
+#' @param hour Numeric. Hour at which to post (e.g., 8)
+#'
+#' @returns Date time as character (without timezone)
+#'
+#' @export
+#' @examples
+#' post_time("Wednesday", 8)
+
+post_time <- function(day, hour) {
+  day_of_week <- c(
+    "Monday" = 1,
+    "Tuesday" = 2,
+    "Wednesday" = 3,
+    "Thursday" = 4,
+    "Friday" = 5,
+    "Saturday" = 6,
+    "Sunday" = 7
+  )[day]
+
+  date_time <- lubridate::ceiling_date(
+    Sys.Date(),
+    "weeks",
+    week_start = day_of_week
+  )
+  date_time <- date_time + lubridate::hours(hour)
+  date_time <- as.character(date_time)
+
+  date_time
 }

@@ -2,13 +2,14 @@
 % Please edit documentation in R/coworking.R
 \name{cw_issue}
 \alias{cw_issue}
-\title{Create Coworking To-Do's on Comms Repo}
+\title{Create Coworking To-Dos}
 \usage{
 cw_issue(
   date = NULL,
   tz = NULL,
   theme = "XXXX",
   cohost = "XXXX",
+  repo = "rosadmin/comms",
   dry_run = FALSE
 )
 }
@@ -21,11 +22,23 @@ cw_issue(
 
 \item{cohost}{Character. Name of cohost, if unknown, uses XXXX placeholder}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+\item{repo}{Character. GitHub repository including owner (e.g.,
+\code{rosadmin/comms})}
+
+\item{dry_run}{Logical. Whether to really create the issue or just return the
+text.}
+}
+\value{
+Nothing
 }
 \description{
-Create an issue listing the coworking todos. If no date or timezone, picks
-the next appropriate date (first Tuesday in the month following an existing
-coworking issue) and next appropriate timezone (cycling through America,
-Europe, and Australia) automatically.
+Create a GitHub issue in a repository listing the Coworking ToDos. If no date
+or timezone, picks the next appropriate date (first Tuesday of the month
+following an existing coworking issue) and next appropriate timezone (cycling
+through America, Europe, and Australia) automatically.
+}
+\examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+cw_issue(dry_run = TRUE)
+\dontshow{\}) # examplesIf}
 }

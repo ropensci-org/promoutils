@@ -4,7 +4,7 @@
 \alias{next_date}
 \title{Find the next date}
 \usage{
-next_date(month, which = "Tues", n = 1)
+next_date(month, which = "Tues", n = 1, call = rlang::caller_env())
 }
 \arguments{
 \item{month}{Character/Date. The current month. Date returned is the next month.}
@@ -14,6 +14,9 @@ abbreviated English weekday.}
 
 \item{n}{Numeric. The nth week to return (i.e. the 1st Tuesday if \code{n = 1}
 and \code{which = "Tues"}).}
+
+\item{call}{Environment. Calling environment for appropriate messages if used
+within another function.}
 }
 \value{
 A date
