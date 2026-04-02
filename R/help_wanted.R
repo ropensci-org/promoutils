@@ -133,7 +133,7 @@ help_post <- function(help, date_time = NULL, dry_run = FALSE, print = FALSE) {
       labels_first = dplyr::if_else(
         .data$labels_first,
         glue::glue(
-          "\U1F4A1 A great way to learn with this 'good first issue'! {\U1F4A1}\n\n\n"
+          "\U1F4A1 A great way to learn with this 'good first issue'! \U1F4A1\n\n\n"
         ),
         glue::glue("")
       )
