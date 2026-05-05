@@ -1,13 +1,14 @@
-test_that("pkgs_ru() & pkg_authors()", {
-  expect_silent(p <- pkgs_ru())
-  expect_s3_class(p, "data.frame")
-  expect_all_true(
-    c("package", "title", "owner", "maintainer_name") %in% names(p)
-  )
-  expect_silent(a <- pkg_authors("weathercan", p))
-  expect_equal(a, "Steffi LaZerte")
+with_mock_dir("runiverse", {
+  test_that("pkgs_ru() & pkg_authors()", {
+    expect_silent(p <- pkgs_ru())
+    expect_s3_class(p, "data.frame")
+    expect_all_true(
+      c("package", "title", "owner", "maintainer_name") %in% names(p)
+    )
+    expect_silent(a <- pkg_authors("weathercan", p))
+    expect_equal(a, "Steffi LaZerte")
+  })
 })
-
 
 test_that("replace_emoji()", {
   expect_silent(replace_emoji(
@@ -55,11 +56,15 @@ test_that("url_from_path()", {
   )
 })
 
-test_that("prs_list()", {
-  expect_silent(prs_list()) |>
-    expect_s3_class("tbl") |>
-    expect_named(c("html_url", "number", "title", "ref"))
+
+with_mock_dir("github_prs", {
+  test_that("prs_list()", {
+    expect_silent(prs_list()) |>
+      expect_s3_class("tbl") |>
+      expect_named(c("html_url", "number", "title", "ref"))
+  })
 })
+
 
 test_that("escape_linkedin_chars()", {
   x <- paste(
@@ -77,7 +82,6 @@ test_that("escape_linkedin_chars()", {
   expect_silent(xx <- escape_linkedin_chars(x))
   expect_true(stringr::str_detect(xx, "\\\\\\("))
 })
-
 
 test_that("fmt_slack_urls()", {
   input <- "[My awesome page](https://my-awesome.html)"

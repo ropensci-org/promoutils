@@ -3,11 +3,12 @@ test_that("li_client()", {
   expect_equal(li_client()$name, "rOpenSci_linkedIn")
 })
 
-test_that("li_urn_me()", {
-  expect_silent(li_urn_me()) |>
-    expect_equal("urn:li:person:Bxn4HyByQ5")
+with_mock_dir("li", {
+  test_that("li_urn_me()", {
+    expect_silent(li_urn_me()) |>
+      expect_equal("urn:li:person:Bxn4HyByQ5")
+  })
 })
-
 
 test_that("li_req_posts()", {
   expect_silent(p <- li_req_posts())
@@ -15,11 +16,14 @@ test_that("li_req_posts()", {
   expect_equal(p$url, "https://api.linkedin.com/rest/posts")
 })
 
-test_that("li_posts_read()", {
-  expect_silent(p <- li_posts_read(ro_urn))
-  expect_type(p, "list")
-  expect_named(p, c("paging", "elements"))
+with_mock_dir("li", {
+  test_that("li_posts_read()", {
+    expect_silent(p <- li_posts_read(ro_urn))
+    expect_type(p, "list")
+    expect_named(p, c("paging", "elements"))
+  })
 })
+
 
 test_that("li_posts_write()", {
   expect_output(

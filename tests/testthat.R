@@ -7,6 +7,7 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
+library(httptest2)
 library(promoutils)
 
 test_check("promoutils")

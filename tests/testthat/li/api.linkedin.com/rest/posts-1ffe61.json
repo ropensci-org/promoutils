@@ -1,0 +1,241 @@
+{
+    "paging": {
+        "start": 0,
+        "count": 10,
+        "links": [
+            {
+                "type": "application/json",
+                "rel": "next",
+                "href": "/rest/posts?q=author&author=urn%3Ali%3Aorganization%3A77132573&start=10&count=10"
+            }
+        ],
+        "total": 408
+    },
+    "elements": [
+        {
+            "isReshareDisabledByAuthor": false,
+            "createdAt": 1775650413936,
+            "lifecycleState": "PUBLISHED",
+            "lastModifiedAt": 1775650528280,
+            "visibility": "PUBLIC",
+            "publishedAt": 1775650413936,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7447617633195212800",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "content": {
+                "article": {
+                    "description": "R-consortium ISC top-level project R-universe is working with Bioconductor to help gradually modernize parts of its infrastructure, while accommodating the project’s scale, governance, and established processes.",
+                    "thumbnail": "urn:li:image:D4D27AQFJSvT585q0iw",
+                    "source": "https://ropensci.org/blog/2026/04/08/r-universe-bioc/",
+                    "title": "Collaborating between Bioconductor and R-universe on Development of Common Infrastructure",
+                    "thumbnailAltText": "screenshot of r-universe package"
+                }
+            },
+            "commentary": "✍️ \\[blog\\] Collaborating between @[Bioconductor](urn:li:organization:88220381) and R-Universe on Development of Common Infrastructure by rOpenSci and Bioconductor Teams\n\nThe @[R Consortium](urn:li:organization:36080541) ISC top-level project R-Universe is working with Bioconductor to gradually modernize parts of its infrastructure while accommodating the project’s scale, governance, and established processes.\n\nLearn more about it https://lnkd.in/dPzw3Kxi\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1775575822575,
+            "lastModifiedAt": 1775575840329,
+            "visibility": "PUBLIC",
+            "publishedAt": 1775575822575,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7447304774389211136",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "rOpenSci Coworking and Office Hours coming up in an hour!\n\nToday's Theme: Getting to know the CSID Network with cohost Irene Ramos\n\nTuesday April 7th 09:00 Americas Pacific \\(16:00 UTC\\)\n\nhttps://lnkd.in/gJadZRBM\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1775150341399,
+            "lastModifiedAt": 1775150375162,
+            "visibility": "PUBLIC",
+            "publishedAt": 1775150341399,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7445520177053511680",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "\\[blog\\] Throw-back Thursday!\n\nNot so long ago Yanina Bellini Saibene shared how the Champions program supports the growth of mentors. Do you have some mentors you'd like to support?\n\n⏳ Supporting rOpenSci Mentors with Practical Tools\n📆 April 8, 2025\n🔗 https://lnkd.in/dT22TE8Z\n\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1775144022562,
+            "lastModifiedAt": 1775144052600,
+            "visibility": "PUBLIC",
+            "publishedAt": 1775144022562,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7445493673884086272",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "\\[help wanted\\] An rOpenSci package is looking for some help! 🙏\n\n📦 GLMMcosinor \\(maintained by Rex Parsons\\)\n\nCheck out this 'help wanted' issue:\n'\\[improvement\\] extract and visualise rhythms at the random-effect level' at https://lnkd.in/gjz-sk4g \\(by Rex Parsons\\)\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1775143721220,
+            "lastModifiedAt": 1775143751250,
+            "visibility": "PUBLIC",
+            "publishedAt": 1775143721220,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7445492409150619648",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "\\[help wanted\\] rOpenSci packages are looking for maintainer help 🙏\n\nThe following packages are looking for a new maintainer \\(or maintainer team\\).\nCheck out their issues to see about getting involved\n\nlandscapetools - https://lnkd.in/gsSTJsBK\nNLMR - https://lnkd.in/gWF9WSim\n\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1774974210478,
+            "lastModifiedAt": 1774974233467,
+            "visibility": "PUBLIC",
+            "publishedAt": 1774974210478,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7444781430318153728",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "Coworking and Office Hours next week!\n\nTheme: Getting to know the CSID Network\n\nTuesday April 7th 09:00 Americas Pacific \\(16:00 UTC\\)\n\nJoin Irene Ramos and Steffi LaZerte\n\n- General coworking\n- Visit the \\[CSID Network\\]\\(https://csidnet.org/\\)\n- Cowork independently on something related to R\n- Chat with Irene and other attendees and discuss our theme!\n\nhttps://lnkd.in/gJadZRBM\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "createdAt": 1774866767153,
+            "lifecycleState": "PUBLISHED",
+            "lastModifiedAt": 1774866786431,
+            "visibility": "PUBLIC",
+            "publishedAt": 1774866767153,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7444330780295774208",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "content": {
+                "article": {
+                    "description": "trilingual dev guide, AI in software review, champions program, new package and package news",
+                    "thumbnail": "urn:li:image:D4D27AQFw1tMgQPoK9g",
+                    "source": "https://ropensci.org/blog/2026/03/30/news-mars-2026/",
+                    "title": "rOpenSci News Digest, March 2026",
+                    "thumbnailAltText": "cover of rOpenSci dev guide, showing a package production line with small humans discussing, examining and promoting packages"
+                }
+            },
+            "commentary": "March news! 🗞️ {hashtag|\\#|RStats} \n\n🌐 rOpenSci Dev Guide 1.0.0: Trilingual and Improved\n🙌 Champions Program Update\n🚀 R-Universe update\n🔎 Software review and usage of AI tools\n🤖 Software review bot updates\n📆 Coworking\n🐦 New package \\{suwo\\}\n👋 Call for contributions & new maintainers\n🗒️ Blog posts!\n🧰 Package Development Corner\n\nhttps://lnkd.in/dbjc8Upj",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1773152863024,
+            "lastModifiedAt": 1773152892052,
+            "visibility": "PUBLIC",
+            "publishedAt": 1773152863024,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7437142145490272256",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "\\[blog\\] Breaking Release of the patentsview Package\n\nRuss Allen and Chris Baker introduce major updates to patentsview following breaking changes to the PatentsView API 🔧\n  \nLearn what's changed and how to update your code to work with the new API endpoints and structure.\n  \nhttps://lnkd.in/dxuguHQw\n  \n⚠️ Note: A PatentsView API key is now required & there is some uncertainty around the long-term API viability\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "createdAt": 1772993585210,
+            "lifecycleState": "PUBLISHED",
+            "lastModifiedAt": 1772993615239,
+            "visibility": "PUBLIC",
+            "publishedAt": 1772993585210,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7436474084684849152",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "content": {
+                "article": {
+                    "title": "rOpenSci",
+                    "description": "Open Tools and R Packages for Open Science",
+                    "source": "https://ropensci.org"
+                }
+            },
+            "commentary": "On International Women’s Day, we celebrate the many women who shape rOpenSci every day. 💙\n\nFrom software development and peer review to mentorship, community leadership, and training, women are building and strengthening open science across our global community.\n\nThey play key roles across rOpenSci:\n\n💻 developing and maintaining research software\n🔍 serving as software editors and reviewers\n🎓 training, mentoring, and championing the next generation of contributors\n🌱 leading community programs\n🧩 shaping policies for open and reproducible science\n\nYou can meet some of these women on our website:\nhttps://ropensci.org\n\nThe strength of rOpenSci comes from the people who contribute to it. Today, we celebrate the women who lead, collaborate, and support others in open science and reaffirm our commitment to building inclusive communities where everyone can thrive. ✨ \n\nTag or highlight some woman whose work inspires you in the rOpenSci community. 🙌 \n\nLet’s recognize the people who make open science stronger every day.\n\n{hashtag|\\#|IWD2026} {hashtag|\\#|WomenInOpenScience} {hashtag|\\#|RSE} {hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        },
+        {
+            "isReshareDisabledByAuthor": false,
+            "lifecycleState": "PUBLISHED",
+            "createdAt": 1772727473527,
+            "lastModifiedAt": 1772727483106,
+            "visibility": "PUBLIC",
+            "publishedAt": 1772727473527,
+            "author": "urn:li:organization:77132573",
+            "id": "urn:li:share:7435357932688650240",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "thirdPartyDistributionChannels": [
+
+                ]
+            },
+            "commentary": "\\[blog\\] Throw-back Thursday!\n\nTime flies when you're having fun! 10 years ago Jeroen Ooms introduced pdftools to the rOpenSci ecosystem as a staff-maintained package!\n\n⏳ Introducing pdftools - A fast and portable PDF extractor\n📆 March 1, 2016\n🔗 https://lnkd.in/gcziB8YJ\n\n\n{hashtag|\\#|RStats}",
+            "lifecycleStateInfo": {
+                "isEditedByAuthor": false
+            }
+        }
+    ]
+}

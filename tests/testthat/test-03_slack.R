@@ -1,3 +1,28 @@
+with_mock_dir({
+  test_that("slack_posts_write()", {
+    # Actually post but only to the #testing-api channel
+
+    # Basic ------------------------------------
+    expect_message(
+      slack_posts_write(
+        "Test message for immediate posting",
+        when = "now",
+        channel = "#testing-api"
+      )
+    ) |>
+      suppressMessages()
+
+    m <- slack_messages(channel = "#testing-api")
+    expect_equal(m$text[1], "Test message for immediate posting")
+    expect_message(
+      slack_message_rm("#testing-api", ts = m$ts[1]),
+      "successfully removed"
+    )
+    m <- slack_messages(channel = "#testing-api")
+    expect_true(m$text[1] != "Test message for immediate posting")
+  })
+})
+
 # Test Slack Functions (Dry Runs Only)
 
 test_that("slack_posts_write()", {
