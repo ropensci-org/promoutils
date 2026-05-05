@@ -1,0 +1,135 @@
+{
+    "ok": true,
+    "channels": [
+        {
+            "id": "G0K012UF8",
+            "created": 1453319739,
+            "creator": "U026GCWK6",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768772230522,
+            "name": "staff-and-leadership",
+            "name_normalized": "staff-and-leadership",
+            "is_channel": false,
+            "is_group": true,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "For rOpenSci staff related discussions including projects and general stuff (but not general enough for the general room)",
+                "creator": "U026GCWK6",
+                "last_set": 1453319771
+            },
+            "topic": {
+                "value": "Staff and Leadership Team",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766178444
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "is_open": true,
+            "last_read": "1766178444.681349",
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "type": "bookmarks"
+                    }
+                ],
+                "is_dormant": true
+            },
+            "priority": 0
+        },
+        {
+            "id": "G32BP4MDG",
+            "created": 1479149533,
+            "creator": "U026GCWK6",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1776139707459,
+            "name": "tripreport",
+            "name_normalized": "tripreport",
+            "is_channel": false,
+            "is_group": true,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Post fun pics from your trips",
+                "creator": "U026GCWK6",
+                "last_set": 1479149534
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "is_open": true,
+            "last_read": "1777063719.322239",
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    }
+                ]
+            },
+            "priority": 0.16788694539448
+        }
+    ],
+    "response_metadata": {
+        "next_cursor": ""
+    }
+}

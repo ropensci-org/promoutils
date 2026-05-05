@@ -1,0 +1,577 @@
+{
+    "ok": true,
+    "channels": [
+        {
+            "id": "C07D38MS4NM",
+            "created": 1721160188,
+            "creator": "U03VA1W6S",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1726142553624,
+            "name": "project-epiverse",
+            "name_normalized": "project-epiverse",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 6,
+            "properties": {
+                "tabs": [
+                    {
+                        "id": "Ct07J735TPN3",
+                        "label": "",
+                        "type": "folder"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct07J735TPN3",
+                        "type": "folder"
+                    }
+                ],
+                "is_dormant": true
+            }
+        },
+        {
+            "id": "C08B5V9D080",
+            "created": 1738005758,
+            "creator": "U02FHTGRP17",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768772231058,
+            "name": "ro-hackathon-2025",
+            "name_normalized": "ro-hackathon-2025",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "To chat, share, and communicate before, during and after our Mini Hackathon First-Time Contributors to R Packages",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766177235
+            },
+            "topic": {
+                "value": "Mini Hackathon First-Time Contributors to R Packages",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766177193
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 31,
+            "properties": {
+                "tabs": [
+                    {
+                        "id": "Ct08B5TC655M",
+                        "type": "list",
+                        "data": {
+                            "file_id": "F08B5TC4UKH",
+                            "shared_ts": "1738629311.075189"
+                        },
+                        "label": ""
+                    },
+                    {
+                        "id": "Ct08B5TK8WPR",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct08B5TC655M",
+                        "type": "list",
+                        "data": {
+                            "file_id": "F08B5TC4UKH",
+                            "shared_ts": "1738629311.075189"
+                        }
+                    },
+                    {
+                        "id": "Ct08B5TK8WPR",
+                        "type": "folder"
+                    },
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "type": "files"
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C08DZ3HGB6Z",
+            "created": 1739981225,
+            "creator": "UNRAUCMTK",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1755796512878,
+            "name": "fed-support",
+            "name_normalized": "fed-support",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "",
+                "creator": "U03VA1W6S",
+                "last_set": 1740847717
+            },
+            "topic": {
+                "value": "",
+                "creator": "U03VA1W6S",
+                "last_set": 1740847717
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 9,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct08JXD2TV6E",
+                        "type": "folder",
+                        "label": ""
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct08JXD2TV6E",
+                        "type": "folder"
+                    }
+                ],
+                "is_dormant": true
+            }
+        },
+        {
+            "id": "C08R0SC60HJ",
+            "created": 1746445339,
+            "creator": "U4V9SS4TV",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768765049405,
+            "name": "pkgcheck",
+            "name_normalized": "pkgcheck",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Channel for rOpenSci's {pkgcheck} package and automated checking system. Purpose of this channel is to help community members help us to maintain and improve our automated checking system. See tabs at top for channel details.",
+                "creator": "U4V9SS4TV",
+                "last_set": 1746446624
+            },
+            "topic": {
+                "value": "{pkgcheck} package and automated checking system",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766172745
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 14,
+            "properties": {
+                "tabs": [
+                    {
+                        "id": "Ct08QVB0U8UD",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F08QVB0T3UM",
+                            "shared_ts": "1746445350.874419"
+                        },
+                        "label": ""
+                    },
+                    {
+                        "id": "Ct08QVB0U8GM",
+                        "type": "list",
+                        "data": {
+                            "file_id": "F08QVAXAUH3",
+                            "shared_ts": "1746445350.500399"
+                        },
+                        "label": ""
+                    },
+                    {
+                        "type": "workflows",
+                        "label": "",
+                        "id": "workflows"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct08QVB0U8UD",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F08QVB0T3UM",
+                            "shared_ts": "1746445350.874419"
+                        }
+                    },
+                    {
+                        "id": "Ct08QVB0U8GM",
+                        "type": "list",
+                        "data": {
+                            "file_id": "F08QVAXAUH3",
+                            "shared_ts": "1746445350.500399"
+                        }
+                    },
+                    {
+                        "type": "workflows"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ],
+                "use_case": "PROJECT_SOLUTION",
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C08RY1PUHM3",
+            "created": 1747073987,
+            "creator": "UNRAUCMTK",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1774911136416,
+            "name": "testing-api",
+            "name_normalized": "testing-api",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 1
+        },
+        {
+            "id": "C08RZ0MEYSU",
+            "created": 1746630998,
+            "creator": "U03VA1W6S",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768772230644,
+            "name": "recon-maintainers",
+            "name_normalized": "recon-maintainers",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Channel for RECON Maintainers",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766177100
+            },
+            "topic": {
+                "value": "R Epidemics Consortium <https://www.repidemicsconsortium.org>",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766177078
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 5,
+            "properties": {
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C08T0PS0QDR",
+            "created": 1747775269,
+            "creator": "UNRAUCMTK",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1769452262207,
+            "name": "admin-scheduled",
+            "name_normalized": "admin-scheduled",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 1
+        },
+        {
+            "id": "C09573E9ESG",
+            "created": 1752131214,
+            "creator": "U0PMCAJF3",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1765987085075,
+            "name": "multiverse-ropensci",
+            "name_normalized": "multiverse-ropensci",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 4,
+            "properties": {
+                "is_dormant": true
+            }
+        },
+        {
+            "id": "C096JNEEZ51",
+            "created": 1753086604,
+            "creator": "U0PMCAJF3",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1773407351616,
+            "name": "gen-ai",
+            "name_normalized": "gen-ai",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "GenAI in general, LLMs in particular, both the good and the bad.",
+                "creator": "U02FHTGRP17",
+                "last_set": 1753087344
+            },
+            "topic": {
+                "value": "GenAI in general, LLMs in particular, both the good and the bad.",
+                "creator": "U0PMCAJF3",
+                "last_set": 1753086637
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 49,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        }
+    ],
+    "response_metadata": {
+        "next_cursor": "dGVhbTpDMEE5NURBNFgxTg=="
+    }
+}

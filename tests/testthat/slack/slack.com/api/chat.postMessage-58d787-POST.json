@@ -1,0 +1,50 @@
+{
+    "ok": true,
+    "channel": "C08RY1PUHM3",
+    "ts": "1777949402.231449",
+    "message": {
+        "user": "UNRAUCMTK",
+        "type": "message",
+        "ts": "1777949402.231449",
+        "bot_id": "B08T2KP6LNS",
+        "app_id": "A08TC016QDS",
+        "text": "Test message for immediate posting",
+        "team": "T026GCWK4",
+        "bot_profile": {
+            "id": "B08T2KP6LNS",
+            "app_id": "A08TC016QDS",
+            "name": "promoutils",
+            "icons": {
+                "image_36": "https://a.slack-edge.com/80588/img/plugins/app/bot_36.png",
+                "image_48": "https://a.slack-edge.com/80588/img/plugins/app/bot_48.png",
+                "image_72": "https://a.slack-edge.com/80588/img/plugins/app/service_72.png"
+            },
+            "deleted": false,
+            "updated": 1747772842,
+            "team_id": "T026GCWK4"
+        },
+        "blocks": [
+            {
+                "type": "rich_text",
+                "block_id": "kmLqN",
+                "elements": [
+                    {
+                        "type": "rich_text_section",
+                        "elements": [
+                            {
+                                "type": "text",
+                                "text": "Test message for immediate posting"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "warning": "missing_charset",
+    "response_metadata": {
+        "warnings": [
+            "missing_charset"
+        ]
+    }
+}

@@ -1,5 +1,5 @@
-with_mock_dir({
-  test_that("slack_posts_write()", {
+with_mock_dir("slack", {
+  test_that("slack_posts_write() live", {
     # Actually post but only to the #testing-api channel
 
     # Basic ------------------------------------
@@ -25,7 +25,7 @@ with_mock_dir({
 
 # Test Slack Functions (Dry Runs Only)
 
-test_that("slack_posts_write()", {
+test_that("slack_posts_write() dry_run", {
   # Basic ------------------------------------
   expect_message(
     slack_posts_write(

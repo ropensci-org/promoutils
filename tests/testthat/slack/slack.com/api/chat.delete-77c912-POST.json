@@ -1,0 +1,11 @@
+{
+    "ok": true,
+    "channel": "C08RY1PUHM3",
+    "ts": "1777949402.231449",
+    "warning": "missing_charset",
+    "response_metadata": {
+        "warnings": [
+            "missing_charset"
+        ]
+    }
+}

@@ -1,0 +1,1128 @@
+{
+    "ok": true,
+    "channels": [
+        {
+            "id": "CGPPLNS3X",
+            "created": 1551790347,
+            "creator": "UDYLEHAHG",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1766179316734,
+            "name": "targets",
+            "name_normalized": "targets",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussion of use and development of `{targets}`, reproducible pipelines, build systems, and HPC.",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766179316
+            },
+            "topic": {
+                "value": "Discussion of use and development of `{targets}`, reproducible pipelines, build systems, and HPC.",
+                "creator": "U03VA1W6S",
+                "last_set": 1696975100
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 66,
+            "properties": {
+                "canvas": {
+                    "file_id": "F060DCT47AR",
+                    "is_empty": false,
+                    "quip_thread_id": "WLP9AAgMEZ5",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F060DCT47AR"
+                },
+                "tabs": [
+                    {
+                        "id": "Ct090K0H31PZ",
+                        "label": "The #targets channel",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F060DCT47AR",
+                            "shared_ts": "1749658465.267369"
+                        }
+                    },
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07KAD8502C",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct090K0H31PZ",
+                        "label": "The #targets channel",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F060DCT47AR",
+                            "shared_ts": "1749658465.267369"
+                        }
+                    },
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07KAD8502C",
+                        "type": "folder"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ]
+            },
+            "previous_names": [
+                "pipeline-toolkits",
+                "drake"
+            ]
+        },
+        {
+            "id": "CK35ACWF4",
+            "created": 1560186365,
+            "creator": "UK46J3FME",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768772231079,
+            "name": "webchem",
+            "name_normalized": "webchem",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussions about webchem package development",
+                "creator": "UK46J3FME",
+                "last_set": 1560186366
+            },
+            "topic": {
+                "value": "All things webchem",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766179803
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 8,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "CMB8875DG",
+            "created": 1566589136,
+            "creator": "U2826BHJ5",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1749648527347,
+            "name": "package-maintenance",
+            "name_normalized": "package-maintenance",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Q&amp;A and knowledge sharing about maintaining or taking over maintenance of an R package. We welcome participation and civil conversations that adhere to our code of conduct <https://ropensci.org/code-of-conduct/>",
+                "creator": "U2826BHJ5",
+                "last_set": 1566589137
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 216,
+            "properties": {
+                "canvas": {
+                    "file_id": "F05GJHS8HE1",
+                    "is_empty": true,
+                    "quip_thread_id": "JVT9AAqcaM5",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F05GJHS8HE1"
+                },
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07JMKEF10A",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JMKEF10A",
+                        "type": "folder"
+                    },
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "CSRUDAYGJ",
+            "created": 1580080666,
+            "creator": "U045PPK7M",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768772231147,
+            "name": "sysreqs",
+            "name_normalized": "sysreqs",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "<https://github.com/r-hub/sysreqs> development",
+                "creator": "U045PPK7M",
+                "last_set": 1580080667
+            },
+            "topic": {
+                "value": "All things sysreqs",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766179267
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 6,
+            "properties": {
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C013F82AG48",
+            "created": 1588164187,
+            "creator": "U4V9SS4TV",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1724731652623,
+            "name": "stats-peer-review",
+            "name_normalized": "stats-peer-review",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussion of project for peer review of statistical software, and for collecting community feedback and guidance. We welcome all forms of participation and civil conversation that adhere to our code of conduct <https://ropensci.org/code-of-conduct>.",
+                "creator": "U4V9SS4TV",
+                "last_set": 1588164188
+            },
+            "topic": {
+                "value": "<https://stats-devguide.ropensci.org/>",
+                "creator": "U4V9SS4TV",
+                "last_set": 1668605921
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 107,
+            "properties": {
+                "tabs": [
+                    {
+                        "id": "bookmarks",
+                        "label": "",
+                        "type": "bookmarks"
+                    },
+                    {
+                        "id": "files",
+                        "label": "",
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JMKF0AGJ",
+                        "label": "",
+                        "type": "folder"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JMKF0AGJ",
+                        "type": "folder"
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C0152F1SKAP",
+            "created": 1591675946,
+            "creator": "U2826BHJ5",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1767718802015,
+            "name": "co-working",
+            "name_normalized": "co-working",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Remote co-working. Meet face-to-face online, at agreed times, to do work – your own work, but together in time.\nAbout: <https://www.cscce.org/2020/02/04/online-co-working-partnerships-are-community-of-practice-in-action/>",
+                "creator": "U2826BHJ5",
+                "last_set": 1591677180
+            },
+            "topic": {
+                "value": "Post here to find a co-working partner. About: <https://www.cscce.org/2020/02/04/online-co-working-partnerships-are-community-of-practice-in-action/>",
+                "creator": "U2826BHJ5",
+                "last_set": 1602042431
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 51,
+            "properties": {
+                "canvas": {
+                    "file_id": "F068U4UCXCN",
+                    "is_empty": true,
+                    "quip_thread_id": "EfY9AAU4usw",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F068U4UCXCN"
+                },
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07JMGA181Z",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JMGA181Z",
+                        "type": "folder"
+                    },
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C01J8SM985T",
+            "created": 1610205205,
+            "creator": "U56D939S9",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768772230756,
+            "name": "undergradstats",
+            "name_normalized": "undergradstats",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Teaching undergraduate statistics: pedagogy, resources, curriculum discussion, and support for stats instructors",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766179733
+            },
+            "topic": {
+                "value": "Teaching undergraduate statistics: pedagogy, resources, curriculum discussion, and support for stats instructors",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766179730
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 9,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C01QPTMD2BZ",
+            "created": 1615584827,
+            "creator": "U03VA1W6S",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1766177690829,
+            "name": "software-peer-review-feed",
+            "name_normalized": "software-peer-review-feed",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "A feed of activity on the software-peer-review repository",
+                "creator": "U03VA1W6S",
+                "last_set": 1615584827
+            },
+            "topic": {
+                "value": "A feed of activity on the software-peer-review repository",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766177690
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 11,
+            "properties": {
+                "canvas": {
+                    "file_id": "F05NX0W291Q",
+                    "is_empty": true,
+                    "quip_thread_id": "IeT9AAmYeTO",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F05NX0W291Q"
+                },
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C021SEFAQ6S",
+            "created": 1621016171,
+            "creator": "U2826BHJ5",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1765726578804,
+            "name": "events",
+            "name_normalized": "events",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "A place to post events you endorse",
+                "creator": "U2826BHJ5",
+                "last_set": 1621016172
+            },
+            "topic": {
+                "value": "Local, regional and global events, including CfP, scholarships opportunities",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765726578
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 77,
+            "properties": {
+                "canvas": {
+                    "file_id": "F06QT3DUFG8",
+                    "is_empty": false,
+                    "quip_thread_id": "OfD9AAX7GVY",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F06QT3DUFG8"
+                },
+                "tabs": [
+                    {
+                        "id": "Ct0912KW7QLC",
+                        "label": "Canvas",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F06QT3DUFG8",
+                            "shared_ts": "1749673633.235039"
+                        }
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07J735469M",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct0912KW7QLC",
+                        "label": "Canvas",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F06QT3DUFG8",
+                            "shared_ts": "1749673633.235039"
+                        }
+                    },
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07J735469M",
+                        "type": "folder"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C021YAQQJTC",
+            "created": 1621003442,
+            "creator": "U5GH9KJR2",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1768311335987,
+            "name": "arrow",
+            "name_normalized": "arrow",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussion and support for Apache Arrow and the Arrow R package. Share tips, troubleshoot issues, and discuss best practices.",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765717952
+            },
+            "topic": {
+                "value": "Apache Arrow: questions, tips, and updates",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765717995
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 43,
+            "properties": {
+                "canvas": {
+                    "file_id": "F05UXBQ7BHV",
+                    "is_empty": false,
+                    "quip_thread_id": "UYF9AAupmmK",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F05UXBQ7BHV"
+                },
+                "tabs": [
+                    {
+                        "id": "Ct090JHQEBQX",
+                        "label": "The #arrow channel",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F05UXBQ7BHV",
+                            "shared_ts": "1749655183.499319"
+                        }
+                    },
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07JMGA8MEX",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct090JHQEBQX",
+                        "label": "The #arrow channel",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F05UXBQ7BHV",
+                            "shared_ts": "1749655183.499319"
+                        }
+                    },
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JMGA8MEX",
+                        "type": "folder"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C023E2K5YAV",
+            "created": 1621985732,
+            "creator": "U2826BHJ5",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1766172790200,
+            "name": "r-universe",
+            "name_normalized": "r-universe",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussion and questions about the R-universe project. Public forum: <https://discuss.ropensci.org/c/r-universe/30>",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766172790
+            },
+            "topic": {
+                "value": "<https://docs.r-universe.dev/>",
+                "creator": "U0PMCAJF3",
+                "last_set": 1717163562
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 74,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07JF0Y0D9C",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "id": "Ct09H472N9PY",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F09H472MLLW",
+                            "shared_ts": "1758811089.513949"
+                        },
+                        "label": ""
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JF0Y0D9C",
+                        "type": "folder"
+                    },
+                    {
+                        "id": "Ct09H472N9PY",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F09H472MLLW",
+                            "shared_ts": "1758811089.513949"
+                        }
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C02UHQF9T53",
+            "created": 1642572266,
+            "creator": "U0PMCAJF3",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1724731662251,
+            "name": "blog-planning",
+            "name_normalized": "blog-planning",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Inviting posts etc.",
+                "creator": "U0PMCAJF3",
+                "last_set": 1642572267
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 4,
+            "properties": {
+                "tabs": [
+                    {
+                        "id": "files",
+                        "label": "",
+                        "type": "files"
+                    },
+                    {
+                        "id": "bookmarks",
+                        "label": "",
+                        "type": "bookmarks"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "type": "bookmarks"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "C0326FK7B3N",
+            "created": 1644321713,
+            "creator": "U027ETBB6",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1765718254701,
+            "name": "deployments",
+            "name_normalized": "deployments",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Automated deployment notifications from r-universe. Monitors build status and deployment activity across R-universe packages.",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765718254
+            },
+            "topic": {
+                "value": "r-universe deployment status",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765718185
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 2,
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C03A7BT6VB9",
+            "created": 1649372104,
+            "creator": "UGMNP4KKR",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1775839427970,
+            "name": "rcplusplus",
+            "name_normalized": "rcplusplus",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Questions and links relevant to c, c++ and R",
+                "creator": "U02FHTGRP17",
+                "last_set": 1761689937
+            },
+            "topic": {
+                "value": "C, C++ and R",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765726475
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 13,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+                "cpp11"
+            ]
+        }
+    ],
+    "response_metadata": {
+        "next_cursor": "dGVhbTpDMDNBUUFZQ1FCWA=="
+    }
+}

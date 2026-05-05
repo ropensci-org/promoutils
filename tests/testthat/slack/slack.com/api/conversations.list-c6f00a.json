@@ -1,0 +1,402 @@
+{
+    "ok": true,
+    "channels": [
+        {
+            "id": "C03CVD8JNF9",
+            "created": 1651129516,
+            "creator": "U02RMK68Q4Q",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1729701884719,
+            "name": "taxonomy",
+            "name_normalized": "taxonomy",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussions about biological #taxonomy and packages relating to it",
+                "creator": "U02RMK68Q4Q",
+                "last_set": 1651129516
+            },
+            "topic": {
+                "value": "<https://github.com/ropensci/taxonomy>",
+                "creator": "U02RMK68Q4Q",
+                "last_set": 1651130768
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 21,
+            "properties": {
+                "is_dormant": true
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C03DJNW4UQ0",
+            "created": 1650912016,
+            "creator": "U010QDFPE94",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1764071372440,
+            "name": "ropensci-blog",
+            "name_normalized": "ropensci-blog",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "RSS feed for rOpenSci blog (<https://ropensci.org/blog/>)",
+                "creator": "U010QDFPE94",
+                "last_set": 1650912077
+            },
+            "topic": {
+                "value": "",
+                "creator": "",
+                "last_set": 0
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": false,
+            "num_members": 21,
+            "properties": {
+                "canvas": {
+                    "file_id": "F082HK6TXBM",
+                    "quip_thread_id": "aHc9AAtqAm9",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F082HK6TXBM"
+                },
+                "tabs": [
+                    {
+                        "id": "Ct09148L2C02",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F082HK6TXBM",
+                            "shared_ts": "1749696189.770999"
+                        },
+                        "label": ""
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "id": "Ct07KAD98DMW",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "id": "Ct09148L2C02",
+                        "type": "canvas",
+                        "data": {
+                            "file_id": "F082HK6TXBM",
+                            "shared_ts": "1749696189.770999"
+                        }
+                    },
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "id": "Ct07KAD98DMW",
+                        "type": "folder"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C04AK6GA57Z",
+            "created": 1668515329,
+            "creator": "U02FHTGRP17",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1776968792551,
+            "name": "multilingual",
+            "name_normalized": "multilingual",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Discussion around internationalization, localization and human languages translation for packages, data, and documentation",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766172932
+            },
+            "topic": {
+                "value": "Discussion around internationalization, localization and human languages translation for packages, data, and documentation",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766172937
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 49,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07JJNZUW9K",
+                        "type": "folder",
+                        "label": ""
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07JJNZUW9K",
+                        "type": "folder"
+                    }
+                ]
+            },
+            "previous_names": [
+
+            ]
+        },
+        {
+            "id": "C04E51XFJJG",
+            "created": 1670380413,
+            "creator": "U026GCWK6",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1766178589268,
+            "name": "staff",
+            "name_normalized": "staff",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": true,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "rOpenSci staff only channel",
+                "creator": "U026GCWK6",
+                "last_set": 1670380413
+            },
+            "topic": {
+                "value": "For rOpenSci staff-related discussions, including projects, funding, and other operational stuff.",
+                "creator": "U02FHTGRP17",
+                "last_set": 1766178589
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 8,
+            "properties": {
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "id": "Ct07J735DX1V",
+                        "type": "folder",
+                        "label": ""
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "id": "Ct07J735DX1V",
+                        "type": "folder"
+                    },
+                    {
+                        "type": "bookmarks"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "C05C3GP1CSU",
+            "created": 1686145267,
+            "creator": "U02FHTGRP17",
+            "is_org_shared": false,
+            "is_im": false,
+            "context_team_id": "T026GCWK4",
+            "updated": 1769017179670,
+            "name": "devel-tools",
+            "name_normalized": "devel-tools",
+            "is_channel": true,
+            "is_group": false,
+            "is_mpim": false,
+            "is_private": false,
+            "is_archived": false,
+            "is_general": false,
+            "is_shared": false,
+            "is_ext_shared": false,
+            "unlinked": 0,
+            "is_pending_ext_shared": false,
+            "pending_shared": [
+
+            ],
+            "parent_conversation": null,
+            "purpose": {
+                "value": "Share tips and discuss developer tools: IDEs, debuggers, profilers, linters, extensions, and anything that makes our dev experience better.",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765718425
+            },
+            "topic": {
+                "value": "Discuss developers tools, like IDEs, tooling, and workflow optimization",
+                "creator": "U02FHTGRP17",
+                "last_set": 1765718406
+            },
+            "shared_team_ids": [
+                "T026GCWK4"
+            ],
+            "pending_connected_team_ids": [
+
+            ],
+            "is_member": true,
+            "num_members": 81,
+            "properties": {
+                "canvas": {
+                    "file_id": "F08ESFB25DM",
+                    "is_empty": true,
+                    "quip_thread_id": "IHE9AAWeu66",
+                    "is_migrated": true
+                },
+                "meeting_notes": {
+                    "file_id": "F08ESFB25DM"
+                },
+                "tabs": [
+                    {
+                        "type": "files",
+                        "label": "",
+                        "id": "files"
+                    },
+                    {
+                        "type": "bookmarks",
+                        "label": "",
+                        "id": "bookmarks"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true,
+                        "id": "channel_canvas"
+                    }
+                ],
+                "tabz": [
+                    {
+                        "type": "files"
+                    },
+                    {
+                        "type": "bookmarks"
+                    },
+                    {
+                        "label": "Canvas",
+                        "type": "channel_canvas",
+                        "is_disabled": true
+                    }
+                ],
+                "is_dormant": true
+            },
+            "previous_names": [
+                "devtools"
+            ]
+        }
+    ],
+    "response_metadata": {
+        "next_cursor": "dGVhbTpDMDZVSkU1OEIzOA=="
+    }
+}
