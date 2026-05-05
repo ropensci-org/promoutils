@@ -1,3 +1,6 @@
+# 0.6
+- Consolidate and standarize key management - keys_check() etc.
+
 # 0.5
 - Update LinkedIn API version
 - Use templates

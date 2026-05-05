@@ -2,7 +2,7 @@
 % Please edit documentation in R/slack.R
 \name{slack_user}
 \alias{slack_user}
-\title{Fetch details on a specific users}
+\title{Fetch details on a specific user}
 \usage{
 slack_user(name, users = NULL)
 }
@@ -15,7 +15,7 @@ slack_user(name, users = NULL)
 Data frame
 }
 \description{
-Fetch details on a specific users
+Fetch details on a specific user
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

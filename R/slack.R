@@ -451,7 +451,7 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
       time = lubridate::as_datetime(as.numeric(.data$ts)),
       time = lubridate::with_tz(.data$time, tz = Sys.timezone())
     ) |>
-    dplyr::relocate(.data$time, .after = "ts")
+    dplyr::relocate("time", .after = "ts")
 }
 
 #' Remove a Slack message
