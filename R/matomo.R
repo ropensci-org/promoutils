@@ -63,6 +63,8 @@ matomo_fetch <- function(date_range, host = "https://ropensci.matomo.cloud") {
   }
 
   Sys.setenv(MATOMO_HOST = host)
+  Sys.setenv(MATOMO_TOKEN = key("matomo"))
+
   idSite <- 1
 
   query <- list(

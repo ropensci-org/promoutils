@@ -5,7 +5,11 @@
 #' @details `memoise::memoise(gh::gh)`
 #'
 #' @export
-gh_cache <- memoise::memoise(gh::gh, omit_args = c(".max_rate"))
+.gh_cache <- function(..., .token = key("github"), .max_rate = NULL) {
+  gh::gh(..., .token = .token)
+}
+gh_cache <- memoise::memoise(.gh_cache, omit_args = c(".max_rate"))
+
 
 #' List of packages and details from R-Universe API
 #'

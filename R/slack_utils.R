@@ -1,13 +1,16 @@
-
 slack_auth <- function(resp) {
-  httr2::req_auth_bearer_token(resp, token = keyring::key_get("slack-api"))
+  httr2::req_auth_bearer_token(resp, token = key("slack"))
 }
 
 
-slack_check <- function(resp, msg = "Successful", element = NULL, paginate = FALSE,
-                        call = rlang::caller_env()) {
-
-  if(paginate) {
+slack_check <- function(
+  resp,
+  msg = NULL,
+  element = NULL,
+  paginate = FALSE,
+  call = rlang::caller_env()
+) {
+  if (paginate) {
     problems <- httr2::resps_failures(resp)
     if (length(problems) > 0) {
       cli::cli_abort("Errors in pagination", call = call)

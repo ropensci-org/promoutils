@@ -86,6 +86,7 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
 #' @noRd
 li_req_posts <- function() {
   v <- getOption("promoutils.linkedin_version") %||% "202510"
+
   httr2::request(base_url = "https://api.linkedin.com/rest/posts") |>
     li_req_auth() |>
     httr2::req_headers(
@@ -145,7 +146,7 @@ li_client <- function() {
     name = "rOpenSci_linkedIn",
     id = "78su90mmb4rsd4",
     token_url = "https://www.linkedin.com/oauth/v2/accessToken",
-    secret = Sys.getenv("LINKEDIN_SECRET")
+    secret = key("linkedin")
   )
 }
 
