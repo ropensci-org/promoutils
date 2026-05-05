@@ -182,10 +182,9 @@ slack_scheduled_list <- function() {
       date_created_dt = lubridate::as_datetime(.data$date_created)
     ) |>
     dplyr::mutate(
-      channel = purrr::map_chr(
-        .data$channel_id,
-        \(x) slack_channel(channel_id = x)$channel
-      )
+      channel = purrr::map_chr(.data$channel_id, \(x) {
+        slack_channel_name(channel_id = x)
+      })
     ) |>
     dplyr::select(dplyr::all_of(cols))
 }
@@ -223,6 +222,8 @@ slack_scheduled_list <- function() {
 #' }
 
 slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
+  channel <- slack_channel_name(channel)
+
   if (!is.null(msg)) {
     if (nrow(msg) == 0) {
       rlang::inform("No messages to remove")
@@ -247,7 +248,9 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
       dplyr::filter(stringr::str_detect(.data$text, i)) |>
       dplyr::pull(.data$ts)
 
-    if (length(admin_ts) > 0) slack_message_rm(slack_admin(), admin_ts)
+    if (length(admin_ts) > 0) {
+      slack_message_rm(channel_id = slack_admin(), ts = admin_ts)
+    }
   })
 }
 
@@ -305,7 +308,6 @@ slack_cleanup <- function() {
 
 #' List channels and their ids
 #'
-#'
 #' @param channel Character. Channel Name.
 #' @param types Character. Type of channels, one or both of "public_channel" or
 #' "private_channel"
@@ -348,9 +350,11 @@ slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
   }
 
   if (!is.null(channel)) {
+    channel <- stringr::str_remove(channel, "^#") |>
+      tolower()
     chn <- dplyr::filter(
       channels,
-      stringr::str_detect(tolower(.data$channel), tolower(.env$channel))
+      stringr::str_detect(tolower(.data$channel), .env$channel)
     )
   } else if (!is.null(channel_id)) {
     chn <- dplyr::filter(
@@ -358,11 +362,31 @@ slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
       .data$channel_id == .env$channel_id
     )
   }
+
+  if (length(chn) == 0) {
+    cli::cli_abort("Channel not found", call = NULL)
+  }
+
   chn
 }
 
+slack_channel_name <- function(
+  channel = NULL,
+  channel_id = NULL,
+  channels = NULL
+) {
+  slack_channel(channel, channel_id, channels)$channel
+}
 
-#' Fetch details on a specific users
+slack_channel_id <- function(
+  channel = NULL,
+  channel_id = NULL,
+  channels = NULL
+) {
+  slack_channel(channel, channel_id, channels)$channel_id
+}
+
+#' Fetch details on a specific user
 #'
 #' @param name Character. String to match real name to
 #' @param users Data frame. Data frame of users from `slack_users()`.
@@ -415,9 +439,7 @@ slack_users <- function() {
 #' slack_messages(channel = "General")
 
 slack_messages <- function(channel = NULL, channel_id = NULL) {
-  if (is.null(channel_id) && !is.null(channel)) {
-    channel_id <- slack_channel(channel)$channel_id
-  }
+  channel_id <- slack_channel_id(channel, channel_id)
 
   httr2::request("https://slack.com/api/conversations.history") |>
     slack_auth() |>
@@ -432,7 +454,21 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
     dplyr::relocate(.data$time, .after = "ts")
 }
 
-slack_message_rm <- function(channel_id, ts) {
+#' Remove a Slack message
+#'
+#' Use with caution!
+#'
+#' @param channel Character. Channel Name. Not required if channel_id supplied.
+#' @param channel_id Character. Channel id.
+#' @param ts Numeric. Timestamp to identify message to remove
+#'
+#' @returns Nothing. Side effect of removing message from channel
+#'
+#' @export
+
+slack_message_rm <- function(channel = NULL, channel_id = NULL, ts) {
+  channel_id <- slack_channel_id(channel, channel_id)
+
   httr2::request("https://slack.com/api/chat.delete") |>
     httr2::req_body_json(list(channel = channel_id, ts = ts)) |>
     slack_auth() |>
