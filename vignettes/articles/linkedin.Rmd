@@ -1,0 +1,654 @@
+---
+title: "Working with LinkedIn"
+---
+
+
+
+
+``` r
+library(promoutils)
+library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
+```
+
+
+This article will walk you through using the promoutils functions to schedule messages for Linkedin.
+First make sure you are authorized to work with the LinkedIn API:
+
+
+``` r
+keys_check()
+#> Key status
+#> ✔ slack: TRUE
+#> ✔ matomo: TRUE
+#> ✔ linkedin: TRUE
+#> ✔ linkedin_org: TRUE
+#> ✔ github: TRUE
+#> → Good to go!
+```
+
+If not, see the [Setting Up LinkedIn](article/linkedin_app) article.
+
+
+### Accessing the API
+
+Once you have set up your LinkedIn access, you can use the LinkedIn API to access
+the rOpenSci LinkedIn space using httr2 directly or via the promoutils helper functions.
+
+Most of the time we'll be using the `ro_urn` object to define the 'author' (i.e. rOpenSci) of our requests.
+
+For example, to get a list of recent posts by rOpenSci we can use
+
+
+``` r
+li_posts_read(ro_urn)
+#> $paging
+#> $paging$start
+#> [1] 0
+#> 
+#> $paging$count
+#> [1] 10
+#> 
+#> $paging$links
+#> $paging$links[[1]]
+#> $paging$links[[1]]$type
+#> [1] "application/json"
+#> 
+#> $paging$links[[1]]$rel
+#> [1] "next"
+#> 
+#> $paging$links[[1]]$href
+#> [1] "/rest/posts?q=author&author=urn%3Ali%3Aorganization%3A77132573&start=10&count=10"
+#> 
+#> 
+#> 
+#> $paging$total
+#> [1] 428
+#> 
+#> 
+#> $elements
+#> $elements[[1]]
+#> $elements[[1]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[1]]$createdAt
+#> [1] 1.778611e+12
+#> 
+#> $elements[[1]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[1]]$lastModifiedAt
+#> [1] 1.778611e+12
+#> 
+#> $elements[[1]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[1]]$publishedAt
+#> [1] 1.778611e+12
+#> 
+#> $elements[[1]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[1]]$id
+#> [1] "urn:li:share:7460033722600480768"
+#> 
+#> $elements[[1]]$distribution
+#> $elements[[1]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[1]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[1]]$content
+#> $elements[[1]]$content$media
+#> $elements[[1]]$content$media$altText
+#> [1] "Zhian smiling, below his bio. In the right: tinkr package, Zhian's social media handle and github user. "
+#> 
+#> $elements[[1]]$content$media$id
+#> [1] "urn:li:image:D4D10AQE9w05K80z5WQ"
+#> 
+#> 
+#> 
+#> $elements[[1]]$commentary
+#> [1] "👋 Meet Zhian Kamvar! 🇺🇸\n\nSenior Software Engineer at Recast and maintainer of \\{tinkr\\} for rOpenSci. tinkr package cast \\(R\\)Markdown Files to XML and Back Again.\n\nFind Zhian at:\n🐘 hachyderm.io/\\@zkamvar\n💻 github.com/zkamvar\n🔗 linkedin.com/in/zkamvar\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[1]]$lifecycleStateInfo
+#> $elements[[1]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[2]]
+#> $elements[[2]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[2]]$createdAt
+#> [1] 1.778593e+12
+#> 
+#> $elements[[2]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[2]]$lastModifiedAt
+#> [1] 1.778593e+12
+#> 
+#> $elements[[2]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[2]]$publishedAt
+#> [1] 1.778593e+12
+#> 
+#> $elements[[2]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[2]]$id
+#> [1] "urn:li:share:7459958263393001472"
+#> 
+#> $elements[[2]]$distribution
+#> $elements[[2]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[2]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[2]]$content
+#> $elements[[2]]$content$media
+#> $elements[[2]]$content$media$altText
+#> [1] "Andrea smiling. Colombia and Argentina flags. Package, LinkedIn profile (in/andreasociologa), github and personal website."
+#> 
+#> $elements[[2]]$content$media$id
+#> [1] "urn:li:image:D4D10AQEN797Usa-xhQ"
+#> 
+#> 
+#> 
+#> $elements[[2]]$commentary
+#> [1] "{hashtag|\\#|MaintainerMonth} spotlight! \n👋 Meet Andrea Gómez Vargas\n\nAndrea is a sociologist and data analyst focused on population statistics and official data, developing R tools for the public sector.  She is part of rOpenSci's Champions Program and the maintainer of \\{ARcenso\\}. This R package is designed to democratize access to official data from Argentina’s National Population Censuses produced by the National Institute of Statistics and Census \\(INDEC\\). \n\nFind Andrea at:\n🌐 soyandrea.github.io\n💻 github.com/SoyAndrea  \n\n{hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[2]]$lifecycleStateInfo
+#> $elements[[2]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[3]]
+#> $elements[[3]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[3]]$createdAt
+#> [1] 1.778524e+12
+#> 
+#> $elements[[3]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[3]]$lastModifiedAt
+#> [1] 1.778524e+12
+#> 
+#> $elements[[3]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[3]]$publishedAt
+#> [1] 1.778524e+12
+#> 
+#> $elements[[3]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[3]]$id
+#> [1] "urn:li:share:7459671343349936128"
+#> 
+#> $elements[[3]]$distribution
+#> $elements[[3]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[3]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[3]]$content
+#> $elements[[3]]$content$media
+#> $elements[[3]]$content$media$altText
+#> [1] "Victor picture, package, GitHub user and personal website."
+#> 
+#> $elements[[3]]$content$media$id
+#> [1] "urn:li:image:D5610AQEPQOzLTwwcYQ"
+#> 
+#> 
+#> 
+#> $elements[[3]]$commentary
+#> [1] "👋 Meet Victor Ordu! 🇳🇬🇺🇸\n\nMedical Doctor and software developer. Participant of rOpenSci Champions Program and maintainer of \\{naijR\\}, an R package that contains a suite of functions that make it easier to deal with data and datasets about the country Nigeria and its constituent parts. \n\nFind him at:\n🌐 victorordu.wordpress.com\n💻 github.com/BroVic\n🔗 https://lnkd.in/g6j6v7tF\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[3]]$lifecycleStateInfo
+#> $elements[[3]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[4]]
+#> $elements[[4]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[4]]$createdAt
+#> [1] 1.778506e+12
+#> 
+#> $elements[[4]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[4]]$lastModifiedAt
+#> [1] 1.778506e+12
+#> 
+#> $elements[[4]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[4]]$publishedAt
+#> [1] 1.778506e+12
+#> 
+#> $elements[[4]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[4]]$id
+#> [1] "urn:li:share:7459595867805884416"
+#> 
+#> $elements[[4]]$distribution
+#> $elements[[4]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[4]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[4]]$content
+#> $elements[[4]]$content$media
+#> $elements[[4]]$content$media$altText
+#> [1] "Carolina in the snow. List of package, personal website, github and linkedIn profile (in/carolina-pradier-32886a306/)"
+#> 
+#> $elements[[4]]$content$media$id
+#> [1] "urn:li:image:D5610AQFlInKlkRTamA"
+#> 
+#> 
+#> 
+#> $elements[[4]]$commentary
+#> [1] "👋 Meet Carolina Pradier 🇦🇷 🇨🇦\n\nShe researches gender inequalities in science through bibliometrics. \nMaintainer of \\{eph\\}, Argentina's Permanent Household Survey Data and Manipulation Utilities. Carolina is a participant in the rOpenSci's Champions Program.\n\nFind her at: \n🌐 cpradier.netlify.app \n🐙 github.com/caropradier\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[4]]$lifecycleStateInfo
+#> $elements[[4]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[5]]
+#> $elements[[5]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[5]]$createdAt
+#> [1] 1.778179e+12
+#> 
+#> $elements[[5]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[5]]$lastModifiedAt
+#> [1] 1.778476e+12
+#> 
+#> $elements[[5]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[5]]$publishedAt
+#> [1] 1.778179e+12
+#> 
+#> $elements[[5]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[5]]$id
+#> [1] "urn:li:share:7458221776448344064"
+#> 
+#> $elements[[5]]$distribution
+#> $elements[[5]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[5]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[5]]$content
+#> $elements[[5]]$content$media
+#> $elements[[5]]$content$media$altText
+#> [1] "Julia smiling. List of packages and social media."
+#> 
+#> $elements[[5]]$content$media$id
+#> [1] "urn:li:image:D4D10AQGAS6Q9CeOVqQ"
+#> 
+#> 
+#> 
+#> $elements[[5]]$commentary
+#> [1] "Today we’re featuring Julia Silge! 🇺🇸\n\nData scientist and MLOps practitioner with {hashtag|\\#|rstats}, specializing in text mining. She maintains \\{qualtRics\\} that implements the retrieval of survey data using the Qualtrics API and aims to reduce the pre-processing steps needed in analyzing such surveys. \n\n🐘 fosstodon.org/\\@juliasilge\n💻 github.com/juliasilge\n🔗 linkedin.com/in/juliasilge\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[5]]$lifecycleStateInfo
+#> $elements[[5]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[6]]
+#> $elements[[6]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[6]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[6]]$createdAt
+#> [1] 1.778169e+12
+#> 
+#> $elements[[6]]$lastModifiedAt
+#> [1] 1.778457e+12
+#> 
+#> $elements[[6]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[6]]$publishedAt
+#> [1] 1.778169e+12
+#> 
+#> $elements[[6]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[6]]$id
+#> [1] "urn:li:share:7458181163027705856"
+#> 
+#> $elements[[6]]$distribution
+#> $elements[[6]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[6]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[6]]$commentary
+#> [1] "\\[blog\\] Throw-back Thursday!\n\n  Last year Maëlle Salmon introduced the idea of ROR IDs \\(tldr; ROR IDs are to Organizations what ORCiDs are to individuals\\). Have you set your organizations up with ROR IDs and put them in all the docs yet? \n\n⏳ Roaringly Acknowledge Organizations with ROR IDs in DESCRIPTION\n📆 May 9, 2025\n🔗 https://lnkd.in/e-qzPP8j\n\n\n{hashtag|\\#|RStats}"
+#> 
+#> $elements[[6]]$lifecycleStateInfo
+#> $elements[[6]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[7]]
+#> $elements[[7]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[7]]$createdAt
+#> [1] 1.778092e+12
+#> 
+#> $elements[[7]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[7]]$lastModifiedAt
+#> [1] 1.778317e+12
+#> 
+#> $elements[[7]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[7]]$publishedAt
+#> [1] 1.778092e+12
+#> 
+#> $elements[[7]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[7]]$id
+#> [1] "urn:li:share:7457859372002627584"
+#> 
+#> $elements[[7]]$distribution
+#> $elements[[7]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[7]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[7]]$content
+#> $elements[[7]]$content$media
+#> $elements[[7]]$content$media$altText
+#> [1] "Steffi is smiling as she walks along a path surrounded by vegetation, carrying a camping backpack with one of her cats sitting on it."
+#> 
+#> $elements[[7]]$content$media$id
+#> [1] "urn:li:image:D4D10AQFVfnNZMMpeLQ"
+#> 
+#> 
+#> 
+#> $elements[[7]]$commentary
+#> [1] "👋 Meet Steffi Lazerte! 🇨🇦\n\nIndependent R Consultant and Teacher, Behavioural Ecologist, Citizen Science Enthusiast, and rOpenSci Community Assistant. She maintains \\{weathercan\\} that makes it easier to search for and download multiple months/years of historical weather data from Canada.\n\n🐘 https://lnkd.in/d\\_s3RjaZ\n💻 github.com/steffilazerte\n🔗 https://lnkd.in/dmYHQ\\_Wg\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[7]]$lifecycleStateInfo
+#> $elements[[7]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[8]]
+#> $elements[[8]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[8]]$createdAt
+#> [1] 1.778006e+12
+#> 
+#> $elements[[8]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[8]]$lastModifiedAt
+#> [1] 1.77831e+12
+#> 
+#> $elements[[8]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[8]]$publishedAt
+#> [1] 1.778006e+12
+#> 
+#> $elements[[8]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[8]]$id
+#> [1] "urn:li:share:7457498691675779072"
+#> 
+#> $elements[[8]]$distribution
+#> $elements[[8]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[8]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[8]]$content
+#> $elements[[8]]$content$media
+#> $elements[[8]]$content$media$altText
+#> [1] "Ronald headshot, short bio, package dendroNetwork, GitHub user RonaldVisser and social media handle (LinkedIn in/ronaldmvisser)."
+#> 
+#> $elements[[8]]$content$media$id
+#> [1] "urn:li:image:D4D10AQEhJr2dzexe1A"
+#> 
+#> 
+#> 
+#> $elements[[8]]$commentary
+#> [1] "{hashtag|\\#|MaintainerMonth} spotlight! 👋 Meet Ronald M. Visser \n\nRonald is an interdisciplinary scientist combining archaeology, dendrochronology, and data science. He maintains \\{dendroNetwork\\}, an R package for analysing dendrochronological networks.\n\nFind him at:\n🐘 \\@RonaldVisser\\@akademienl.social\n🐙 github.com/RonaldVisser\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[8]]$lifecycleStateInfo
+#> $elements[[8]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[9]]
+#> $elements[[9]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[9]]$createdAt
+#> [1] 1.778089e+12
+#> 
+#> $elements[[9]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[9]]$lastModifiedAt
+#> [1] 1.778308e+12
+#> 
+#> $elements[[9]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[9]]$publishedAt
+#> [1] 1.778089e+12
+#> 
+#> $elements[[9]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[9]]$id
+#> [1] "urn:li:share:7457847380294590465"
+#> 
+#> $elements[[9]]$distribution
+#> $elements[[9]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[9]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[9]]$content
+#> $elements[[9]]$content$media
+#> $elements[[9]]$content$media$altText
+#> [1] "Profile pictures of the 11 new members of the mentoring team."
+#> 
+#> $elements[[9]]$content$media$id
+#> [1] "urn:li:image:D4D22AQG4ku0GSdWEbw"
+#> 
+#> 
+#> 
+#> $elements[[9]]$commentary
+#> [1] "🗒️ \\[blog\\] New Mentoring Team with Experienced Mentors and New Voices\n\nMeet the new team of mentors who will accompany our Champions in their projects for a year, sharing experience, guidance, and enthusiasm.\n\nhttps://lnkd.in/dsysfVAP\n\n{hashtag|\\#|RStats} {hashtag|\\#|Mentoring} {hashtag|\\#|RSE} {hashtag|\\#|FOSS} "
+#> 
+#> $elements[[9]]$lifecycleStateInfo
+#> $elements[[9]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+#> 
+#> 
+#> 
+#> $elements[[10]]
+#> $elements[[10]]$isReshareDisabledByAuthor
+#> [1] FALSE
+#> 
+#> $elements[[10]]$createdAt
+#> [1] 1.778073e+12
+#> 
+#> $elements[[10]]$lifecycleState
+#> [1] "PUBLISHED"
+#> 
+#> $elements[[10]]$lastModifiedAt
+#> [1] 1.778283e+12
+#> 
+#> $elements[[10]]$visibility
+#> [1] "PUBLIC"
+#> 
+#> $elements[[10]]$publishedAt
+#> [1] 1.778073e+12
+#> 
+#> $elements[[10]]$author
+#> [1] "urn:li:organization:77132573"
+#> 
+#> $elements[[10]]$id
+#> [1] "urn:li:share:7457776640673288192"
+#> 
+#> $elements[[10]]$distribution
+#> $elements[[10]]$distribution$feedDistribution
+#> [1] "MAIN_FEED"
+#> 
+#> $elements[[10]]$distribution$thirdPartyDistributionChannels
+#> list()
+#> 
+#> 
+#> $elements[[10]]$content
+#> $elements[[10]]$content$media
+#> $elements[[10]]$content$media$altText
+#> [1] "Peter headshot and bio. Information about their social media accounts."
+#> 
+#> $elements[[10]]$content$media$id
+#> [1] "urn:li:image:D4D10AQHGj7-bKDMjRQ"
+#> 
+#> 
+#> 
+#> $elements[[10]]$commentary
+#> [1] "👋 Meet Peter Desmet! 🇧🇪\n\nBiodiversity informatician at INBO, passionate about open data and open science. He develops research software, maintains data standards, and publishes datasets. Peter maintains \\{frictionless\\}, a package to read and write Frictionless Data Packages. \n\n🦋 \\@peterdesmet.com\n💻 github.com/peterdesmet\n🔗 https://lnkd.in/d8XJPQDt\n\n{hashtag|\\#|MaintainerMonth} {hashtag|\\#|rOpenSci} {hashtag|\\#|RStats}"
+#> 
+#> $elements[[10]]$lifecycleStateInfo
+#> $elements[[10]]$lifecycleStateInfo$isEditedByAuthor
+#> [1] FALSE
+```
+
+We can print the most recent message with
+
+
+``` r
+li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
+#> 👋 Meet Zhian Kamvar! 🇺🇸
+#> 
+#> Senior Software Engineer at Recast and maintainer of \{tinkr\} for rOpenSci. tinkr package cast \(R\)Markdown Files to XML and Back Again.
+#> 
+#> Find Zhian at:
+#> 🐘 hachyderm.io/\@zkamvar
+#> 💻 github.com/zkamvar
+#> 🔗 linkedin.com/in/zkamvar
+#> 
+#> {hashtag|\#|MaintainerMonth} {hashtag|\#|rOpenSci} {hashtag|\#|RStats}
+```
+
+To write a post you can use the `li_posts_write()` function. 
+Let's do a dry run (which won't actually post).
+
+
+``` r
+id <- li_posts_write(
+  author = ro_urn, # Post on behalf of rOpenSci
+  body = "Testing out the LinkedIn API via R and httr2!",
+  dry_run = TRUE
+)
+#> POST /rest/posts HTTP/1.1
+#> accept: */*
+#> accept-encoding: deflate, gzip, br, zstd
+#> authorization: Bearer AQUsazyg-C76SMQ53nAysl-LUdrXe1yH-V8l5tyUQBBNCQTBY_MA52fBkWRTERxfuIX4kCdHIitZ4-ACXJfa7L3fYiUc_DDFB8c4xQl3U7sc3fDD02HKx608ilwdx_Vr2Ems8yFmcZYjCFRVof8RST4lRQUbSfn9Jf9mWmN_oBGk6kWDqzWPe7qvXGKKyW70J5OJ_n3kNNT4U3KzPzEaMq73EM6PV-G_Q464RcF2uypBuII9fLzy3uBm-aSAPjjsYlNvBAj9hm1cy9TGU23Kq9MPpNrdBXWOwAs0okpwmlyrOCTyCgqCB_1rQY5o9-ORE1ZY__QLRtbrCwtPOUgsclDCeup2aUv_bwmthzS5sE3ezduF0iZQWWYNwvzUIITfZywIhhXgCt7XCGPexks
+#> content-length: 291
+#> content-type: application/json
+#> host: api.linkedin.com
+#> linkedin-version: 202510
+#> user-agent: httr2/1.2.2 r-curl/7.1.0 libcurl/8.5.0
+#> x-restli-protocol-version: 2.0.0
+#> 
+#> {
+#>   "author": "urn:li:organization:77132573",
+#>   "commentary": "Testing out the LinkedIn API via R and httr2!",
+#>   "visibility": "PUBLIC",
+#>   "distribution": {
+#>     "feedDistribution": "MAIN_FEED",
+#>     "targetEntities": [
+#> 
+#>     ],
+#>     "thirdPartyDistributionChannels": [
+#> 
+#>     ]
+#>   },
+#>   "lifecycleState": "PUBLISHED",
+#>   "isReshareDisabledByAuthor": false
+#> }
+```
+
+It's a good idea to capture the returned `id` (URN) in case you want to remove the post later (but you can always get this with `li_posts_read()` too).
+
+If you want to post from your personal account, you'll need to use your personal ID (URN).
+You can fetch this with `li_urn_me()`.
+
+
+
+``` r
+li_urn_me()
+#> urn:li:person:Bxn4HyByQ5
+```
+
+To schedule messages we recommend using a GitHub action on a cron job (or similar). 

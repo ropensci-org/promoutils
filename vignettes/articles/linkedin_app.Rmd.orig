@@ -1,0 +1,92 @@
+---
+title: "Setting Up LinkedIn"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(promoutils)
+```
+
+These are the instructions for setting up access to the API. 
+Once this has been done, it's not necessary to do it again, but we record this
+process here as a reference.
+
+> Note: These are instructions from the perspective of rOpenSci Staff setting
+> up this LinkedIn app for posting messages to rOpenSci's organizational
+> LinkedIn page.
+
+## Resources
+- [LinkedIn API Docs](https://learn.microsoft.com/en-us/linkedin/)
+- [LinkedIn Developer Apps](https://www.linkedin.com/developers/apps)
+- [API Posts](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/posts-api?view=li-lms-2023-11&tabs=http)
+
+## Setting up the app
+
+For access to the LinkedIn API we have to create an App on the [LinkedIn Developer Portal](https://www.linkedin.com/developers/apps)
+
+- This App is called: 'rOpenSci Scheduler'
+    - Users who wish to use this app in order to access the LinkedIn API must have admin access
+- Under the "Auth" tab, we have listed the Redirect URL of "http://localhost:1444" (this is used by the R functions and must match)
+- A [request needs to be made](https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens?context=linkedin/context) in order to be able to programatically refresh tokens
+
+### LinkedIn API endpoints
+
+We must request access to the different sets of end points we wish to use.
+
+- We have Default access to "Share on LinkedIn" which allows us to post on behalf of a user (i.e. ourselves) ([Terms of use](https://www.linkedin.com/legal/l/api-terms-of-use))
+- We have requested (and received) additional access to "Advertising API" (Marketing API Program; this allows posting on behalf of an organization) ([Terms of Use](https://www.linkedin.com/legal/l/marketing-api-terms))
+
+### Setting up LinkedIn credentials in this repository
+
+This workflow requires two secrets in the GitHub repository (and locally if you want to use the functions or run tests locally):
+- `linkedin_org` - The client secret from the developer portal - Do this once
+- `linkedin` - The refresh token created below - Needs to be refreshed every year
+
+> Note: When using promoutils, these secrets are named `linkedin_org` and `linkedin`,
+> but when storing these secrets as environmental variables, use use `PU_LINKEDIN_ORG_KEY` and `PU_LINKEDIN_KEY` (i.e. prepending "PU" for promoutils and appending "KEY"). 
+
+You can check if you have them locally with `keys_check()`
+
+```{r}
+keys_check()
+```
+
+See [Authentication for promoutils](articles/authentication) for specifics on 
+setting up authentication.
+
+In repositories like `scheduled_socials` which use GitHub Actions on CRON to 
+post social media posts, we need to include these authentication keys in the 
+as secrets in GitHub > Settings > Secrets and variables > Actions and then
+define the Environmental variables in the workflow file
+ (`PU_LINKEDIN_KEY` and `PU_LINKEDIN_ORG_KEY`).
+
+
+We can get a 1-year refresh token that will automatically be refreshed.
+However, after a year, we will have to re-run the following code to get a new
+token and put it in the repo under `PU_LINKEDIN_KEY`.
+
+> You'll know it's time to do this when the functions fail with:
+> `HTTP 426 Upgrade Required.`
+
+For local testing, you'll also need to have the `PU_LINKEDIN_KEY` (and `PU_LINKEDIN_ORG`) 
+tokens in your .Renviron file or keyring.
+
+Note that the authenticator for these API calls is considered the 'author' of the rOpenSci post on LinkedIn.
+However, this authorship is only visible to admins.
+
+Running the following code will open a browser so you can login to LinkedIn and give it access to the rOpenSci account again. 
+
+Only do this when you're ready to update the token in:
+- Your .Renviron file - Use `key_set("linkedin")`
+- Your GitHub secrets - `PU_LINKEDIN_KEY`
+
+```{r}
+#| eval: false
+l <- li_auth()
+l$refresh_token # Copy this
+keys_set("linkedin") # Then paste into the prompt
+```
+

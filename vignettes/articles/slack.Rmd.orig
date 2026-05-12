@@ -1,0 +1,114 @@
+---
+title: "Working with Slack"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(promoutils)
+library(dplyr)
+```
+
+
+Using the Slack API to schedule messages.
+First make sure you are authorized to work with the Slack API:
+
+```{r}
+keys_check()
+```
+
+If not, see the [Setting Up Slack](article/slack_app) article.
+
+Once you have set up your Slack access, you can use the Slack API to access
+the rOpenSci Slack space using httr2 directly or via the promoutils helper functions.
+
+
+### Posting messages immediately
+
+By default all messages are posted in the `#testing-api` channel which is great 
+for playing and testing, but when you're ready to post for real you can change 
+this with the `channel` argument.
+
+```{r}
+slack_posts_write("Testing immediately posting in the Vignette!")
+```
+
+We can get a list of messages in this channel:
+```{r}
+slack_messages("testing-api")
+```
+
+And we can clean this up with:
+
+```{r}
+m <- slack_messages("testing-api") |>
+  slack_message_rm()
+```
+
+Check that it's gone
+```{r}
+slack_messages("testing-api")
+```
+
+```{r include=FALSE}
+# Silently clean up from the vignette
+slack_scheduled_list() |>
+  filter(
+    channel == "testing-api",
+    #text == "Testing schedules in the Vignette!"
+  ) |>
+  slack_scheduled_rm()
+```
+
+
+### Scheduling messages
+
+Let's schedule a message for tomorrow. 
+
+```{r}
+slack_posts_write(
+  "Testing scheduled messages in the Vignette!",
+  when = Sys.Date() + lubridate::days(1)
+)
+```
+
+- If `when = "now"`, `slack_posts_write()` will post immediately (default)
+- If scheduled, `slack_posts_write()` will also post a copy of the message and 
+it's date to scheduled in the private channel, `#admin-scheduled`, 
+for quick checking of currently scheduled messages when you're in the Slack app.
+
+![](slack_eg.png){fig-alt = ""}
+
+See the currently scheduled messages according to the Slack API
+```{r}
+slack_scheduled_list()
+```
+
+
+To delete currently scheduled messages you need to know the `channel_id` and the message `id`. 
+We can get these from `slack_list_scheduled()` or we can supply the data frame directly as we did above.
+
+```{r}
+m <- slack_scheduled_list()
+slack_scheduled_rm(m)
+```
+
+Note that `slack_scheduled_rm()` also removes the message posted to the `#admin-scheduled`
+channel, so that channel *should* be a faithful representation of messages currently 
+scheduled via the API.
+
+```{r}
+slack_scheduled_list()
+```
+
+However, after posts have been sent, you'll need to clean up `#admin-scheduled`
+with a call to `slack_cleanup()` which will remove any message in `#admin-scheduled` that isn't also in Slack's internal scheduled messages list.
+
+```{r}
+slack_cleanup()
+```

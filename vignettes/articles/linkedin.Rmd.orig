@@ -1,0 +1,68 @@
+---
+title: "Working with LinkedIn"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(promoutils)
+library(dplyr)
+```
+
+
+This article will walk you through using the promoutils functions to schedule messages for Linkedin.
+First make sure you are authorized to work with the LinkedIn API:
+
+```{r}
+keys_check()
+```
+
+If not, see the [Setting Up LinkedIn](article/linkedin_app) article.
+
+
+### Accessing the API
+
+Once you have set up your LinkedIn access, you can use the LinkedIn API to access
+the rOpenSci LinkedIn space using httr2 directly or via the promoutils helper functions.
+
+Most of the time we'll be using the `ro_urn` object to define the 'author' (i.e. rOpenSci) of our requests.
+
+For example, to get a list of recent posts by rOpenSci we can use
+
+```{r}
+li_posts_read(ro_urn)
+```
+
+We can print the most recent message with
+
+```{r}
+li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
+```
+
+To write a post you can use the `li_posts_write()` function. 
+Let's do a dry run (which won't actually post).
+
+```{r}
+id <- li_posts_write(
+  author = ro_urn, # Post on behalf of rOpenSci
+  body = "Testing out the LinkedIn API via R and httr2!",
+  dry_run = TRUE
+)
+```
+
+It's a good idea to capture the returned `id` (URN) in case you want to remove the post later (but you can always get this with `li_posts_read()` too).
+
+If you want to post from your personal account, you'll need to use your personal ID (URN).
+You can fetch this with `li_urn_me()`.
+
+
+```{r}
+li_urn_me()
+```
+
+To schedule messages we recommend using a GitHub action on a cron job (or similar). 
