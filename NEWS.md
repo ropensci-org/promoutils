@@ -1,5 +1,6 @@
 # 0.6
 - Consolidate and standarize key management - keys_check() etc.
+- Add `help_wanted_json()` for rosadmin/help-wanted
 
 # 0.5
 - Update LinkedIn API version
