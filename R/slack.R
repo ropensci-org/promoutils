@@ -222,8 +222,6 @@ slack_scheduled_list <- function() {
 #' }
 
 slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
-  channel <- slack_channel_name(channel)
-
   if (!is.null(msg)) {
     if (nrow(msg) == 0) {
       rlang::inform("No messages to remove")
@@ -231,6 +229,8 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
     }
     channel <- msg$channel
     id <- msg$id
+  } else {
+    channel <- slack_channel_name(channel)
   }
 
   purrr::walk2(channel, id, \(c, i) {
@@ -361,6 +361,8 @@ slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
       channels,
       .data$channel_id == .env$channel_id
     )
+  } else {
+    chn <- character(0)
   }
 
   if (length(chn) == 0) {
@@ -449,15 +451,20 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
     slack_df("messages", c("ts", "user", "text")) |>
     dplyr::mutate(
       time = lubridate::as_datetime(as.numeric(.data$ts)),
-      time = lubridate::with_tz(.data$time, tz = Sys.timezone())
+      time = lubridate::with_tz(.data$time, tz = Sys.timezone()),
+      channel = slack_channel_name(channel_id = channel_id)
     ) |>
-    dplyr::relocate("time", .after = "ts")
+    dplyr::relocate("time", .after = "ts") |>
+    dplyr::relocate("channel")
 }
 
 #' Remove a Slack message
 #'
 #' Use with caution!
 #'
+#' @param msg Data frame. Output of `slack_messages` containing messages to
+#'   remove. Should contain columns "channel" and "ts". Note that only the most
+#'   recent message will be removed.
 #' @param channel Character. Channel Name. Not required if channel_id supplied.
 #' @param channel_id Character. Channel id.
 #' @param ts Numeric. Timestamp to identify message to remove
@@ -466,7 +473,24 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
 #'
 #' @export
 
-slack_message_rm <- function(channel = NULL, channel_id = NULL, ts) {
+slack_message_rm <- function(
+  msg = NULL,
+  channel = NULL,
+  channel_id = NULL,
+  ts
+) {
+  if (!is.null(msg)) {
+    if (nrow(msg) == 0) {
+      rlang::inform("No messages to remove")
+      return(invisible())
+    } else if (nrow(msg) > 1) {
+      cli::cli_inform("Only removing the most recent message")
+      msg <- dplyr::arrange(msg, dplyr::desc(ts)) |>
+        dplyr::slice(1)
+    }
+    channel <- msg$channel
+    ts <- msg$ts
+  }
   channel_id <- slack_channel_id(channel, channel_id)
 
   httr2::request("https://slack.com/api/chat.delete") |>
