@@ -47,5 +47,5 @@ skip_if_not_all <- function() {
   not_ci <- Sys.getenv("CI") == ""
   test_all <- Sys.getenv("TEST_ALL") == "yes"
 
-  skip_if_not(not_ci || test_all, "Not time for a full API test")
+  testthat::skip_if_not(not_ci || test_all, "Not time for a full API test")
 }
