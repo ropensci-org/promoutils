@@ -1,6 +1,6 @@
 Package: promoutils
 Title: Utilities for Promoting rOpenSci on Social Media
-Version: 0.4.6
+Version: 0.6.0
 Authors@R: 
     person(given = "Steffi",
            family = "LaZerte",

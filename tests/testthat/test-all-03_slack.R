@@ -7,7 +7,8 @@ test_that("slack_posts_write() immediate", {
       "Test message for immediate posting",
       when = "now",
       channel = "#testing-api"
-    )
+    ),
+    "Slack message posted successfully to #testing-api"
   ) |>
     suppressMessages()
 
@@ -34,9 +35,10 @@ test_that("slack_posts_write() future", {
       when = future_time,
       tz = "America/Winnipeg",
       channel = "#testing-api"
-    )
+    ),
+    "Slack message scheduled successfully to #testing-api"
   ) |>
-    suppressMessages()
+    expect_message("Scheduled message successfully added to #admin-scheduled")
 
   # Test present and removed successfully
   expect_silent(m <- slack_scheduled_list())
