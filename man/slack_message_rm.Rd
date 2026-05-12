@@ -4,7 +4,7 @@
 \alias{slack_message_rm}
 \title{Remove a Slack message}
 \usage{
-slack_message_rm(channel = NULL, channel_id = NULL, ts)
+slack_message_rm(msg = NULL, channel = NULL, channel_id = NULL, ts)
 }
 \arguments{
 \item{channel}{Character. Channel Name. Not required if channel_id supplied.}

@@ -34,6 +34,7 @@ Imports:
     tidyr,
     yaml
 Suggests: 
+    gitcreds,
     httptest2,
     httpuv,
     matomoR (>= 0.0.1),

@@ -9,11 +9,6 @@
 # t$refresh_token
 # usethis::edit_r_environ()
 
-
-
-
-
-
 # Get rOpenSci posts
 p <- li_posts_read(ro_urn)
 
@@ -29,29 +24,31 @@ httr2::last_response() |>
 id <- li_posts_write(
   author = "urn:li:organization:5515715",
   body = "testing 1...2...3..",
-  dry_run = FALSE)
+  dry_run = FALSE
+)
 
 # Write as Steffi
 id <- li_posts_write(
   author = ro_urn,
   body = "Testing out the LinkedIn API via R and httr2!",
-  dry_run = TRUE)
+  dry_run = TRUE
+)
 
 
 id <- li_posts_write(
   author = li_urn_me(),
-  body =
-    paste(
-      "Testing out the LinkedIn API via R and httr2!",
-      "And again with links...",
-      "",
-      "- https://docs.ropensci.org/weathercan",
-      "- weathercan docs (https://docs.ropensci.org/weathercan)",
-      "- (what about other things in brackets?)",
-      "",
-      "🎉",
-      sep = "\n"
-    ), dry_run = FALSE
+  body = paste(
+    "Testing out the LinkedIn API via R and httr2!",
+    "And again with links...",
+    "",
+    "- https://docs.ropensci.org/weathercan",
+    "- weathercan docs (https://docs.ropensci.org/weathercan)",
+    "- (what about other things in brackets?)",
+    "",
+    "🎉",
+    sep = "\n"
+  ),
+  dry_run = FALSE
 )
 
 
@@ -83,9 +80,13 @@ p <- "Testing escape Chars with LinkedIn API
 escape_linkedin_chars(p) |> cat()
 
 li_posts_write(author = li_urn_me(), body = p)
-li_posts_write(author = li_urn_me(),
-               body = glue::glue(
-                 "testing urls... in line https://steffilazerte.ca",
-                 "",
-                 "with (https://github.com/steffilazerte)",
-                 "with hashtags #testing", .sep = "\n"))
+li_posts_write(
+  author = li_urn_me(),
+  body = glue::glue(
+    "testing urls... in line https://steffilazerte.ca",
+    "",
+    "with (https://github.com/steffilazerte)",
+    "with hashtags #testing",
+    .sep = "\n"
+  )
+)
