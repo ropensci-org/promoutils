@@ -7,6 +7,10 @@
 slack_message_rm(msg = NULL, channel = NULL, channel_id = NULL, ts)
 }
 \arguments{
+\item{msg}{Data frame. Output of \code{slack_messages} containing messages to
+remove. Should contain columns "channel" and "ts". Note that only the most
+recent message will be removed.}
+
 \item{channel}{Character. Channel Name. Not required if channel_id supplied.}
 
 \item{channel_id}{Character. Channel id.}

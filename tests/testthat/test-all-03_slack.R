@@ -16,7 +16,7 @@ test_that("slack_posts_write() immediate", {
   m <- slack_messages(channel = "#testing-api")
   expect_equal(m$text[1], "Test message for immediate posting")
   expect_message(
-    slack_message_rm("#testing-api", ts = m$ts[1]),
+    slack_message_rm(channel = "#testing-api", ts = m$ts[1]),
     "successfully removed"
   )
 
