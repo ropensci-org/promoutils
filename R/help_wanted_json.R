@@ -18,28 +18,28 @@ help_wanted_json <- function() {
 
   issues <- dplyr::tibble(owner = c("ropensci", "ropenscilabs")) |>
     dplyr::mutate(
-      repos = purrr::map(owner, \(x) {
+      repos = purrr::map(.data$owner, \(x) {
         gh::gh(glue::glue("/users/{x}/repos"), .limit = Inf)
       })
     ) |>
     dplyr::mutate(
-      info = purrr::map(repos, \(x) {
+      info = purrr::map(.data$repos, \(x) {
         dplyr::tibble(
           package = purrr::map_chr(x, "name"),
           open_issues = purrr::map_dbl(x, "open_issues")
         ) |>
-          dplyr::filter(open_issues > 0)
+          dplyr::filter(.data$open_issues > 0)
       })
     ) |>
     dplyr::select(-"repos") |>
-    tidyr::unnest(info) |>
-    dplyr::filter(!package %in% pkgs_ignore) |>
+    tidyr::unnest("info") |>
+    dplyr::filter(!.data$package %in% .env$pkgs_ignore) |>
     dplyr::mutate(
-      issues = purrr::map2(owner, package, \(x, y) {
+      issues = purrr::map2(.data$owner, .data$package, \(x, y) {
         gh_issue_fetch(owner = x, repo = y, since = min_date)
       }),
-      issues = purrr::map(issues, gh_issue_fmt),
-      issues = purrr::map(issues, \(x) {
+      issues = purrr::map(.data$issues, gh_issue_fmt),
+      issues = purrr::map(.data$issues, \(x) {
         gh_issue_labels(x, labels_help, labels_first) |>
           dplyr::select(-"owner", -"repo")
       })
@@ -48,13 +48,16 @@ help_wanted_json <- function() {
   pkgs <- pkgs_ru()
 
   issues_clean <- issues |>
-    tidyr::unnest(issues) |>
+    tidyr::unnest("issues") |>
     dplyr::filter(lubridate::as_date(.data$label_created) >= .env$min_date) |>
     dplyr::mutate(
-      url = stringr::str_remove_all(url, glue::glue("(api\\.)|(repos\\/)")),
-      title = stringr::str_remove_all(title, "`"),
-      issue_created = lubridate::ymd_hms(created),
-      maintainer_name = purrr::map_chr(package, \(x) pkg_authors(x, pkgs))
+      url = stringr::str_remove_all(
+        .data$url,
+        glue::glue("(api\\.)|(repos\\/)")
+      ),
+      title = stringr::str_remove_all(.data$title, "`"),
+      issue_created = lubridate::ymd_hms(.data$created),
+      maintainer_name = purrr::map_chr(.data$package, \(x) pkg_authors(x, pkgs))
     ) |>
     dplyr::select(
       "owner",
@@ -78,7 +81,7 @@ help_wanted_json <- function() {
       dplyr::as_tibble() |>
       dplyr::rename("labels_github" = "username", "labels_name" = "author")
 
-    author_index <- dplyr::select(old_list, labels_name, labels_github) |>
+    author_index <- dplyr::select(old_list, "labels_name", "labels_github") |>
       dplyr::distinct()
 
     issues_clean <- dplyr::left_join(
