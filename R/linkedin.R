@@ -129,16 +129,13 @@ li_req_auth <- function(req) {
   # Define authorization
   httr2::req_oauth_refresh(
     req,
-    client = li_client()
+    client = li_client(),
+    refresh_token = key("linkedin")
   )
 }
 
 
 #' Setup rOpenSci client id for LinkedIn API
-#'
-#' Expects to find the "Client Secret" in the .Renviron file under
-#' LINKEDIN_SECRET (Or as a general environemental variable through GitHub
-#' actions).
 #'
 #' @noRd
 li_client <- function() {
@@ -146,7 +143,7 @@ li_client <- function() {
     name = "rOpenSci_linkedIn",
     id = "78su90mmb4rsd4",
     token_url = "https://www.linkedin.com/oauth/v2/accessToken",
-    secret = key("linkedin")
+    secret = key("linkedin_org")
   )
 }
 
