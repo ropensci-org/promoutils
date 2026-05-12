@@ -1,29 +1,58 @@
-# Test Slack Functions (Dry Runs Only)
+test_that("slack_posts_write() immediate", {
+  # Actually post but only to the #testing-api channel
+  skip_if_not_all()
 
-test_that("slack_posts_write() dry_run", {
-  # Basic ------------------------------------
   expect_message(
     slack_posts_write(
       "Test message for immediate posting",
       when = "now",
-      channel = "#testing-api",
-      dry_run = TRUE
+      channel = "#testing-api"
     )
   ) |>
     suppressMessages()
 
-  # Scheduled ---------------------------------
+  # Test present and removed successfully
+  m <- slack_messages(channel = "#testing-api")
+  expect_equal(m$text[1], "Test message for immediate posting")
+  expect_message(
+    slack_message_rm("#testing-api", ts = m$ts[1]),
+    "successfully removed"
+  )
+
+  m <- slack_messages(channel = "#testing-api")
+  expect_true(m$text[1] != "Test message for immediate posting")
+})
+
+test_that("slack_posts_write() future", {
+  skip_if_not_all()
+
+  # Actually post but only to the #testing-api channel
   future_time <- Sys.time() + 3600
   expect_message(
     slack_posts_write(
       "Test message for scheduled posting",
       when = future_time,
       tz = "America/Winnipeg",
-      channel = "#testing-api",
-      dry_run = TRUE
+      channel = "#testing-api"
     )
   ) |>
     suppressMessages()
+
+  # Test present and removed successfully
+  expect_silent(m <- slack_scheduled_list())
+  expect_equal(m$text[1], "Test message for scheduled posting")
+  expect_equal(round(m$post_at[1]), round(as.numeric(future_time)))
+  expect_message(
+    slack_scheduled_rm(m[1, ], "#testing-api"),
+    "successfully removed"
+  )
+
+  m <- slack_messages(channel = "#testing-api")
+  expect_true(m$text[1] != "Test message for immediate posting")
+})
+
+test_that("", {
+  skip_if_not_all()
 
   # Multiline -------------------------------
   multiline_msg <- paste(

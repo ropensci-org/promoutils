@@ -1,5 +1,4 @@
 test_that("gh_issue_post()", {
-  # Except actual posting
   with_mocked_bindings(
     gh_cache = function(...) cli::cli_inform("Posting!"),
     code = {

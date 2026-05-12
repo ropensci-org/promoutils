@@ -40,3 +40,12 @@ local_mocked_cocoon <- function(.env = rlang::caller_env()) {
     .package = "monarch" # Not advised generally, but works for us
   )
 }
+
+skip_if_not_all <- function() {
+  # On CI run only if set to TEST_ALL
+  # Otherwise always run
+  not_ci <- Sys.getenv("CI") == ""
+  test_all <- Sys.getenv("TEST_ALL") == "yes"
+
+  skip_if_not(not_ci || test_all, "Not time for a full API test")
+}
