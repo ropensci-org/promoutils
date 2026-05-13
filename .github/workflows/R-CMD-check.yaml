@@ -32,9 +32,9 @@ jobs:
       TEST_ALL: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'yes' || 'no' }}
       PU_GITHUB_KEY: ${{ secrets.GITHUB_TOKEN }}
       PU_SLACK_KEY: ${{ secrets.SLACK_SECRET }}
-      PU_LINKEDIN_KEY: ${{ secrets.LINKEDIN_SECRET }}
+      PU_LINKEDIN_ORG_KEY: ${{ secrets.LINKEDIN_ORG }}
       PU_MATOMO_KEY: ${{ secrets.MATOMO_TOKEN }}
-      HTTR2_REFRESH_TOKEN: ${{ secrets.LINKEDIN_HTTR2_REFRESH_TOKEN }}
+      PU_LINKEDIN_KEY: ${{ secrets.LINKEDIN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:
