@@ -20,7 +20,9 @@ Data frame of formatted use cases.
 Extract out resource information
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 u <- uc_fetch() |>
   uc_fmt("2025-01-01")
 u
+\dontshow{\}) # examplesIf}
 }

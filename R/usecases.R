@@ -60,7 +60,7 @@ uc_fetch <- function(owner = "ropensci", name = "discussions") {
 #' @returns Data frame of formatted use cases.
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' u <- uc_fetch() |>
 #'   uc_fmt("2025-01-01")
 #' u
