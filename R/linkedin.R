@@ -48,7 +48,7 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
   # Need to escape () around links in the body or we lose them and everything following
   body <- escape_linkedin_chars(body)
 
-  r <- li_req_posts() |>
+  r <- li_req_posts(dry_run = dry_run) |>
     httr2::req_headers("Content-Type" = "application/json") |>
     httr2::req_body_json(
       list(
@@ -83,11 +83,11 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
 #' - Latest API Version: https://learn.microsoft.com/en-us/linkedin/talent/versioning?#latest-version
 #'
 #' @noRd
-li_req_posts <- function() {
+li_req_posts <- function(dry_run = FALSE) {
   v <- getOption("promoutils.linkedin_version") %||% "202510"
 
   httr2::request(base_url = "https://api.linkedin.com/rest/posts") |>
-    li_req_auth() |>
+    li_req_auth(dry_run = dry_run) |>
     httr2::req_headers(
       "LinkedIn-Version" = v,
       "X-Restli-Protocol-Version" = "2.0.0"
@@ -123,21 +123,26 @@ li_urn_me <- function() {
 #' @param req httr2 request
 #'
 #' @noRd
-li_req_auth <- function(req) {
+li_req_auth <- function(req, dry_run = FALSE) {
   # Uses refresh token so works programatically on GitHub API
   # Define authorization
-  httr2::req_oauth_refresh(
-    req,
-    client = li_client(),
-    refresh_token = key("linkedin")
-  )
+  if (dry_run) {
+    r <- req
+  } else {
+    r <- httr2::req_oauth_refresh(
+      req,
+      client = li_client(),
+      refresh_token = key("linkedin")
+    )
+  }
+  r
 }
 
 
 #' Setup rOpenSci client id for LinkedIn API
 #'
 #' @noRd
-li_client <- function() {
+li_client <- function(dry_run = FALSE) {
   httr2::oauth_client(
     name = "rOpenSci_linkedIn",
     id = "78su90mmb4rsd4",
