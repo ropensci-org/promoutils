@@ -6,7 +6,7 @@
 #' @returns Data frame of usecases
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' u <- uc_fetch()
 #' u
 

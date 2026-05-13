@@ -18,6 +18,8 @@ Data frame of usecases
 Fetch and format use cases from a GitHub Discussion board
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 u <- uc_fetch()
 u
+\dontshow{\}) # examplesIf}
 }
