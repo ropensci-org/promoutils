@@ -33,7 +33,6 @@ This function authorizes with the scopes:
 }
 }
 \examples{
-
 \dontrun{
 # Only run if you need to update the scopes or get a new token (otherwise
 # you'll have to replace all your tokens)

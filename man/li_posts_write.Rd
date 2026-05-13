@@ -22,7 +22,6 @@ A string of the URN for the post id.
 Post to LinkedIn
 }
 \examples{
-
 # Dry-run
 id <- li_posts_write(
   author = ro_urn, # Post on behalf of rOpenSci

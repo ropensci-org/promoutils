@@ -9,7 +9,7 @@
 #'   - https://learn.microsoft.com/en-us/linkedin/shared/api-guide/concepts/urns
 #'   - https://learn.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/posts-api
 #'
-#' @examples
+#' @examplesIf interactive()
 #' li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
 
 li_posts_read <- function(author) {
@@ -31,7 +31,6 @@ li_posts_read <- function(author) {
 #' @export
 #'
 #' @examples
-#'
 #' # Dry-run
 #' id <- li_posts_write(
 #'   author = ro_urn, # Post on behalf of rOpenSci
@@ -105,10 +104,10 @@ li_req_posts <- function() {
 #' @export
 #'
 #' @examples
-#'
 #' \dontrun{
 #' li_urn_me()
 #' }
+
 li_urn_me <- function() {
   id <- httr2::request(base_url = "https://api.linkedin.com/v2/me") |>
     li_req_auth() |>
@@ -176,7 +175,6 @@ li_client <- function() {
 #'   - Refresh tokens API: https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens
 #'
 #' @examples
-#'
 #' \dontrun{
 #' # Only run if you need to update the scopes or get a new token (otherwise
 #' # you'll have to replace all your tokens)
@@ -209,6 +207,17 @@ li_auth <- function() {
     pkce = FALSE
   )
 }
+
+#' Perform an httr2 request
+#'
+#' Performs an httr2 request but also catches specific error statuses related
+#' to needing to update the LinkedIn API (makes it easier to see what's wrong).
+#'
+#' @param req
+#'
+#' @returns httr2 request
+#'
+#' @noRd
 
 li_req_perform <- function(req) {
   req |>
