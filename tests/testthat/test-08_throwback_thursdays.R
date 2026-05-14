@@ -1,4 +1,6 @@
 test_that("tt_review()", {
+  skip_on_runiverse()
+
   expect_output(tt <- tt_review())
   expect_s3_class(tt, "data.frame")
   expect_named(tt, c("post_date", "nb_visits", "url"))

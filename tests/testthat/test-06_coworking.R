@@ -1,5 +1,7 @@
 test_that("cw_details()", {
   skip_on_ci()
+  skip_on_runiverse()
+
   expect_silent(d <- cw_details(which = "next"))
   expect_s3_class(d, "data.frame")
   expect_named(d, c("title", "body", "date", "tz", "theme", "cohost"))
@@ -8,6 +10,8 @@ test_that("cw_details()", {
 
 test_that("cw_issue()", {
   skip_on_ci()
+  skip_on_runiverse()
+
   expect_error(cw_issue("2023-11", dry_run = TRUE), "Invalid date")
 
   with_mocked_bindings(

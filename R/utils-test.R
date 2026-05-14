@@ -42,10 +42,22 @@ local_mocked_cocoon <- function(.env = rlang::caller_env()) {
 }
 
 skip_if_not_all <- function() {
+  # Do not run on R-Universe ever (no credentials for API)
   # On CI run only if set to TEST_ALL
   # Otherwise always run
   not_ci <- Sys.getenv("CI") == ""
   test_all <- Sys.getenv("TEST_ALL") == "yes"
 
-  testthat::skip_if_not(not_ci || test_all, "Not time for a full API test")
+  testthat::skip_if_not(
+    !on_runiverse() && (not_ci || test_all),
+    "Not time for a full API test"
+  )
+}
+
+on_runiverse <- function() {
+  Sys.getenv("MY_UNIVERSE") != ""
+}
+
+skip_on_runiverse <- function() {
+  skip_if(on_runiverse(), "On R-Universe")
 }

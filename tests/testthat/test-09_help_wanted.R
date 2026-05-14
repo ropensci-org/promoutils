@@ -1,5 +1,7 @@
 test_that("help_fetch()", {
   skip_on_ci()
+  skip_on_runiverse()
+
   expect_silent(h <- help_fetch("2025-01-01"))
   expect_s3_class(h, "data.frame")
 })

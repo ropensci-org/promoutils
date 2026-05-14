@@ -4,6 +4,8 @@ test_that("matomo_dir()", {
 })
 
 test_that("matomo_fetch()", {
+  skip_on_runiverse()
+
   expect_message(
     v <- matomo_fetch(as.Date(c("2025-01-01", "2025-01-05"))),
     "Fetching segments"
@@ -13,6 +15,8 @@ test_that("matomo_fetch()", {
 })
 
 test_that("matomo_update()", {
+  skip_on_runiverse()
+
   expect_message(matomo_update(), "Fetching segments") |>
     expect_message("Fetching pages") |>
     expect_message("Writing")
@@ -20,6 +24,8 @@ test_that("matomo_update()", {
 
 
 test_that("matomo_read()", {
+  skip_on_runiverse()
+
   expect_silent(v <- matomo_read())
   expect_s3_class(v, "data.frame")
   expect_true("type" %in% names(v))
@@ -27,6 +33,8 @@ test_that("matomo_read()", {
 })
 
 test_that("matomo_blogposts()", {
+  skip_on_runiverse()
+
   expect_silent(v <- matomo_read() |> matomo_blogposts())
   expect_s3_class(v, "data.frame")
   expect_false("type" %in% names(v))

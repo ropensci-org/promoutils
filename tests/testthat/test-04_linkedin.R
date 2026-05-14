@@ -1,22 +1,26 @@
 test_that("li_client()", {
+  skip_on_runiverse()
   expect_s3_class(li_client(), "httr2_oauth_client")
   expect_equal(li_client()$name, "rOpenSci_linkedIn")
 })
 
 with_mock_dir("li", {
   test_that("li_urn_me()", {
+    skip_on_runiverse()
     expect_silent(li_urn_me()) |>
       expect_equal("urn:li:person:Bxn4HyByQ5")
   })
 })
 
 test_that("li_req_posts()", {
+  skip_on_runiverse()
   expect_silent(p <- li_req_posts())
   expect_s3_class(p, "httr2_request")
   expect_equal(p$url, "https://api.linkedin.com/rest/posts")
 })
 
 with_mock_dir("li", {
+  skip_on_runiverse()
   test_that("li_posts_read()", {
     expect_silent(p <- li_posts_read(ro_urn))
     expect_type(p, "list")
