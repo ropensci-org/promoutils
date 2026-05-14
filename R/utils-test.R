@@ -59,5 +59,5 @@ on_runiverse <- function() {
 }
 
 skip_on_runiverse <- function() {
-  skip_if(on_runiverse(), "On R-Universe")
+  testthat::skip_if(on_runiverse(), "On R-Universe")
 }
