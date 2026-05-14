@@ -46,7 +46,7 @@ Config/testthat/edition: 3
 Config/ropensci/maintainer: staff
 Depends: 
     R (>= 4.2.0)
-URL: https://github.com/ropensci-org/promoutils
+URL: https://docs.ropensci.org/promoutils, https://github.com/ropensci-org/promoutils
 BugReports: https://github.com/ropensci-org/promoutils/issues
 Remotes: 
     ebbertd/matomoR,

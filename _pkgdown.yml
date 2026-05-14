@@ -1,8 +1,11 @@
-url: ~
+url: https://docs.ropensci.org/promoutils
 template:
   bootstrap: 5
 
 reference:
+- title: API authentication helpers
+  contents:
+  - starts_with("keys")
 - title: Coworking Helpers
   contents:
   - starts_with("cw")
@@ -17,10 +20,13 @@ reference:
   - starts_with("li")
   - starts_with("matomo")
 - title: Dictionary Helpers (in progress...)
+  contents:
   - starts_with("dict")
 - title: Utility functions
+  contents:
+  - ro_urn
   - by_platform
-  - gh_cache
+  - .gh_cache
   - next_date
   - pkg_authors
   - pkgs_ru

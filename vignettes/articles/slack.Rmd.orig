@@ -55,16 +55,6 @@ Check that it's gone
 slack_messages("testing-api")
 ```
 
-```{r include=FALSE}
-# Silently clean up from the vignette
-slack_scheduled_list() |>
-  filter(
-    channel == "testing-api",
-    #text == "Testing schedules in the Vignette!"
-  ) |>
-  slack_scheduled_rm()
-```
-
 
 ### Scheduling messages
 
@@ -82,7 +72,7 @@ slack_posts_write(
 it's date to scheduled in the private channel, `#admin-scheduled`, 
 for quick checking of currently scheduled messages when you're in the Slack app.
 
-![](slack_eg.png){fig-alt = ""}
+![Screenshot of a Slack message in the #admin-scheduled channel giving the details of the scheduled message](slack_admin_scheduled.png)
 
 See the currently scheduled messages according to the Slack API
 ```{r}

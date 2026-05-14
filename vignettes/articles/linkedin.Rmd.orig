@@ -35,13 +35,13 @@ Most of the time we'll be using the `ro_urn` object to define the 'author' (i.e.
 For example, to get a list of recent posts by rOpenSci we can use
 
 ```{r}
-li_posts_read(ro_urn)
+p <- li_posts_read(ro_urn)
 ```
 
 We can print the most recent message with
 
 ```{r}
-li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
+p$elements[[1]]$commentary |> cat()
 ```
 
 To write a post you can use the `li_posts_write()` function. 

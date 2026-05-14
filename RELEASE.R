@@ -12,6 +12,9 @@ devtools::build_readme()
 # Precompile Vignettes
 source("vignettes/articles/_PRECOMPILE.R")
 
+# Check docs
+pkgdown::build_site()
+
 # Standard checks ------------------------------------------
 devtools::test() # Use Ctrl-Shift-T to test non-interactively
 devtools::run_examples()
@@ -24,9 +27,6 @@ goodpractice::gp(checks = all_checks()[all_checks() != "cov"])
 
 spelling::spell_check_package() # Check spelling in docs
 urlchecker::url_check() # Check URLs in documentation
-
-# Check docs
-pkgdown::build_site()
 
 # Platform checks
 rhub::rhub_check() # Check on multiple platforms

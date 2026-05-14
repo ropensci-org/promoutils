@@ -13,37 +13,34 @@ library(promoutils)
 Using the Slack API to schedule messages.
 
 This assumes that we are sending messages from our *personal* user accounts. 
-![](slack_eg.png){fig-alt = ""}
+![Screenshot of an example Slack message authored by Steffi](slack_eg.png)
 
 ### Setup an App for user tokens
 
 Following steps in Slack API Docs: https://docs.slack.dev/app-management/quickstart-app-settings
 
 1. Create New (from scratch)
-
-  - App Name: promoutils 
-  - Workspace: rOpenSci
+    - App Name: promoutils 
+    - Workspace: rOpenSci
 
 2. Create Scopes
-
-  - Go to OAuth & Permissions, scroll down to "Scopes"
-  - Add "**User** Token Scopes"
-  - `channels:history`
-  - `channels:read`
-  - `chat:write`
-  - `files:read`
-  - `groups:read`
-  - `groups:write`
-  - `groups:history`
-  - `im:write`
-  - `users:read`
+    - Go to OAuth & Permissions, scroll down to "Scopes"
+    - Add "**User** Token Scopes"
+    - `channels:history`
+    - `channels:read`
+    - `chat:write`
+    - `files:read`
+    - `groups:read`
+    - `groups:write`
+    - `groups:history`
+    - `im:write`
+    - `users:read`
   
 3. Install and authorize
-
- - Go to OAuth & Permissions > OAuth Tokens > "Install to rOpenSci" 
-   (This authorizes 'promoutils' to act on *your* behalf)
- - Copy the Token and add it to your keyring in R:
-   `keys_set("slack")` (which uses [keyring](https://keyring.r-lib.org/#usage) under the hood).
+   - Go to OAuth & Permissions > OAuth Tokens > "Install to rOpenSci" 
+     (This authorizes 'promoutils' to act on *your* behalf)
+   - Copy the Token and add it to your keyring in R:
+     `keys_set("slack")` (which uses [keyring](https://keyring.r-lib.org/#usage) under the hood).
 
 > Note:   
 >
@@ -53,3 +50,5 @@ Following steps in Slack API Docs: https://docs.slack.dev/app-management/quickst
 > 
 > If we leave it as token based, we don't have to rotate the token, but we DO 
 > need to keep that token safe. Therefore use [keyring](https://keyring.r-lib.org/). 
+
+Now you're ready to start working with the [Slack functions in promoutils](slack.html).

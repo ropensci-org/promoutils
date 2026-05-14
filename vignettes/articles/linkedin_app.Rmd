@@ -36,6 +36,7 @@ We must request access to the different sets of end points we wish to use.
 ### Setting up LinkedIn credentials in this repository
 
 This workflow requires two secrets in the GitHub repository (and locally if you want to use the functions or run tests locally):
+
 - `linkedin_org` - The client secret from the developer portal - Do this once
 - `linkedin` - The refresh token created below - Needs to be refreshed every year
 
@@ -82,6 +83,7 @@ However, this authorship is only visible to admins.
 Running the following code will open a browser so you can login to LinkedIn and give it access to the rOpenSci account again. 
 
 Only do this when you're ready to update the token in:
+
 - Your .Renviron file - Use `key_set("linkedin")`
 - Your GitHub secrets - `PU_LINKEDIN_KEY`
 
@@ -92,3 +94,4 @@ l$refresh_token # Copy this
 keys_set("linkedin") # Then paste into the prompt
 ```
 
+Now you're ready to start working with the [LinkedIn functions in promoutils](linkedin.html).

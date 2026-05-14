@@ -49,10 +49,10 @@ We can get a list of messages in this channel:
 ``` r
 slack_messages("testing-api")
 #> # A tibble: 2 × 5
-#>   channel     ts                time                user      text                                        
-#>   <chr>       <chr>             <dttm>              <chr>     <chr>                                       
-#> 1 testing-api 1778620945.090329 2026-05-12 16:22:25 UNRAUCMTK Testing immediately posting in the Vignette!
-#> 2 testing-api 1747073987.605889 2025-05-12 13:19:47 UNRAUCMTK <@UNRAUCMTK> has joined the channel
+#>   channel     ts                time                user      text                              
+#>   <chr>       <chr>             <dttm>              <chr>     <chr>                             
+#> 1 testing-api 1778789426.839439 2026-05-14 15:10:26 UNRAUCMTK Testing immediately posting in th…
+#> 2 testing-api 1747073987.605889 2025-05-12 13:19:47 UNRAUCMTK <@UNRAUCMTK> has joined the chann…
 ```
 
 And we can clean this up with:
@@ -62,7 +62,7 @@ And we can clean this up with:
 m <- slack_messages("testing-api") |>
   slack_message_rm()
 #> Only removing the most recent message
-#> Message 1778620945.090329 successfully removed from C08RY1PUHM3
+#> Message 1778789426.839439 successfully removed from C08RY1PUHM3
 ```
 
 Check that it's gone
@@ -70,12 +70,10 @@ Check that it's gone
 ``` r
 slack_messages("testing-api")
 #> # A tibble: 1 × 5
-#>   channel     ts                time                user      text                               
-#>   <chr>       <chr>             <dttm>              <chr>     <chr>                              
-#> 1 testing-api 1747073987.605889 2025-05-12 13:19:47 UNRAUCMTK <@UNRAUCMTK> has joined the channel
+#>   channel     ts                time                user      text                              
+#>   <chr>       <chr>             <dttm>              <chr>     <chr>                             
+#> 1 testing-api 1747073987.605889 2025-05-12 13:19:47 UNRAUCMTK <@UNRAUCMTK> has joined the chann…
 ```
-
-
 
 
 ### Scheduling messages
@@ -97,16 +95,16 @@ slack_posts_write(
 it's date to scheduled in the private channel, `#admin-scheduled`, 
 for quick checking of currently scheduled messages when you're in the Slack app.
 
-![](slack_eg.png){fig-alt = ""}
+![Screenshot of a Slack message in the #admin-scheduled channel giving the details of the scheduled message](slack_admin_scheduled.png)
 
 See the currently scheduled messages according to the Slack API
 
 ``` r
 slack_scheduled_list()
 #> # A tibble: 1 × 8
-#>   channel     scheduled_local     text                  date_created_dt     channel_id id    post_at date_created
-#>   <chr>       <dttm>              <chr>                 <dttm>              <chr>      <chr>   <int>        <int>
-#> 1 testing-api 2026-05-13 00:00:00 Testing scheduled me… 2026-05-12 21:22:26 C08RY1PUH… Q0B3…  1.78e9   1778620946
+#>   channel    scheduled_local     text  date_created_dt     channel_id id    post_at date_created
+#>   <chr>      <dttm>              <chr> <dttm>              <chr>      <chr>   <int>        <int>
+#> 1 testing-a… 2026-05-15 00:00:00 Test… 2026-05-14 20:10:27 C08RY1PUH… Q0B3…  1.78e9   1778789427
 ```
 
 
@@ -117,8 +115,8 @@ We can get these from `slack_list_scheduled()` or we can supply the data frame d
 ``` r
 m <- slack_scheduled_list()
 slack_scheduled_rm(m)
-#> Message Q0B3AGH9H45 successfully removed from scheduled queue for testing-api
-#> Message 1778620946.914269 successfully removed from C08T0PS0QDR
+#> Message Q0B3Z8LM4LR successfully removed from scheduled queue for testing-api
+#> Message 1778789429.070449 successfully removed from C08T0PS0QDR
 ```
 
 Note that `slack_scheduled_rm()` also removes the message posted to the `#admin-scheduled`
@@ -129,8 +127,8 @@ scheduled via the API.
 ``` r
 slack_scheduled_list()
 #> # A tibble: 0 × 8
-#> # ℹ 8 variables: channel <lgl>, scheduled_local <lgl>, text <lgl>, date_created_dt <lgl>, channel_id <lgl>,
-#> #   id <lgl>, post_at <lgl>, date_created <lgl>
+#> # ℹ 8 variables: channel <lgl>, scheduled_local <lgl>, text <lgl>, date_created_dt <lgl>,
+#> #   channel_id <lgl>, id <lgl>, post_at <lgl>, date_created <lgl>
 ```
 
 However, after posts have been sent, you'll need to clean up `#admin-scheduled`

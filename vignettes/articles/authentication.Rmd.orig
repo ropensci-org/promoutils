@@ -33,7 +33,7 @@ Slack needs to be set up for each user, and LinkedIn only once for the organizat
 
 As such these APIs have separate articles to walk you through this process:
 
-- [Slack](articles/slack)
-- [LinkedIn](articles/linkedin_app)
+- [Slack](slack_app.html)
+- [LinkedIn](linkedin_app.html)
 
 
