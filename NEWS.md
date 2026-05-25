@@ -1,5 +1,6 @@
 # 0.6.1
 - Export `gh_issue_fetch`, `gh_issue_fmt` and `gh_issue_post()`
+- Fix `replace_emoji()` with multiple times
 
 # 0.6
 - Consolidate and standarize key management - keys_check() etc.
