@@ -1,3 +1,6 @@
+# 0.6.1
+- Export `gh_issue_fetch`, `gh_issue_fmt` and `gh_issue_post()`
+
 # 0.6
 - Consolidate and standarize key management - keys_check() etc.
 - Add `help_wanted_json()` for rosadmin/help-wanted

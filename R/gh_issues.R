@@ -1,6 +1,28 @@
 #' Create a GH issues post
 #'
-#' @noRd
+#' Opens an issue on Github with title, body and labels.
+#'
+#' @param title Character. Title of the issue.
+#' @param body Character. Body text of the issue.
+#' @param labels Character vector. Vector of labels to assign.
+#' @param owner Character. GitHub username or organization owner of the repository.
+#' @param repo Character. Repository in which to create issue.
+#' @param avoid_dups Logical. If TRUE (default), avoids posting duplicate issues.
+#'
+#' @inheritParams common_docs
+#'
+#' @export
+#'
+#' @examples
+#' gh_issue_post(
+#'   title = "My issue",
+#'   body = "Body of the issue",
+#'   labels = "help-wanted",
+#'   owner = "ropensci",
+#'   repo = "weathercan",
+#'   dry_run = TRUE
+#' )
+
 gh_issue_post <- function(
   title,
   body,
@@ -65,6 +87,9 @@ gh_issue_post <- function(
 
 #' Fetch issues from a GH repository
 #'
+#' Fetches issues from a GitHub repository and returns them as a list. Pass on
+#' to [gh_issue_fmt()] for formatting.
+#'
 #' @param state Character. Which issues to fetch: "open", "closed", "all"
 #' @param labels Character vector. Fetch only issues with these labels. (Optional)
 #' @param since Character/Date/datetime. Fetch only issues since this date/time. (Optional)
@@ -75,7 +100,7 @@ gh_issue_post <- function(
 #' @inheritParams common_docs
 #'
 #' @return List of issues
-#' @noRd
+#' @export
 #'
 #' @examples
 #' i <- gh_issue_fetch()
@@ -121,14 +146,15 @@ gh_issue_fetch <- function(
 #' Format issues list from GH
 #'
 #' @param i List of issues from `gh_issue_fetch()`
-#' @param which Which fields to includ
+#' @param which Which fields to include
 #'
 #' @return Issues formated as a data frame
-#' @noRd
+#' @export
 #'
 #' @examples
 #' i <- gh_issue_fetch()
 #' i <- gh_issue_fmt(i, which = "title")
+
 gh_issue_fmt <- function(
   i,
   which = c(

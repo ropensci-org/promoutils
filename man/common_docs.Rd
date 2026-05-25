@@ -4,9 +4,11 @@
 \alias{common_docs}
 \title{Common arguments and documentation for various functions}
 \arguments{
-\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area)}
+\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area).}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
+
+\item{open_browser}{Logical. Whether to open the issue in the browser.}
 
 \item{quiet}{Logical. Whether to suppress progress messages.}
 
