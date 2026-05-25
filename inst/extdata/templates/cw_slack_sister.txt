@@ -5,7 +5,7 @@ You can work quietly on your own, join in a discussion, or work while listening 
 
 :grey_exclamation: Theme: {theme}
 :hourglass_flowing_sand: When: {time}
-:cookie: Hosted by: @{who_main_linkedin} and community host @{who_linkedin}
+:cookie: Hosted by: @{who_main_linkedin} and co-host @{who_linkedin}
 :mag: Details: {event_url}
 
 You can use this time for...
