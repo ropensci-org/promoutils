@@ -13,7 +13,7 @@ handles and arranged by platform upon which to post, output of
 
 \item{date_time}{Character/Date. When to post. Defaults to next Thursday if \code{NULL}.}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
 
 \item{print}{Logical. Whether to simply print the text to console instead of
 copying to the clipboard.}

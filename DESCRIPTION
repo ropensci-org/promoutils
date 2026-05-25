@@ -1,13 +1,13 @@
 Package: promoutils
-Title: Utilities for Promoting rOpenSci on Social Media
-Version: 0.6.0
+Title: Utilities for Promoting rOpenSci
+Version: 0.6.1
 Authors@R: 
     person(given = "Steffi",
            family = "LaZerte",
            role = c("aut", "cre"),
            email = "steffi@steffi.ca",
            comment = c(ORCID = "0000-0002-7690-8360"))
-Description: Utility functions for accessing GitHub and social media data.
+Description: Utility functions and workflows for promoting community events and community members on rOpenSci website and social media.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

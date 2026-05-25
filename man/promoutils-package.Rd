@@ -4,13 +4,14 @@
 \name{promoutils-package}
 \alias{promoutils}
 \alias{promoutils-package}
-\title{promoutils: Utilities for Promoting rOpenSci on Social Media}
+\title{promoutils: Utilities for Promoting rOpenSci}
 \description{
-Utility functions for accessing GitHub and social media data.
+Utility functions and workflows for promoting community events and community members on rOpenSci website and social media.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://docs.ropensci.org/promoutils}
   \item \url{https://github.com/ropensci-org/promoutils}
   \item Report bugs at \url{https://github.com/ropensci-org/promoutils/issues}
 }

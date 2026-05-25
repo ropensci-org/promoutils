@@ -39,9 +39,9 @@ organizer (i.e., \verb{<@UXXXXXXX>}. Defaults to Steffi's id.}
 time at which to post Slack messages as these are posted in the local
 timezone}
 
-\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area)}
+\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area).}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post)}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
 
 \item{print}{Logical. Whether to simply print the text to console instead of
 copying to the clipboard.}

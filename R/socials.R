@@ -21,7 +21,6 @@
 #'   display draft if `verbose = TRUE`).
 #' @param avoid_dups Logical. Don't post an issue if any open issue has the
 #'  same title.
-#' @param open_browser Logical. Whether to open the issue in the browser.
 #' @param over_char_limit Function. Error or warn if over the character limit?
 #'
 #' @inheritParams common_docs
