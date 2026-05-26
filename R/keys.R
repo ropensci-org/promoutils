@@ -135,6 +135,7 @@ key <- function(type, check = FALSE) {
 
   if (key == "") {
     if (interactive()) {
+      rlang::check_installed("keyring")
       key <- tryCatch(keyring::key_get(type), error = \(e) "")
     } else if (!check) {
       cli::cli_abort(
@@ -166,6 +167,7 @@ key_guide <- function(type, msg, bullets) {
     if (type == "github") {
       gitcreds::gitcreds_set()
     } else {
+      rlang::check_installed("keyring")
       keyring::key_set(type, prompt = paste(tools::toTitleCase(type), "Token"))
     }
   }
