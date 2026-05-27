@@ -1,7 +1,11 @@
 # 0.6.1
 - Export `gh_issue_fetch`, `gh_issue_fmt` and `gh_issue_post()`
-- Fix `replace_emoji()` with multiple times
 - keyring is suggested
+
+## Bug fixes
+- Fix `replace_emoji()` with multiple times
+- Fix `li_posts_write()` where doesn't pass on request
+
 
 # 0.6
 - Consolidate and standarize key management - keys_check() etc.

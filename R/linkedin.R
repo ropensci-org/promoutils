@@ -69,7 +69,7 @@ li_posts_write <- function(author, body, dry_run = FALSE) {
   if (dry_run) {
     httr2::req_dry_run(r)
   } else {
-    li_req_perform() |>
+    li_req_perform(r) |>
       httr2::resp_header("x-restli-id")
   }
 }
