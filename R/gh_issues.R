@@ -112,6 +112,7 @@ gh_issue_close <- function(n, owner, repo, dry_run = FALSE) {
       repo = repo,
       number = n,
       state = "closed",
+      .token = key("github"),
       .method = "PATCH"
     )
   } else {
