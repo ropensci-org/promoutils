@@ -85,6 +85,40 @@ gh_issue_post <- function(
   return(invisible())
 }
 
+#' Close a GH issue
+#'
+#' Closes a GH issue by number, repository and owner.
+#'
+#' @param n Numeric. Issue number to close.
+#' @param owner Character. GitHub username or organization owner of the repository.
+#' @param repo Character. Repository in which to create issue.
+#'
+#' @inheritParams common_docs
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   # Closes the first issue in the "myrop" repository of "myhandle" on GitHub
+#'   gh_issue_close(1, "myhandle", "myrepo")
+#' }
+
+gh_issue_close <- function(n, owner, repo, dry_run = FALSE) {
+  if (!dry_run) {
+    cli::cli_inform("Closing issue: {n} in {owner}/{repo}")
+    gh::gh(
+      endpoint = "/repos/{owner}/{repo}/issues/{number}",
+      owner = owner,
+      repo = repo,
+      number = n,
+      state = "closed",
+      .method = "PATCH"
+    )
+  } else {
+    cli::cli_inform("Would have closed issue: {n} in {owner}/{repo}")
+  }
+}
+
 #' Fetch issues from a GH repository
 #'
 #' Fetches issues from a GitHub repository and returns them as a list. Pass on

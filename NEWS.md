@@ -1,5 +1,6 @@
 # 0.6.1
-- Export `gh_issue_fetch`, `gh_issue_fmt` and `gh_issue_post()`
+- Export `gh_issue_fetch()`, `gh_issue_fmt()` and `gh_issue_post()`
+- Add `gh_issue_close()`
 - keyring is suggested
 
 ## Bug fixes
