@@ -9,7 +9,7 @@
 #' @param when Character or Date/time. When to post message (timezone is
 #'   ignored, see `tz`).
 #' @param tz Character. Timezone of `when`.
-#' @param channel Character. Channel to post message to.
+#' @param channel Character vector. Channel(s) to post message to.
 #' @param dry_run Logical. Test run?
 #'
 #' @returns Success message
@@ -56,6 +56,13 @@ slack_posts_write <- function(
     when <- lubridate::as_datetime(when, tz = tz) |> lubridate::round_date()
     post_at <- as.integer(when)
     type <- "scheduled"
+  }
+
+  if (length(channel) > 1) {
+    purrr::map(channel, \(chn) {
+      slack_posts_write(body, when, tz, channel = chn, dry_run = dry_run)
+    })
+    return(invisible())
   }
 
   # Fix formatting of links

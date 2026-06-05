@@ -20,7 +20,7 @@ ignored, see \code{tz}).}
 
 \item{tz}{Character. Timezone of \code{when}.}
 
-\item{channel}{Character. Channel to post message to.}
+\item{channel}{Character vector. Channel(s) to post message to.}
 
 \item{dry_run}{Logical. Test run?}
 }
