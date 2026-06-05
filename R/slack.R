@@ -431,7 +431,8 @@ slack_users <- function() {
     slack_paginate() |>
     slack_check(element = "members", paginate = TRUE) |>
     slack_df("members", c("id", "name", "real_name", "deleted")) |>
-    dplyr::filter(!deleted)
+    dplyr::filter(!deleted) |>
+    dplyr::mutate(id = paste0("<@", .data$id, ">"))
 }
 
 #' Get the last 100 messages from a channel
