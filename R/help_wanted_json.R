@@ -1,112 +1,142 @@
 #' Create help wanted JSON file
 #'
-#' Function created for rosadmin/help-wanted. Fetches ropensci repos with
-#' issues labelled help-wanted. Saves output to issues.json for use by
-#' helpwanted workflows including https://ropensci.org/help-wanted.
+#' Function created for rosadmin/help-wanted. Fetches package repos with
+#' issues labelled help-wanted (and variants). Saves output to issues.json for
+#' use by helpwanted workflows including https://ropensci.org/help-wanted.
 #'
 #' @returns Creates/updates `issues.json`
 #'
 #' @export
+#'
+#' @examplesIf interactive()
+#' hw_issues()
 
-help_wanted_json <- function() {
+hw_issues <- function(verbose = TRUE) {
   min_date <- Sys.Date() - lubridate::years(2)
-
   pkgs_ignore <- c("plotly", "opentripplanner") # Uses help-wanted in a different way
 
-  labels_help <- "(help)|(help wanted)|(help-wanted)|(help_wanted)"
-  labels_first <- "(good first issue)|(beginner)|(good-first-issue)"
+  # GH label search not case sensitive
+  labels_help <- c("help wanted", "help-wanted", "help_wanted")
+  labels_first <- c(
+    "good first issue",
+    "beginner",
+    "good-first-issue",
+    "good_first_issue"
+  )
+  labels_regex <- paste0("(", c(labels_help, labels_first), ")", collapse = "|")
 
-  issues <- dplyr::tibble(owner = c("ropensci", "ropenscilabs")) |>
+  labels_gh <- glue::glue("\"{labels_help}\"") |>
+    glue::glue_collapse(sep = ",")
+
+  pkgs <- pkgs_ru() |>
+    dplyr::filter(!package %in% pkgs_ignore)
+
+  repos <- pkgs |>
+    dplyr::filter(!stringr::str_detect(.data$owner, "ropensci")) |>
     dplyr::mutate(
-      repos = purrr::map(.data$owner, \(x) {
-        gh::gh(glue::glue("/users/{x}/repos"), .limit = Inf)
-      })
+      repos = stringr::str_remove(.data$url, "https://github.com/"),
+      repos = dplyr::if_else(
+        package == "assertr",
+        paste0(.data$owner, "/", .data$package),
+        repos
+      )
     ) |>
-    dplyr::mutate(
-      info = purrr::map(.data$repos, \(x) {
-        dplyr::tibble(
-          package = purrr::map_chr(x, "name"),
-          open_issues = purrr::map_dbl(x, "open_issues")
-        ) |>
-          dplyr::filter(.data$open_issues > 0)
-      })
-    ) |>
-    dplyr::select(-"repos") |>
-    tidyr::unnest("info") |>
-    dplyr::filter(!.data$package %in% .env$pkgs_ignore) |>
-    dplyr::mutate(
-      issues = purrr::map2(.data$owner, .data$package, \(x, y) {
-        gh_issue_fetch(owner = x, repo = y, since = min_date)
-      }),
-      issues = purrr::map(.data$issues, gh_issue_fmt),
-      issues = purrr::map(.data$issues, \(x) {
-        gh_issue_labels(x, labels_help, labels_first) |>
-          dplyr::select(-"owner", -"repo")
-      })
-    )
+    dplyr::pull(.data$repos)
 
-  pkgs <- pkgs_ru()
+  orgs <- pkgs$owner |>
+    unique() |>
+    stringr::str_subset("ropensci")
 
-  issues_clean <- issues |>
-    tidyr::unnest("issues") |>
-    dplyr::filter(lubridate::as_date(.data$label_created) >= .env$min_date) |>
-    dplyr::mutate(
-      url = stringr::str_remove_all(
-        .data$url,
-        glue::glue("(api\\.)|(repos\\/)")
+  cli::cli_inform("Fetch issues")
+
+  # rOpenSci repos (Get all)
+  i_ro <- gh::gh(
+    "/search/issues",
+    q = glue::glue(
+      'org:{paste0(orgs, collapse = ",")} label:{labels_gh} state:open'
+    ),
+    .limit = Inf
+  )$items
+
+  # Non-ropensci repos (get specific)
+  i_extra <- purrr::map(repos, \(r) {
+    gh::gh(
+      "/search/issues",
+      q = glue::glue(
+        'repo:{r} label:{labels_gh} state:open'
       ),
-      title = stringr::str_remove_all(.data$title, "`"),
-      issue_created = lubridate::ymd_hms(.data$created),
-      maintainer_name = purrr::map_chr(.data$package, \(x) pkg_authors(x, pkgs))
+      .limit = Inf
+    )$items
+  }) |>
+    purrr::compact() |>
+    purrr::list_flatten()
+
+  # Combine and extract details
+  i <- append(i_ro, i_extra) |>
+    purrr::map(\(i) {
+      l <- purrr::map(i$labels, "name") |>
+        stringr::str_subset(stringr::regex(labels_regex, ignore_case = TRUE)) |>
+        stringr::str_replace_all("-|_", " ") |>
+        tolower()
+
+      dplyr::tibble(
+        repo_url = i$repository_url,
+        package = stringr::str_extract(.data$repo_url, "[^/]+$"),
+        owner = stringr::str_remove_all(
+          .data$repo_url,
+          paste0("https://api.github.com/repos/|", "/", .data$package)
+        ),
+        issue_url = i$url,
+        title = i$title,
+        opened = i$created_at,
+        updated = i$updated_at,
+        labels = list(l),
+        labels_github = i$user$login,
+        labels_first = any(stringr::str_detect(l, "good first issue"))
+      )
+    }) |>
+    purrr::list_rbind()
+
+  # Filter to those in pkgs and get maintainer names/github
+  i <- i |>
+    dplyr::filter(lubridate::as_date(.data$updated) >= .env$min_date) |>
+    dplyr::inner_join(
+      dplyr::select(
+        pkgs,
+        "package",
+        "url",
+        "maintainer_github",
+        "maintainer_name"
+      ),
+      by = "package"
     ) |>
-    dplyr::select(
-      "owner",
-      "package",
-      "maintainer_name",
-      "title",
-      "labels",
-      "labels_github" = "gh_user_issue",
-      "url",
-      "opened" = "issue_created",
-      "updated",
-      "label_created",
-      "labels_first"
+    dplyr::arrange(.data$updated)
+
+  # Add/fetch missing author information
+  i <- i |>
+    monarch::add_handles(
+      primary = "github",
+      pkg_col = "package",
+      owner_col = "owner",
+      prefix = "labels_",
+      which_cols = "name"
     ) |>
-    dplyr::arrange(.data$label_created)
-
-  # Get authors from any existing lists
-  old_list <- "issues.json"
-  if (file.exists(old_list)) {
-    old_list <- jsonlite::fromJSON(old_list) |>
-      dplyr::as_tibble() |>
-      dplyr::rename("labels_github" = "username", "labels_name" = "author")
-
-    author_index <- dplyr::select(old_list, "labels_name", "labels_github") |>
-      dplyr::distinct()
-
-    issues_clean <- dplyr::left_join(
-      issues_clean,
-      author_index,
-      by = "labels_github"
+    monarch::add_handles(
+      primary = "name",
+      pkg_col = "package",
+      owner_col = "owner",
+      prefix = "maintainer_",
+      which_cols = "github"
     )
-  } else {
-    issues_clean <- dplyr::mutate(issues_clean, labels_name = NA_character_)
-  }
 
-  # Get any more missing authors
-  issues_clean <- monarch::add_handles(
-    issues_clean,
-    primary = "github",
-    pkg_col = "package",
-    owner_col = "owner",
-    prefix = "labels_"
-  ) |>
-    dplyr::select(-"labels_mastodon", -"labels_linkedin") |>
-    dplyr::rename("username" = "labels_github", "author" = "labels_name")
+  # Need:
+  # package, pkg_author, title (issue), labels (list), username (issue author), url (issue),
+  # opened (issue, date), updated (issue, date), label_created (date), labels_first (T/F for good first)
+  # author (name of issue author)
 
   jsonlite::write_json(
-    issues_clean,
-    "issues.json",
+    i,
+    "issues2.json",
     pretty = TRUE,
     auto_unbox = TRUE
   )
