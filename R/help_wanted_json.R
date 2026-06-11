@@ -29,7 +29,7 @@ hw_issues <- function(
   pkgs_ignore <- c("plotly", "opentripplanner")
 
   # GH label search not case sensitive
-  labels_help <- c("help wanted", "help-wanted", "help_wanted")
+  labels_help <- c("help", "help wanted", "help-wanted", "help_wanted")
   labels_first <- c(
     "good first issue",
     "beginner",
