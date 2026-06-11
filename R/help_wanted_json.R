@@ -4,15 +4,27 @@
 #' issues labelled help-wanted (and variants). Saves output to issues.json for
 #' use by helpwanted workflows including https://ropensci.org/help-wanted.
 #'
-#' @returns Creates/updates `issues.json`
+#' @param min_date Date. Fetch issues since this data.
+#' @param throttle Numeric. Maximum requests per second. Default throttled to 10
+#' requests per minute which is the max rate for unauthenticated GitHub Pats
+#' (i.e. on GH actions).
+#' @param path Character. Filename/path to save json of issues to.
+#'
+#' @inheritParams common_docs
+#'
+#' @returns Creates/updates issues json list at `path`
 #'
 #' @export
 #'
 #' @examplesIf interactive()
 #' hw_issues()
 
-hw_issues <- function(verbose = TRUE) {
-  min_date <- Sys.Date() - lubridate::years(2)
+hw_issues <- function(
+  min_date = Sys.Date() - lubridate::years(2),
+  throttle = 10 / 60,
+  path = "issues.json",
+  verbose = TRUE
+) {
   pkgs_ignore <- c("plotly", "opentripplanner") # Uses help-wanted in a different way
 
   # GH label search not case sensitive
@@ -53,8 +65,10 @@ hw_issues <- function(verbose = TRUE) {
   i_ro <- gh::gh(
     "/search/issues",
     q = glue::glue(
-      'org:{paste0(orgs, collapse = ",")} label:{labels_gh} state:open'
+      'org:{paste0(orgs, collapse = ",")} label:{labels_gh} state:open updated:>={min_date}'
     ),
+    .progress = TRUE,
+    .max_rate = throttle,
     .limit = Inf
   )$items
 
@@ -63,8 +77,10 @@ hw_issues <- function(verbose = TRUE) {
     gh::gh(
       "/search/issues",
       q = glue::glue(
-        'repo:{r} label:{labels_gh} state:open'
+        'repo:{r} label:{labels_gh} state:open updated:>={min_date}'
       ),
+      .progress = TRUE,
+      .max_rate = throttle,
       .limit = Inf
     )$items
   }) |>
@@ -116,8 +132,6 @@ hw_issues <- function(verbose = TRUE) {
   i <- i |>
     monarch::add_handles(
       primary = "github",
-      pkg_col = "package",
-      owner_col = "owner",
       prefix = "labels_",
       which_cols = "name"
     ) |>
@@ -136,7 +150,7 @@ hw_issues <- function(verbose = TRUE) {
 
   jsonlite::write_json(
     i,
-    "issues2.json",
+    path,
     pretty = TRUE,
     auto_unbox = TRUE
   )

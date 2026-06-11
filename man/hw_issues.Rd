@@ -4,15 +4,31 @@
 \alias{hw_issues}
 \title{Create help wanted JSON file}
 \usage{
-hw_issues(verbose = TRUE)
+hw_issues(
+  min_date = Sys.Date() - lubridate::years(2),
+  throttle = 10/60,
+  path = "issues.json",
+  verbose = TRUE
+)
+}
+\arguments{
+\item{min_date}{Date. Fetch issues since this data.}
+
+\item{throttle}{Numeric. Maximum requests per second. Default throttled to 10
+requests per minute which is the max rate for unauthenticated GitHub Pats
+(i.e. on GH actions).}
+
+\item{path}{Character. Filename/path to save json of issues to.}
+
+\item{verbose}{Logical. Show extra informative messages.}
 }
 \value{
-Creates/updates \code{issues.json}
+Creates/updates issues json list at \code{path}
 }
 \description{
 Function created for rosadmin/help-wanted. Fetches package repos with
-issues labelled help-wanted. Saves output to issues.json for use by
-helpwanted workflows including https://ropensci.org/help-wanted.
+issues labelled help-wanted (and variants). Saves output to issues.json for
+use by helpwanted workflows including https://ropensci.org/help-wanted.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
