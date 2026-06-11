@@ -25,7 +25,8 @@ hw_issues <- function(
   path = "issues.json",
   verbose = TRUE
 ) {
-  pkgs_ignore <- c("plotly", "opentripplanner") # Uses help-wanted in a different way
+  # Ignore packages which use help-wanted labels in a different way
+  pkgs_ignore <- c("plotly", "opentripplanner")
 
   # GH label search not case sensitive
   labels_help <- c("help wanted", "help-wanted", "help_wanted")
@@ -102,7 +103,7 @@ hw_issues <- function(
           .data$repo_url,
           paste0("https://api.github.com/repos/|", "/", .data$package)
         ),
-        issue_url = i$url,
+        issue_url = url_from_api(i$url),
         title = i$title,
         opened = i$created_at,
         updated = i$updated_at,

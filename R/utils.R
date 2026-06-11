@@ -474,3 +474,19 @@ post_time <- function(day, hour) {
 
   date_time
 }
+
+#' Convert an api url to a user-facing url
+#'
+#' When working with the GitHub api, urls are often in for the api.
+#'
+#' @param url Character. URL to convert
+#'
+#' @returns User-facing url character string
+#'
+#' @export
+#' @examples
+#' url_from_api("https://api.github.com/repos/ropensci/qualtRics/issues/386")
+
+url_from_api <- function(url) {
+  stringr::str_remove_all(url, "(api\\.)|(repos/)")
+}

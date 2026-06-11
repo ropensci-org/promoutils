@@ -113,3 +113,30 @@ test_that("fmt_slack_urls()", {
   result <- fmt_slack_urls(input)
   expect_equal(result, expected)
 })
+
+test_that("url_from_api()", {
+  # Full GitHub API URL (repos + api.)
+  expect_equal(
+    url_from_api("https://api.github.com/repos/ropensci/qualtRics/issues/386"),
+    "https://github.com/ropensci/qualtRics/issues/386"
+  )
+
+  # URL with only 'api.' (no 'repos/')
+  expect_equal(
+    url_from_api("https://api.github.com/users/johndoe"),
+    "https://github.com/users/johndoe"
+  )
+
+  # URL with only 'repos/' (no 'api.')
+  expect_equal(
+    url_from_api("https://github.com/repos/ropensci/qualtRics"),
+    "https://github.com/ropensci/qualtRics"
+  )
+})
+
+test_that("url_from_api() no change if none needed", {
+  expect_equal(
+    url_from_api("https://github.com/ropensci/qualtRics/issues/386"),
+    "https://github.com/ropensci/qualtRics/issues/386"
+  )
+})
