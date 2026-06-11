@@ -91,6 +91,7 @@ hw_issues <- function(
   # Combine and extract details
   i <- append(i_ro, i_extra) |>
     purrr::map(\(i) {
+      # Clean up labels, so now all must be 'help wanted' or 'good first issue' or 'beginner'
       l <- purrr::map(i$labels, "name") |>
         stringr::str_subset(stringr::regex(labels_regex, ignore_case = TRUE)) |>
         stringr::str_replace_all("-|_", " ") |>
@@ -109,7 +110,11 @@ hw_issues <- function(
         updated = i$updated_at,
         labels = list(l),
         labels_github = i$user$login,
-        labels_first = any(stringr::str_detect(l, "good first issue"))
+        # Any issues labeled as "good first issue" (and family)?
+        labels_first = any(stringr::str_detect(
+          l,
+          "(good first issue)|(beginner)"
+        ))
       )
     }) |>
     purrr::list_rbind()
