@@ -4,10 +4,10 @@
 \alias{slack_message_rm}
 \title{Remove a Slack message}
 \usage{
-slack_message_rm(msg = NULL, channel = NULL, channel_id = NULL, ts)
+slack_message_rm(msg = NULL, channel = NULL, channel_id = NULL, ts = NULL)
 }
 \arguments{
-\item{msg}{Data frame. Output of \code{slack_messages} containing messages to
+\item{msg}{Data frame. Output of \code{slack_messages} containing message to
 remove. Should contain columns "channel" and "ts". Note that only the most
 recent message will be removed.}
 
@@ -15,11 +15,16 @@ recent message will be removed.}
 
 \item{channel_id}{Character. Channel id.}
 
-\item{ts}{Numeric. Timestamp to identify message to remove}
+\item{ts}{Numeric. Timestamp to identify message to remove (if no \code{msg})}
 }
 \value{
 Nothing. Side effect of removing message from channel
 }
 \description{
-Use with caution!
+Use with caution! Note that users can only delete their own messages. If you
+try to delete another user's message you will get a "Cant Delete Message"
+message from the Slack API.
+}
+\seealso{
+\code{\link[=slack_message_rm_bulk]{slack_message_rm_bulk()}}
 }

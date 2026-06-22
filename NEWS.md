@@ -6,6 +6,7 @@
 - Add url_from_api()
 - Add wordlist functions
 - Fix `slack_cleanup()` with multiple users (ignores messages cannot remove)
+- Add `slack_message_rm_bulk()`
 
 ## Bug fixes
 

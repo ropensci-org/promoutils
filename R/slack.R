@@ -294,27 +294,10 @@ slack_cleanup <- function() {
     return(invisible())
   }
 
-  # If none scheduled, remove all from admin-scheduled
-  if (nrow(sched) == 0 && nrow(admin) > 0) {
-    r <- purrr::map(admin$ts, \(x) {
-      tryCatch(
-        slack_message_rm(channel_id = slack_admin(), ts = x),
-        error = \(e) FALSE
-      )
-      if (any(purrr::map_lgl(r, isFALSE))) {
-        cli::cli_inform(
-          "Some messages were posted by another user and cannot be deleted"
-        )
-      }
-    })
-  }
-
-  # Otherwise remove any that are not currently scheduled
-  admin_rm <- dplyr::anti_join(admin, sched, by = c("id"))
+  # Remove all that are not currently scheduled
+  admin_rm <- dplyr::anti_join(admin, sched, by = "id")
   if (nrow(admin_rm) > 0) {
-    purrr::map(admin_rm$ts, \(x) {
-      slack_message_rm(channel_id = slack_admin(), ts = x)
-    })
+    slack_message_rm_bulk(admin_rm$ts, channel_id = slack_admin())
   }
 
   cli::cli_inform("Channel #admin-scheduled cleaned up")
@@ -476,16 +459,20 @@ slack_messages <- function(channel = NULL, channel_id = NULL) {
 
 #' Remove a Slack message
 #'
-#' Use with caution!
+#' Use with caution! Note that users can only delete their own messages. If you
+#' try to delete another user's message you will get a "Cant Delete Message"
+#' message from the Slack API.
 #'
-#' @param msg Data frame. Output of `slack_messages` containing messages to
+#' @param msg Data frame. Output of `slack_messages` containing message to
 #'   remove. Should contain columns "channel" and "ts". Note that only the most
 #'   recent message will be removed.
 #' @param channel Character. Channel Name. Not required if channel_id supplied.
 #' @param channel_id Character. Channel id.
-#' @param ts Numeric. Timestamp to identify message to remove
+#' @param ts Numeric. Timestamp to identify message to remove (if no `msg`)
 #'
 #' @returns Nothing. Side effect of removing message from channel
+#'
+#' @seealso [slack_message_rm_bulk()]
 #'
 #' @export
 
@@ -493,7 +480,7 @@ slack_message_rm <- function(
   msg = NULL,
   channel = NULL,
   channel_id = NULL,
-  ts
+  ts = NULL
 ) {
   if (!is.null(msg)) {
     if (nrow(msg) == 0) {
@@ -516,4 +503,52 @@ slack_message_rm <- function(
     slack_check(
       msg = glue::glue("Message {ts} successfully removed from {channel_id}")
     )
+}
+
+#' Bulk remove Slack messages
+#'
+#' Use with caution! This removes all messages matched by timestamp `ts` in
+#' `channel` or `channel_id`. Note that users can only delete their own messages.
+#'
+#' @param msg Data frame. Output of `slack_messages` containing messages to
+#'   remove. Should contain columns "channel" and "ts". Removes all messages.
+#' @param channel Character. Channel Name. Not required if channel_id supplied.
+#' @param channel_id Character. Channel id.
+#' @param ts Numeric. Timestamp to identify message to remove
+#'
+#' @returns Nothing. Side effect of removing message from channel
+#'
+#' @export
+slack_message_rm_bulk <- function(
+  msg,
+  channel = NULL,
+  channel_id = NULL,
+  ts = NULL
+) {
+  if (!is.null(msg)) {
+    if (nrow(msg) == 0) {
+      rlang::inform("No messages to remove")
+      return(invisible())
+    }
+
+    ts <- dplyr::arrange(msg, dplyr::desc(ts)) |>
+      dplyr::pull(.datat$ts)
+
+    channel <- msg$channel
+  }
+
+  channel_id <- slack_channel_id(channel, channel_id)
+
+  r <- purrr::map(ts, \(x) {
+    tryCatch(
+      slack_message_rm(channel_id = channel_id, ts = x),
+      error = \(e) FALSE
+    )
+  })
+  if (any(purrr::map_lgl(r, isFALSE))) {
+    cli::cli_inform(
+      "Unable to delete some messages (probable because they were posted by another user)"
+    )
+  }
+  invisible(r)
 }
