@@ -4,6 +4,8 @@
 - Add `gh_issue_close()`
 - keyring is suggested
 - Add url_from_api()
+- Add wordlist functions
+- Fix `slack_cleanup()` with multiple users (ignores messages cannot remove)
 
 ## Bug fixes
 

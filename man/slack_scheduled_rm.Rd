@@ -19,7 +19,7 @@ deleted.}
 Nothing
 }
 \description{
-Removes a currently scheduled messages.
+Removes a currently scheduled messages. Can only be removed by scheduler.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

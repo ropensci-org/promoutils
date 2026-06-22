@@ -11,7 +11,7 @@ Nothing
 }
 \description{
 Removes previously scheduled messages from \verb{#admin-scheduled} if after the
-posting date.
+posting date. Only removes messages scheduled by current user.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

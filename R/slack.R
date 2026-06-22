@@ -198,7 +198,7 @@ slack_scheduled_list <- function() {
 
 #' Delete a scheduled message
 #'
-#' Removes a currently scheduled messages.
+#' Removes a currently scheduled messages. Can only be removed by scheduler.
 #'
 #' @param msg Data frame. Output of `slack_list_scheduled()` containing messages
 #'   to remove. Should contain columns "channel" and "id"
@@ -264,7 +264,7 @@ slack_scheduled_rm <- function(msg = NULL, channel = NULL, id = NULL) {
 #' Clean up old scheduled messages
 #'
 #' Removes previously scheduled messages from `#admin-scheduled` if after the
-#' posting date.
+#' posting date. Only removes messages scheduled by current user.
 #'
 #' @returns Nothing
 #' @export
@@ -296,8 +296,16 @@ slack_cleanup <- function() {
 
   # If none scheduled, remove all from admin-scheduled
   if (nrow(sched) == 0 && nrow(admin) > 0) {
-    purrr::map(admin$ts, \(x) {
-      slack_message_rm(channel_id = slack_admin(), ts = x)
+    r <- purrr::map(admin$ts, \(x) {
+      tryCatch(
+        slack_message_rm(channel_id = slack_admin(), ts = x),
+        error = \(e) FALSE
+      )
+      if (any(purrr::map_lgl(r, isFALSE))) {
+        cli::cli_inform(
+          "Some messages were posted by another user and cannot be deleted"
+        )
+      }
     })
   }
 
