@@ -57,7 +57,7 @@ keys_set <- function(type = NULL) {
 
     for (k in names(keys)) {
       if (k == "slack") {
-        key_guide(
+        r <- key_guide(
           k,
           "See the Slack vignette for details. Briefly...",
           c(
@@ -69,9 +69,10 @@ keys_set <- function(type = NULL) {
             "Paste the token into the 'keyring' popup (or Esc to do this later)"
           )
         )
+        if (!r) return(invisible())
       }
       if (k == "matomo") {
-        key_guide(
+        r <- key_guide(
           k,
           c(
             "Fetch the Matomo token from the Administration Panel: ",
@@ -79,9 +80,10 @@ keys_set <- function(type = NULL) {
           ),
           "Paste the token into the 'keyring' popup (or Esc to do this later)"
         )
+        if (!r) return(invisible())
       }
       if (k == "linkedin") {
-        key_guide(
+        r <- key_guide(
           k,
           "See the LinkedIn vignette for details. Briefly...",
           c(
@@ -92,9 +94,10 @@ keys_set <- function(type = NULL) {
             "Paste the token into the 'keyring' popup (or Esc to do this later)"
           )
         )
+        if (!r) return(invisible())
       }
       if (k == "github") {
-        key_guide(
+        r <- key_guide(
           k,
           "To add your GitHub token...",
           c(
@@ -104,6 +107,7 @@ keys_set <- function(type = NULL) {
             "Calling `gitcreds::gitcreds_set()`..."
           )
         )
+        if (!r) return(invisible())
       }
     }
   } else {
@@ -157,12 +161,20 @@ key_guide <- function(type, msg, bullets) {
   cli::cli_inform(msg)
   cli::cli_li(bullets)
   if (interactive()) {
-    ready <- utils::askYesNo(paste0(
-      "Are you ready to set your ",
-      tools::toTitleCase(type),
-      " token?"
-    ))
+    ready <- utils::askYesNo(
+      paste0(
+        "Are you ready to set your ",
+        tools::toTitleCase(type),
+        " token?"
+      )
+    )
   }
+
+  if (is.na(ready) || !ready) {
+    cli::cli_inform("Cancelling keys set")
+    return(FALSE)
+  }
+
   if (ready) {
     if (type == "github") {
       gitcreds::gitcreds_set()
@@ -170,5 +182,6 @@ key_guide <- function(type, msg, bullets) {
       rlang::check_installed("keyring")
       keyring::key_set(type, prompt = paste(tools::toTitleCase(type), "Token"))
     }
+    return(TRUE)
   }
 }
