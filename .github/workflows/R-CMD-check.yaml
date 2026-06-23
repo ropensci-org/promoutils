@@ -30,6 +30,7 @@ jobs:
 
     env:
       TEST_ALL: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'yes' || 'no' }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PU_GITHUB_KEY: ${{ secrets.GITHUB_TOKEN }}
       PU_SLACK_KEY: ${{ secrets.SLACK_SECRET }}
       PU_LINKEDIN_ORG_KEY: ${{ secrets.LINKEDIN_ORG }}
