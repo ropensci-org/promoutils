@@ -18,7 +18,7 @@ Imports:
     clipr,
     dplyr,
     gert (>= 2.1.5),
-    gh,
+    gh (>= 1.6.0),
     glue,
     googledrive (>= 2.1.1),
     httr2 (>= 1.0.0),
@@ -51,3 +51,4 @@ BugReports: https://github.com/ropensci-org/promoutils/issues
 Remotes: 
     ebbertd/matomoR,
     ropensci-org/monarch
+Config/Needs/website: rmarkdown
