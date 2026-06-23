@@ -25,6 +25,9 @@ test_that("replace_emoji()", {
 
   expect_silent(replace_emoji("9:00 AM :tada: (16:00 UTC)")) |>
     expect_match("9:00 AM 🎉 \\(16:00 UTC\\)")
+
+  expect_silent(replace_emoji(":tada:!\n\n:hourglass_flowing_sand:")) |>
+    expect_match("🎉!\n\n⏳")
 })
 
 test_that("yaml_extract()", {

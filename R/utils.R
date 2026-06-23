@@ -171,7 +171,7 @@ next_date <- function(
 #' replace_emoji("hi :tada: testing \n\n\n Whow ! 🔗 \n\n\n :smile:")
 #' replace_emoji(":link:")
 replace_emoji <- function(x) {
-  emo <- stringr::str_extract_all(x, "\\:[^ ]+\\:") |>
+  emo <- stringr::str_extract_all(x, "\\:[^0-9\\s]+\\:") |>
     unlist() |>
     unique()
 
