@@ -41,7 +41,9 @@ test_that("slack_posts_write() future", {
     expect_message("Scheduled message successfully added to #admin-scheduled")
 
   # Test present and removed successfully
-  expect_silent(m <- slack_scheduled_list())
+  expect_silent(
+    m <- slack_scheduled_list() |> dplyr::arrange(dplyr::desc(date_created_dt))
+  )
   expect_equal(m$text[1], "Test message for scheduled posting")
   expect_equal(round(m$post_at[1]), round(as.numeric(future_time)))
   expect_message(
@@ -49,11 +51,11 @@ test_that("slack_posts_write() future", {
     "successfully removed"
   )
 
-  m <- slack_messages(channel = "#testing-api")
+  m <- slack_scheduled_list()
   expect_true(m$text[1] != "Test message for immediate posting")
 })
 
-test_that("", {
+test_that("slack_posts_write", {
   skip_if_not_all()
 
   # Multiline -------------------------------
