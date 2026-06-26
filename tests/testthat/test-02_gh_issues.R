@@ -18,7 +18,9 @@ test_that("gh_issue_post()", {
 
 with_mock_dir("github_issues", {
   test_that("gh_issue_fetch(), gh_issue_fmt()", {
-    expect_silent(i1 <- gh_issue_fetch(owner = "ropensci", repo = "weathercan"))
+    expect_no_error(
+      i1 <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")
+    ) # Might have progress messages
     expect_type(i1, "list")
 
     expect_silent(i2 <- gh_issue_fmt(i1))

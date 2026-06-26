@@ -69,7 +69,7 @@ test_that("url_from_path()", {
 
 with_mock_dir("github_prs", {
   test_that("prs_list()", {
-    expect_silent(prs_list()) |>
+    expect_no_error(prs_list()) |> # Might have progress messages
       expect_s3_class("tbl") |>
       expect_named(c("html_url", "number", "title", "ref"))
   })
