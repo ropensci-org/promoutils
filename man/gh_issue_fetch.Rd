@@ -37,6 +37,8 @@ Fetches issues from a GitHub repository and returns them as a list. Pass on
 to \code{\link[=gh_issue_fmt]{gh_issue_fmt()}} for formatting.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 i <- gh_issue_fetch()
 i <- gh_issue_fetch(verbose = TRUE)
+\dontshow{\}) # examplesIf}
 }

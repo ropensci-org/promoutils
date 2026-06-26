@@ -137,7 +137,7 @@ gh_issue_close <- function(n, owner, repo, dry_run = FALSE) {
 #' @return List of issues
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' i <- gh_issue_fetch()
 #' i <- gh_issue_fetch(verbose = TRUE)
 
