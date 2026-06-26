@@ -22,6 +22,7 @@ Issues formated as a data frame
 Format issues list from GH
 }
 \examples{
-i <- gh_issue_fetch()
+i <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")
 i <- gh_issue_fmt(i, which = "title")
+i
 }

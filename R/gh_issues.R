@@ -137,9 +137,9 @@ gh_issue_close <- function(n, owner, repo, dry_run = FALSE) {
 #' @return List of issues
 #' @export
 #'
-#' @examplesIf interactive()
-#' i <- gh_issue_fetch()
-#' i <- gh_issue_fetch(verbose = TRUE)
+#' @examples
+#' i <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")
+#' i <- gh_issue_fetch(owner = "ropensci", repo = "weathercan", verbose = TRUE)
 
 gh_issue_fetch <- function(
   state = "open",
@@ -187,8 +187,9 @@ gh_issue_fetch <- function(
 #' @export
 #'
 #' @examples
-#' i <- gh_issue_fetch()
+#' i <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")
 #' i <- gh_issue_fmt(i, which = "title")
+#' i
 
 gh_issue_fmt <- function(
   i,
@@ -242,6 +243,7 @@ gh_issue_fmt <- function(
 #' i <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")
 #' i <- gh_issue_fmt(i)
 #' i <- gh_issue_labels(i)
+#' i
 
 gh_issue_labels <- function(
   i,
