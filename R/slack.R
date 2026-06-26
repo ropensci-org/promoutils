@@ -294,10 +294,10 @@ slack_cleanup <- function() {
     return(invisible())
   }
 
-  # Remove all that are not currently scheduled
+  # Remove from ADMIN Channel - all that are not currently scheduled
   admin_rm <- dplyr::anti_join(admin, sched, by = "id")
   if (nrow(admin_rm) > 0) {
-    slack_message_rm_bulk(admin_rm$ts, channel_id = slack_admin())
+    slack_message_rm_bulk(admin_rm, channel_id = slack_admin())
   }
 
   cli::cli_inform("Channel #admin-scheduled cleaned up")
@@ -348,17 +348,14 @@ slack_channel <- function(channel = NULL, channel_id = NULL, channels = NULL) {
   }
 
   if (!is.null(channel)) {
+    channels <- rlang::set_names(channels$channel_id, channels$channel)
     channel <- stringr::str_remove(channel, "^#") |>
       tolower()
-    chn <- dplyr::filter(
-      channels,
-      stringr::str_detect(tolower(.data$channel), .env$channel)
-    )
+    chn <- channels[channel]
   } else if (!is.null(channel_id)) {
-    chn <- dplyr::filter(
-      channels,
-      .data$channel_id == .env$channel_id
-    )
+    channels <- rlang::set_names(channels$channel, channels$channel_id)
+    chn <- channels[channel_id]
+    chn <- rlang::set_names(names(chn), chn) # Reverse to channel_id contents
   } else {
     chn <- character(0)
   }
@@ -375,7 +372,7 @@ slack_channel_name <- function(
   channel_id = NULL,
   channels = NULL
 ) {
-  slack_channel(channel, channel_id, channels)$channel
+  slack_channel(channel, channel_id, channels) |> names()
 }
 
 slack_channel_id <- function(
@@ -383,7 +380,7 @@ slack_channel_id <- function(
   channel_id = NULL,
   channels = NULL
 ) {
-  slack_channel(channel, channel_id, channels)$channel_id
+  slack_channel(channel, channel_id, channels) |> unname()
 }
 
 #' Fetch details on a specific user
@@ -532,7 +529,7 @@ slack_message_rm_bulk <- function(
     }
 
     ts <- dplyr::arrange(msg, dplyr::desc(ts)) |>
-      dplyr::pull(.datat$ts)
+      dplyr::pull(.data$ts)
 
     channel <- msg$channel
   }
