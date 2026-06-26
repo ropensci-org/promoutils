@@ -36,7 +36,7 @@ wordlist_create <- function(
         primary = "github",
         which_cols = "name"
       ) |>
-      dplyr::pull(name)
+      dplyr::pull(.data$name)
     words <- c(words, nms_maint)
   }
 
@@ -45,12 +45,12 @@ wordlist_create <- function(
       tidyr::unnest("contributors") |>
       dplyr::select("github" = "contributor_github") |>
       dplyr::distinct() |>
-      dplyr::filter(github != "copilot") |>
+      dplyr::filter(.data$github != "copilot") |>
       monarch::add_handles(
         primary = "github",
         which_cols = "name"
       ) |>
-      dplyr::pull(name)
+      dplyr::pull(.data$name)
     words <- c(words, stringr::str_split(nms_ctrb, " +"))
   }
 

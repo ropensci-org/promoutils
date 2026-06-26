@@ -42,16 +42,16 @@ hw_issues <- function(
     glue::glue_collapse(sep = ",")
 
   pkgs <- pkgs_ru() |>
-    dplyr::filter(!package %in% pkgs_ignore)
+    dplyr::filter(!.data$package %in% .env$pkgs_ignore)
 
   repos <- pkgs |>
     dplyr::filter(!stringr::str_detect(.data$owner, "ropensci")) |>
     dplyr::mutate(
       repos = stringr::str_remove(.data$url, "https://github.com/"),
       repos = dplyr::if_else(
-        package == "assertr",
+        .data$package == "assertr",
         paste0(.data$owner, "/", .data$package),
-        repos
+        .data$repos
       )
     ) |>
     dplyr::pull(.data$repos)
