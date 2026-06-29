@@ -25,6 +25,7 @@ reference:
   - starts_with("dict")
   - starts_with("wordlist")
 - title: GitHub issues
+  contents:
   - starts_with("gh_")
 - title: Utility functions
   contents:
