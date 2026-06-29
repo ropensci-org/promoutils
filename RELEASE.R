@@ -12,7 +12,7 @@ devtools::build_readme()
 # Precompile Vignettes
 source("vignettes/articles/_PRECOMPILE.R")
 
-# Check docs
+# Check/Preview docs locally
 pkgdown::build_site()
 
 # Standard checks ------------------------------------------
