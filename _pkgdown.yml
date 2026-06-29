@@ -14,14 +14,18 @@ reference:
   - starts_with("uc")
   - starts_with("help")
   - starts_with("tt")
+  - starts_with("hw")
 - title: API functions
   contents:
   - starts_with("slack")
   - starts_with("li")
   - starts_with("matomo")
-- title: Dictionary Helpers (in progress...)
+- title: Dictionary/Wordlist Helpers (in progress...)
   contents:
   - starts_with("dict")
+  - starts_with("wordlist")
+- title: GitHub issues
+  - starts_with("gh_")
 - title: Utility functions
   contents:
   - ro_urn
@@ -35,6 +39,7 @@ reference:
   - replace_emoji
   - socials_post_issue
   - url_from_path
+  - url_from_api
   - yaml_extract
   
   
