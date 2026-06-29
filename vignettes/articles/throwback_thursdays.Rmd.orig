@@ -1,0 +1,103 @@
+---
+title: "Throwback Thursdays"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r setup}
+library(promoutils)
+```
+
+Throwback Thursday (TT) posts are sent via our social media accounts and highlight
+a historical blog post. 
+
+We use the matomo package to review Matomo blog view metrics and choose a post that 
+which fits any or some of the following:
+
+- Was published in the same month as the TT post
+- Was published a milestone of years ago (5, 10, 15, etc.)
+- Was an important announcement (first Champions Program, first Dev guide published, etc.)
+- Something specifically related to rOpenSci as an organization
+- Was a popular post
+- Is a perennial theme/idea (i.e. Software Peer Review)
+
+Pick posts that have not been (or have not recently been) highlighted in a TT.
+
+We track TT posts in a [private project on `rosadmin`](https://github.com/orgs/rosadmin/projects/9/views/1) so we can check if we've already used a post in the past.
+
+
+First we need to update our cached list of post reviews. 
+
+
+```{r}
+matomo_update()
+```
+
+No we can review the 'popularity' of historical posts for a particular month (here, we review for May, the 5th month).
+In Positron, if the window is wide enough to show the full URL, you should be able to click on the links to open the blog post in your browser to help you decide.
+```{r}
+tt_review(which_month = 5)
+```
+
+Once we've decided on a post, we can use the `tt_post()` function to grab the
+relevant details and prepare the code for a series of `socials_post_issues()`
+```{r}
+tt_post(
+  date = "2021-05-09", # Original blog post date
+  title = "Roaringly Acknowledge Organizations with ROR IDs in DESCRIPTION", # Title or original post
+  url = "ror", # Slug from the original post
+  print = TRUE # only here for illustration, so the code is printed in addition to being copied
+)
+```
+
+We paste this code into an R script. Note that while it automatically gets the post information and the date when this TT should be posted, we still need to flesh this post out and add some details.
+
+So, let's do so:
+```{r}
+#| eval: FALSE
+
+# May 2026 -------------------------------------------------------------------
+promoutils::socials_post_issue(
+  time = "2026-05-07 08:00:00",
+  tz = "America/Vancouver",
+  where = "mastodon",
+  dry_run = FALSE,
+  over_char_limit = cli::cli_warn,
+  title = "TT",
+  body = "[blog] Throw-back Thursday!
+
+Last year @maelle@mastodon.social introduced the idea of ROR IDs (tldr; ROR IDs are to Organizations what ORCiDs are to individuals). Have you set your organizations up with ROR IDs and put them in all the docs yet? 
+
+:hourglass_flowing_sand: Roaringly Acknowledge Organizations with ROR IDs in DESCRIPTION
+:calendar: May 9, 2025
+:link: https://ropensci.org/blog/2025/05/09/ror/
+"
+)
+
+promoutils::socials_post_issue(
+  time = "2026-05-07 08:00:00",
+  tz = "America/Vancouver",
+  where = "linkedin",
+  dry_run = FALSE,
+  over_char_limit = cli::cli_warn,
+  title = "TT",
+  body = "[blog] Throw-back Thursday!
+
+  Last year Maëlle Salmon introduced the idea of ROR IDs (tldr; ROR IDs are to Organizations what ORCiDs are to individuals). Have you set your organizations up with ROR IDs and put them in all the docs yet? 
+
+:hourglass_flowing_sand: Roaringly Acknowledge Organizations with ROR IDs in DESCRIPTION
+:calendar: May 9, 2025
+:link: https://ropensci.org/blog/2025/05/09/ror/
+"
+)
+```
+
+
+Now we can run this code which will create the draft post issues in the GitHub repository. 
+It will also open these issues in the browser, don't forget to review and remove the 'draft' and 'needs-review' labels to finalize the scheduling!
