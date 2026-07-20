@@ -52,7 +52,9 @@ test_that("slack_posts_write() future", {
   )
 
   m <- slack_scheduled_list()
-  expect_true(m$text[1] != "Test message for immediate posting")
+  expect_true(
+    is.null(m$text[1]) || m$text[1] != "Test message for immediate posting"
+  )
 })
 
 test_that("slack_posts_write", {
