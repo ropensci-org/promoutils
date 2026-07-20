@@ -27,7 +27,7 @@ hw_issues <- function(
 ) {
   # Ignore packages which use help-wanted labels in a different way
   pkgs_ignore <- c("plotly", "opentripplanner")
-
+  browser()
   # GH label search not case sensitive
   labels_help <- c("help", "help wanted", "help-wanted", "help_wanted")
   labels_first <- c(
@@ -75,15 +75,18 @@ hw_issues <- function(
 
   # Non-ropensci repos (get specific)
   i_extra <- purrr::map(repos, \(r) {
-    gh::gh(
-      "/search/issues",
-      q = glue::glue(
-        'repo:{r} label:{labels_gh} state:open updated:>={min_date}'
-      ),
-      .progress = TRUE,
-      .max_rate = throttle,
-      .limit = Inf
-    )$items
+    tryCatch(
+      gh::gh(
+        "/search/issues",
+        q = glue::glue(
+          'repo:{r} label:{labels_gh} state:open updated:>={min_date}'
+        ),
+        .progress = TRUE,
+        .max_rate = throttle,
+        .limit = Inf
+      )$items,
+      error = \(e) cli::cli_warn("Could not fetch issues for repo: {r}")
+    )
   }) |>
     purrr::compact() |>
     purrr::list_flatten()
