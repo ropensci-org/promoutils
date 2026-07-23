@@ -1,0 +1,232 @@
+---
+title: "Case Study: Automating Slack Communications"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{schedule_slack_messages}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(promoutils)
+
+```
+
+Slack is one of the apps where online communities communicate.  Interactions are organized into topic-based _channels_. You can choose which channels to join so you can follow the conversations taking place in each one of those channels.  
+
+Finding out which channels are available and joining the ones that are useful to you is one way to make the most of these workspaces. 
+
+The list of channels changes over time, and by default when you join, you’ll only be part of a set of standard ones, such as the #general channel.  Also, if you’re not a member of a channel, by default, you won’t see it in the general list.
+
+For this reason, we thought it would be helpful to remind our Slack members once a week about the channels exist and what they can be used for, while also inviting them to join the channels and participate in the conversations.  
+
+## The full process
+
+The idea is to:
+
+1. get the list of public and active channels in the rOpenSci workspace, their name, description and topics,
+
+2. generate one message for each channel
+
+3. schedulle one message per week to publish on the general channel 
+
+### Step 1: get the list of channel
+
+Slack has an API that allow you to access information, like the list of channels in a workspace. 
+
+You will need an API token for this step. [You can get one following Slack instructions](https://docs.slack.dev/apis/web-api/#authentication).
+
+Once you have your token, store it securely with the package [keyring](https://cran.r-project.org/web/packages/keyring/index.html). You can use the function `key_set("slack")`, and then paste the token in the popup window. You will access that token with `key_get("slack")`
+
+After you have your token ready to use, we can make a call to the API and get the list of active (non archived) channels:
+
+``` r
+library(httr2)
+library(tidyverse)
+library(keyring)
+
+token <- key_get("slack")
+
+channels<- request("https://slack.com/api/conversations.list") |>
+  req_url_query(
+    exclude_archived = "true",
+    limit            = 200        # max allow by Slack
+  ) |>
+  req_headers(Authorization = paste("Bearer", token)) |>
+  req_perform() |>
+  resp_body_json()
+
+```
+
+> Note: I learned about the `slackr` package after I write this code. I need to explore if the package have a function to get the list of active channels. 
+
+The `channels` object has a JSON with the list of non archived channels in rOpenSci workspace. Now we need to create a data frame with the useful information: id, name, description, topic and type (public or private).
+
+``` r
+channels <- channels$channels |>
+  map_df(~ tibble(
+    id          = .x$id,
+    name      = .x$name,
+    type        = if_else(.x$is_private, "private", "public"),
+    description = .x$purpose$value,   
+    topic       = .x$topic$value      
+  ))
+  
+> glimpse(channels)
+Rows: 42
+Columns: 5
+$ id          <chr> "C026GALFB", "C026GCWKA", "C026GCWKC", "C027G1V0W", "C02K0…
+$ name      <chr> "package-development", "general", "random", "docs", "build…
+$ typo        <chr> "publico", "publico", "publico", "publico", "publico", "pu…
+$ description <chr> "Automated notifications from GitHub commits, issues, &amp…
+$ topic       <chr> "Automated notifications from GitHub commits, issues, &amp…
+```
+
+Now `channels` has a list of channels. We need to keep only public ones:
+
+``` r
+channels <- channels |>
+  filter(tipo == "public")
+``` 
+
+### Step 2: generate one message for each channel
+
+Now that we have all the channels we want to advertise in our Slack, we can generate a message for each one.
+
+We clean the data to remove the `general` channel, because is the channel we will post all the messages, and exclude the channels without description, because we will use that information to explain what is the channel about. Finally we will clean the description from data that can break our message format (like internal Slack references and long URLs) and sort the channels alphabetically to post in a consistent order.
+
+``` r
+final_channels <- channels |>
+  filter(name != "general") |>
+  filter(!is.na(description) & description != "") |>
+  mutate(
+    description = str_remove_all(description, "<#[^>]+\\|?[^>]*>"),
+    descripcion = str_remove_all(description, "<https?://[^>]+>"),
+    descripcion = str_squish (description)
+    ) |>
+      select(name, description) |>
+      arrange(name)
+      
+> head(final_channels)    
+# A tibble: 6 × 2
+  name    descripcion                                                         
+  <chr>     <chr>                                                               
+1 allcaps   ONLY ALL CAPS IN THIS ROOM. NO LOWER CASE                           
+2 antarctic The <#C7UBC64Q4> channel is for friendly discussions about using R …
+3 arrow     Discussion and support for Apache Arrow and the Arrow R package. Sh…
+4 books     What you’re reading right now (or want to read next!)               
+5 builds    Automated messages from Travis-CI and Appveyor, for daily builds an…
+6 ci        CI related discussions        
+```
+
+Now, we need a varied opening phrases to avoid repetitive messages and then iterate trough the list of channels: 
+
+``` r
+openings <- c(
+  "Did you know we have a channel for",
+  "This week we'd like to highlight",
+  "A reminder that we have a channel for",
+  "Have you checked out",
+  "Spotlight of the week:"
+)
+
+messages <- final_channels |>
+  mutate(
+    opening = sample(openings, n(), replace = TRUE),
+    message = str_glue(
+      "{opening} *#{name}*! :slack:\n\n",
+      "_{description}_\n\n",
+      "Join the conversation and feel free to participate. "
+    )
+  ) |>
+  select(name, message)
+```
+
+The dataset `messages` now have the intro text for each channel we want to share in the Slack. 
+
+``` r
+
+> head(messages)
+# A tibble: 6 × 2
+  name      messages                                                           
+  <chr>     <glue>                                                            
+1 allcaps   Spotlight of the week: *#allcaps*! :slack:
+
+_ONLY ALL CAPS IN THIS …
+2 antarctic This week we' like to highlight *#antarctic*! :slack:
+
+_The <#C7UB…
+3 arrow     Spotlight of the week: *#arrow*! :slack:
+
+_Discussion and support f…
+4 books     A reminder that we have a channel for *#books*! :slack:
+
+_What you’…
+5 builds    Have you checked out *#builds*! :slack:
+
+_Automated messages from T…
+6 ci        Spotlight of the week: *#ci*! :slack:
+
+_CI related discussions_
+
+Jo… 
+
+```
+
+### Step 3: schedulle one message per week
+
+We need to add the date for each message. We used the `lubridate` package to calculate the _next monday_ as the date for publication for all messages: 
+
+``` r
+next_monday <- today() + days(7)
+
+scheduled_messages <- messages |>
+  mutate(
+    week = row_number() - 1,
+    sent_date = next_monday + weeks(week)
+  )
+
+> glimpse(scheduled_messages)
+Rows: 39
+Columns: 4
+$ name      <chr> "allcaps", "antarctic", "arrow", "books", "builds", "ci", …
+$ message     <glue> "Spotlight of the week: *#allcaps*! :slack:\n\n_ONLY ALL …
+$ week      <dbl> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, …
+$ sent_date <date> 2026-07-29, 2026-08-05, 2026-08-12, 2026-08-19, 2026-08-2…
+```
+
+Now we can schedule the messages using the `slack_posts_write` function from `promoutils`. The `dry_run = TRUE` arguments simulate the scheduling of the message without a real publication.  It is a good idea to check everything works before to do the real scheduling. 
+
+We use the promoutils' function with the `pwalk` function from the `purrr` package to iterate on all the messages:  
+
+``` r
+purrr::pwalk(
+  list(
+    body = scheduled_messages$messages,
+    when = scheduled_messages$sent_date
+  ),
+  function(body, when) {
+    slack_posts_write(
+      body     = body,
+      when     = when,
+      channel  = "#general",
+      dry_run  = TRUE  # Comment this to schedulle
+    )
+  }
+)
+```
+
+> The Slack API has a limit on how many days in the future you can schedule messages, so you can reach a limit in the number of messages that can be scheduled. 
+
+## In practice
+
+This workflow is now running in the rOpenSci Slack workspace, automatically introducing one community channel each week. It helps members discover new conversations while saving us from a repetitive manual task.
+
+`promoutils` with Slack API allow us to automate recurring communications while keeping them flexible and easy to update. If a new channel is created or an old one is archived, rerunning the workflow generates a new schedule with minimal effort.
