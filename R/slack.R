@@ -289,15 +289,20 @@ slack_cleanup <- function() {
     ) |>
     tidyr::drop_na("id") # Ignore non-scheduled messages
 
-  if (nrow(sched) == 0 && nrow(admin) == 0) {
+  if (nrow(admin) == 0) {
     cli::cli_inform("Nothing to clean up")
     return(invisible())
   }
 
   # Remove from ADMIN Channel - all that are not currently scheduled
-  admin_rm <- dplyr::anti_join(admin, sched, by = "id")
+  if (nrow(sched) > 0) {
+    admin_rm <- dplyr::anti_join(admin, sched, by = "id")
+  } else {
+    admin_rm <- admin
+  }
+
   if (nrow(admin_rm) > 0) {
-    slack_message_rm_bulk(admin_rm, channel_id = slack_admin())
+    slack_message_rm_bulk(admin_rm)
   }
 
   cli::cli_inform("Channel #admin-scheduled cleaned up")
@@ -536,9 +541,9 @@ slack_message_rm_bulk <- function(
 
   channel_id <- slack_channel_id(channel, channel_id)
 
-  r <- purrr::map(ts, \(x) {
+  r <- purrr::map2(ts, channel_id, \(t, c) {
     tryCatch(
-      slack_message_rm(channel_id = channel_id, ts = x),
+      slack_message_rm(channel_id = c, ts = t),
       error = \(e) FALSE
     )
   })
