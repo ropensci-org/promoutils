@@ -5,8 +5,7 @@ Authors@R: c(
   person("Steffi", "LaZerte", role = c("aut", "cre"), email = "sel@steffilazerte.ca",
            comment = c(ORCID = "0000-0002-7690-8360")),
   person("Yanina", "Bellini Saibene", role = "ctb", email = "yabellini@ropensci.org", 
-         comment = c(ORCID = "0000-0002-4522-7466"))
-)
+         comment = c(ORCID = "0000-0002-4522-7466")))
 Description: Utility functions and workflows for promoting community events and community members on rOpenSci website and social media.
 License: GPL (>= 3)
 Encoding: UTF-8
@@ -37,8 +36,10 @@ Suggests:
     httptest2,
     httpuv,
     keyring (>= 1.4.1),
+    knitr,
     matomoR (>= 0.0.1),
     pandoc,
+    rmarkdown,
     testthat (>= 3.0.0),
     usethis (>= 3.1.0),
     withr
@@ -52,3 +53,4 @@ Remotes:
     ebbertd/matomoR,
     ropensci-org/monarch
 Config/Needs/website: rmarkdown
+VignetteBuilder: knitr
