@@ -310,8 +310,8 @@ slack_cleanup <- function() {
 #' @param types Character. Type of channels, one or both of "public_channel" or
 #' "private_channel"
 #'
-#' @returns Data frame of channel names and ids, or if `channel` provided, a
-#' single channel id.
+#' @returns Data frame of channel names, ids, types, descriptions, and topics.
+#' Or if `channel` provided, a single channel id.
 #' @export
 #'
 #' @examplesIf interactive()
@@ -330,8 +330,21 @@ slack_channels <- function(
     slack_paginate() |>
     slack_check(element = "channels", paginate = TRUE)
 
-  c <- slack_df(r, "channels", c("name", "id")) |>
-    dplyr::rename("channel" = "name", "channel_id" = "id")
+  c <- slack_df(
+    r,
+    element = "channels",
+    cols = c("name", "id", "type", "purpose", "topic", "is_private"),
+    sub_element = c("purpose" = "value", "topic" = "value")
+  ) |>
+    dplyr::mutate(
+      type = dplyr::if_else(.data$is_private, "private", "public")
+    ) |>
+    dplyr::rename(
+      "channel" = "name",
+      "channel_id" = "id",
+      "description" = "purpose"
+    ) |>
+    dplyr::select(-"is_private")
 
   if (!is.null(channel)) {
     id <- dplyr::filter(c, .data$channel %in% .env$channel) |>
