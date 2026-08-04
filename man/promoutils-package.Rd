@@ -18,7 +18,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Steffi LaZerte \email{steffi@steffi.ca} (\href{https://orcid.org/0000-0002-7690-8360}{ORCID})
+\strong{Maintainer}: Steffi LaZerte \email{sel@steffilazerte.ca} (\href{https://orcid.org/0000-0002-7690-8360}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Yanina Bellini Saibene \email{yabellini@ropensci.org} (\href{https://orcid.org/0000-0002-4522-7466}{ORCID}) [contributor]
+}
 
 }
 \keyword{internal}
