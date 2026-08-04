@@ -1,12 +1,12 @@
 Package: promoutils
 Title: Utilities for Promoting rOpenSci
-Version: 0.6.1
-Authors@R: 
-    person(given = "Steffi",
-           family = "LaZerte",
-           role = c("aut", "cre"),
-           email = "steffi@steffi.ca",
-           comment = c(ORCID = "0000-0002-7690-8360"))
+Version: 0.6.2
+Authors@R: c(
+  person("Steffi", "LaZerte", role = c("aut", "cre"), email = "sel@steffilazerte.ca",
+           comment = c(ORCID = "0000-0002-7690-8360")),
+  person("Yanina", "Bellini Saibene", role = "ctb", email = "yabellini@ropensci.org", 
+         comment = c(ORCID = "0000-0002-4522-7466"))
+)
 Description: Utility functions and workflows for promoting community events and community members on rOpenSci website and social media.
 License: GPL (>= 3)
 Encoding: UTF-8
