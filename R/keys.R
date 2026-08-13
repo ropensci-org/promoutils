@@ -46,13 +46,11 @@ keys_check_internal <- function(msg = TRUE) {
 
 keys_set <- function(type = NULL) {
   keys <- keys_check_internal(msg = FALSE)
-
-  #keys <- keys[!keys]
   keys <- !keys
 
   if (!all(keys)) {
     if (!is.null(type)) {
-      keys <- keys[keys %in% type]
+      keys <- keys[names(keys) %in% type]
     }
 
     for (k in names(keys)) {
