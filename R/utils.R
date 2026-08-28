@@ -125,6 +125,8 @@ nth_day <- function(x) {
 #' # Get the next 3rd Tuesday
 #' next_date("2023-11-01", n = 3)
 #'
+#' next_date("2027-01-31", which = "Mon", n = 1)
+#'
 #' # Oops
 #' \dontrun{
 #' next_date("2023-11-01", n = 5)
@@ -136,7 +138,10 @@ next_date <- function(
   n = 1,
   call = rlang::caller_env()
 ) {
-  month <- lubridate::as_date(month) + lubridate::period("1 month")
+  month <- lubridate::add_with_rollback(
+    lubridate::as_date(month),
+    lubridate::period("1 month")
+  )
 
   d <- month |>
     lubridate::floor_date(unit = "months") |>
