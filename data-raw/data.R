@@ -1,8 +1,6 @@
-ro_urn <- "urn:li:organization:77132573"
-
-usethis::use_data(ro_urn, overwrite = TRUE)
-
-
+# LinkedIn constants
+li_org <- "urn:li:organization:77132573"
+usethis::use_data(li_org, overwrite = TRUE)
 cw_template <- gh::gh(
   "/repos/rosadmin/comms/contents/.github/ISSUE_TEMPLATE/coworking-prep.md",
   .accept = "application/vnd.github.raw+json"

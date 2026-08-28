@@ -1,2 +1,2 @@
 #' rOpenSci linkedin organization URN
-"ro_urn"
+"li_org"
