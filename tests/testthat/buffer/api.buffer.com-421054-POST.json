@@ -1,0 +1,62 @@
+{
+    "data": {
+        "posts": {
+            "edges": [
+                {
+                    "node": {
+                        "id": "6a91eb9ed6a13fc64285a84e",
+                        "channelService": "mastodon",
+                        "text": "testing Api again...",
+                        "createdAt": "2026-08-28T20:12:14.604Z",
+                        "dueAt": null,
+                        "status": "draft"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a91eb971abdeaabf9ac34ab",
+                        "channelService": "mastodon",
+                        "text": "testing Api again...",
+                        "createdAt": "2026-08-28T20:12:07.535Z",
+                        "dueAt": null,
+                        "status": "draft"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a7cf5a218da30e2e660445f",
+                        "channelService": "bluesky",
+                        "text": "rOpenSci Coworking and Office Hours coming up in an hour!\n\nToday's Theme: Getting to Know SORTEE with cohost @eivimeycook.bsky.social\n\nTuesday September 1st 14:00 Europe Central (12:00 UTC)\n\nhttps://ropensci.org/events/coworking-2026-09\n\n#RStats ",
+                        "createdAt": "2026-08-12T22:37:22.697Z",
+                        "dueAt": "2026-09-01T11:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a91eb97b1d0718ca303b01f",
+                        "channelService": "mastodon",
+                        "text": "testing scheduled Api again...",
+                        "createdAt": "2026-08-28T20:12:07.876Z",
+                        "dueAt": "2027-08-28T20:12:07.000Z",
+                        "status": "draft"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a91eb9f1abdeaabf9ac34dc",
+                        "channelService": "mastodon",
+                        "text": "testing scheduled Api again...",
+                        "createdAt": "2026-08-28T20:12:15.029Z",
+                        "dueAt": "2027-08-28T20:12:14.000Z",
+                        "status": "draft"
+                    }
+                }
+            ],
+            "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": "WkRFNE1UazBPRE01TXpRd01EQT06WkRFM09EYzVORGM1TXpVd01qaz06YVRaaE9URmxZamxtTVdGaVpHVmhZV0ptT1dGak16UmtZdz09"
+            }
+        }
+    }
+}

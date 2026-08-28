@@ -1,0 +1,13 @@
+{
+    "data": {
+        "createPost": {
+            "post": {
+                "id": "6a91f234b1d0718ca3040659",
+                "channelService": "linkedin",
+                "text": "testing scheduled Api again...",
+                "dueAt": "2027-08-28T20:40:19.000Z",
+                "status": "draft"
+            }
+        }
+    }
+}

@@ -22,7 +22,7 @@ test_that("li_req_posts()", {
 with_mock_dir("li", {
   skip_on_runiverse()
   test_that("li_posts_read()", {
-    expect_silent(p <- li_posts_read(ro_urn))
+    expect_silent(p <- li_posts_read(li_org))
     expect_type(p, "list")
     expect_named(p, c("paging", "elements"))
   })
@@ -32,7 +32,7 @@ with_mock_dir("li", {
 test_that("li_posts_write()", {
   expect_output(
     details <- li_posts_write(
-      author = ro_urn, # Post on behalf of rOpenSci
+      author = li_org, # Post on behalf of rOpenSci
       body = "Testing out the LinkedIn API via R and httr2!",
       dry_run = TRUE
     ),
