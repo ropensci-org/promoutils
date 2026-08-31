@@ -255,6 +255,7 @@ escape_linkedin_chars <- function(x) {
 }
 
 template <- function(name) {
+  # Templates stored: inst/extdata/templates
   name <- stringr::str_remove(name, "\\.txt$")
   system.file(
     "extdata",

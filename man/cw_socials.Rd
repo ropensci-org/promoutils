@@ -6,13 +6,10 @@
 \usage{
 cw_socials(
   date,
-  who_masto,
-  who_slack,
-  who_linkedin,
-  who_main_masto = "@steffilazerte@fosstodon.org",
-  who_main_slack = "<@UNRAUCMTK>",
-  who_main_linkedin = "Steffi LaZerte",
-  posters_tz = "America/Winnipeg",
+  host = list(mastodon = "@steffilazerte@fosstodon.org", slack = "UNRAUCMTK", linkedin =
+    "Steffi LaZerte", bluesky = "@steffilazerte.bsky.social"),
+  cohost,
+  posters_tz = Sys.timezone(),
   test_run = FALSE,
   dry_run = FALSE,
   print = TRUE,
@@ -21,6 +18,19 @@ cw_socials(
 }
 \arguments{
 \item{date}{Character/Date. Date of the coworking event (local)}
+
+\item{posters_tz}{Character. Timezone of poster. Required for getting the
+time at which to post Slack messages as these are posted in the local
+timezone}
+
+\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area).}
+
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
+
+\item{print}{Logical. Whether to simply print the text to console instead of
+copying to the clipboard.}
+
+\item{branch}{Character. Branch name if not on main.}
 
 \item{who_masto}{Character. The full mastodon handle for the cohost (i.e. \code{XXXX@XXXX.com})}
 
@@ -34,33 +44,32 @@ cw_socials(
 organizer (i.e., \verb{<@UXXXXXXX>}. Defaults to Steffi's id.}
 
 \item{who_main_linkedin}{Character. The full LinkedIn handle for the rOpenSci staff organizer.}
-
-\item{posters_tz}{Character. Timezone of poster. Required for getting the
-time at which to post Slack messages as these are posted in the local
-timezone}
-
-\item{test_run}{Logical. Whether to do a test run (i.e. post to a test area).}
-
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
-
-\item{print}{Logical. Whether to simply print the text to console instead of
-copying to the clipboard.}
-
-\item{branch}{Character. Branch name if not on main.}
 }
 \description{
-Creates draft posts for Mastodon and LinkedIn (by opening issues on
-rosadmin/scheduled_socials) and Slack (by printing the post text and
-schedule).
+Creates draft posts for Bluesky, Mastodon, and LinkedIn (through Buffer) and
+Slack (through Slack API, and text for copy/paste to other Slack spaces).
 }
 \examples{
-cw_socials("2023-07-04",
-           who_masto = "@cohost@mastodon.org",
-           who_linkedin = "Cohost the Best",
-           who_slack = "<UXXXXXXX>",
-           dry_run = TRUE)
+cw_socials(
+  "2023-07-04",
+  cohost = list(
+    "mastodon" = "@cohost@mastodon.org",
+    "bluesky" = "@cohost@bsky.social",
+    "linkedin" = "Cohost",
+    slack = "UXXXXXXX"
+  ),
+  dry_run = TRUE
+)
 
 \dontrun{
-cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXXXX>")
+  cw_socials(
+    "2023-07-04",
+     cohost = list(
+      "mastodon" = "@cohost@mastodon.org",
+      "bluesky" = "@cohost@bsky.social",
+      "linkedin" = "Cohost",
+      slack = "UXXXXXXX"
+    )
+  )
 }
 }
