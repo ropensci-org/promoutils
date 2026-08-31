@@ -849,3 +849,51 @@ cw_slides_link <- function(open_site = TRUE) {
   utils::browseURL(slides_link)
   invisible(slides_link)
 }
+
+
+#' Create a text based todo list for Coworking tasks
+#'
+#' This list can be copy/pasted into todo software to keep track of dated
+#' reminders for arranging coworking events.
+#'
+#' @param start Start date for coworking tasks. `NULL` by default to do Jan-Dec
+#' for the next year.
+#' @param end End date for coworking tasks. `NULL` by default to do Jan-Dec for
+#' the next year.
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+#' cw_todos_list()
+cw_todos_list <- function(start = NULL, end = NULL) {
+  start <- start %||% lubridate::ceiling_date(Sys.Date(), unit = "year")
+  end <- end %||%
+    lubridate::ceiling_date(start, unit = "year") -
+    lubridate::days(1)
+  dts <- seq(start, end, by = "1 month") - lubridate::days(1)
+
+  m <- month.name
+
+  todos <- purrr::map(dts, \(x) {
+    m <- format(x + lubridate::days(1), "%b")
+
+    d <- next_date(x - lubridate::weeks(14), which = "Mon", n = 1)
+    t1 <- glue::glue("- Next Host - ({m}) -{d}")
+
+    d <- next_date(x) - lubridate::weeks(2) - lubridate::days(1)
+    t2 <- glue::glue("- Social posts & Sister Slack msgs - ({m}) -{d}")
+
+    d <- next_date(x) - lubridate::weeks(1) - lubridate::days(1)
+    t3 <- glue::glue("- Check In - ({m}) -{d}")
+
+    d <- next_date(x) - lubridate::days(1)
+    t4 <- glue::glue("- Final Checks and Run - ({m}) -{d}")
+    t5 <- glue::glue("- Wrap Up - ({m}) -{d}")
+
+    c(t1, t2, t3, t4, t5)
+  }) |>
+    unlist() |>
+    glue::glue_collapse(sep = "\n") |>
+    cat()
+}
