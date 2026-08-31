@@ -1,6 +1,7 @@
-#' Title
+#' Create a social media post on Buffer
 #'
-#' @param body Character. Text to use as the body of the post.
+#' @param body Character vector. Text to use as the body of the post. Can be a
+#'   vector the same length as `channels` to use different text for each channel.
 #' @param when Character/Date time. Either "now" to post immediately or create a
 #'   draft post for immediate posting, or a Date/time to specify when the post
 #'   should be scheduled.
@@ -34,9 +35,18 @@ buffer_posts_write <- function(
   # Define 'when'
   when <- check_buff_when(when, tz)
 
-  # Recurse if multiple 'where's
-  resp <- purrr::map(channels, \(c) {
-    .buffer_posts_write(body, when, channel = c, draft, dry_run)
+  # Recurse if multiple channels
+  if (!length(body) %in% c(1, length(channels))) {
+    cli::cli_abort(
+      "Body must be either 1 (repeated) or the same length as channels (one per channel)",
+      call = NULL
+    )
+  } else if (length(body) == 1) {
+    body <- rep(body, length(channels))
+  }
+
+  resp <- purrr::map2(body, channels, \(b, c) {
+    .buffer_posts_write(body = b, when, channel = c, draft, dry_run)
   })
 
   if (dry_run) {
