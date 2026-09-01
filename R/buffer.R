@@ -54,10 +54,7 @@ buffer_posts_write <- function(
   ...
 ) {
   # Define 'when'
-  when <- check_buff_when(when, tz)
-
-  # Add to post
-  handles <- list(...)
+  when <- check_buff_time(when, tz)
 
   # Recurse if multiple channels
   if (!length(body) %in% c(1, length(channels))) {

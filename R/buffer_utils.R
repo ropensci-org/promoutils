@@ -219,24 +219,24 @@ buff_glue <- function(..., env = rlang::caller_env()) {
 }
 
 
-check_buff_when <- function(when, tz) {
-  if (is.character(when) && when == "now") {
-    return(when)
-  } else if (is.character(when)) {
+check_buff_time <- function(time, tz) {
+  if (is.character(time) && time == "now") {
+    return(time)
+  } else if (is.character(time)) {
     tz <- tz %||% Sys.timezone()
-    when <- lubridate::ymd_hms(when, truncated = 2, tz = tz)
-  } else if (lubridate::is.POSIXct(when) || lubridate::is.Date(when)) {
+    time <- lubridate::ymd_hms(time, truncated = 3, tz = tz)
+  } else if (lubridate::is.POSIXct(time) || lubridate::is.Date(time)) {
     if (!is.null(tz)) {
       cli::cli_inform(
-        "Ignoring `tz` as `when` is already a date/time object."
+        "Ignoring `tz` as `time` is already a date/time object."
       )
     }
   }
 
-  when <- lubridate::with_tz(when, "UTC") |>
+  time <- lubridate::with_tz(time, "UTC") |>
     format("%Y-%m-%dT%H:%M:%SZ")
 
-  when
+  time
 }
 
 #' Check length of Buffer post by channel
