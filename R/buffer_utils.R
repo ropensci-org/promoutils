@@ -102,8 +102,11 @@ buffer_request <- function(query, dry_run, paginate = FALSE) {
 buffer_error <- function(resp) {
   e <- httr2::resp_body_json(resp)$error
   r <- httr2::resp_header(resp, "Retry-After") |> as.numeric()
+
   purrr::map(e, \(x) {
-    if (x$extensions$code == "RATE_LIMIT_EXCEEDED") {
+    if (
+      "extensions" %in% names(x) && x$extensions$code == "RATE_LIMIT_EXCEEDED"
+    ) {
       x <- c(
         paste0(x$message, " (", x$extensions$window, " window exceeded)"),
         paste(
