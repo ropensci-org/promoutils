@@ -11,7 +11,8 @@ buffer_posts_write(
   channels = c("mastodon", "linkedin", "bluesky"),
   draft = TRUE,
   dry_run = FALSE,
-  open_browser = interactive()
+  open_browser = interactive(),
+  ...
 )
 }
 \arguments{
@@ -44,5 +45,28 @@ p <- buffer_posts_write("testing Api again...", when = "now") # Create draft
 buffer_posts_remove(p$id)
 p <- buffer_posts_write("testing Api again...", when = "2027-01-01 10:00") # Create schedueld draft
 buffer_posts_remove(p$id)
+
+# Create draft using appropriate handles
+p <- buffer_posts_write(
+  "testing Api again... {steffi} and {yani}",
+  when = "now",
+  steffi = c(
+    "mastodon" = "@steffilazerte@fosstodon.org",
+    "bluesky" = "@steffilazerte.bsky.social",
+    "linkedin" = "Steffi LaZerte"
+  ),
+  yani = c(
+    "mastodon" = "@yabellini@rstats.me",
+    "bluesky" = "@yabellini.bsky.social",
+    "linkedin" = "Yanina Bellini Saibene"
+  )
+)
+
+buffer_posts_remove(p$id)
+
+p <- buffer_posts_write(
+  paste0(rep("testing Api again...\n\n", 20), collapse = ""),
+  when = "now"
+)
 \dontshow{\}) # examplesIf}
 }

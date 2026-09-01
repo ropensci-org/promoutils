@@ -7,7 +7,9 @@
 buffer_posts_list(
   status = c("scheduled", "draft"),
   fields = c("id", "channelService", "text", "createdAt", "dueAt", "status"),
-  dry_run = FALSE
+  since = NULL,
+  dry_run = FALSE,
+  org = buff_org
 )
 }
 \arguments{
@@ -16,7 +18,9 @@ buffer_posts_list(
 Options are "draft", "error", "needs_approal","scheduled", "sending",
 "sent".}
 
-\item{filds}{Character vector. Information to return. Become the columns in
+\item{fields}{Character vector. Information to return. Become the columns in}
+
+\item{since}{Character. Only return posts scheduled/sent after this date.
 the data frame.}
 }
 \description{

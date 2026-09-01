@@ -74,15 +74,17 @@ buffer_posts_write <- function(
     body <- rep(body, length(channels))
   }
 
+  handles <- list(...)
   resp <- purrr::map2(body, channels, \(b, c) {
     h <- purrr::map(handles, c)
     b <- glue::glue_data(h, b)
+
     .buffer_posts_write(
       body = b,
-      when,
+      when = when,
       channel = c,
-      draft,
-      dry_run
+      draft = draft,
+      dry_run = dry_run
     )
   })
 

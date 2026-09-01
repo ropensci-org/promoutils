@@ -24,6 +24,6 @@ buffer_query(
   fields = c("id", "text", "createdAt"),
   sort = list("dueAt" = "asc", "createdAt" = "desc"),
   filter = list("status" = "scheduled"),
-  org = ro_org
+  org = buff_org
 )
 }
