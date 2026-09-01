@@ -11,6 +11,9 @@
 #' @param channels Character vector. Where to post? Options are "mastodon",
 #'   "bluesky", and/or "linkedin".
 #' @param draft Logical. Whether this post should be a draft.
+#' @parm ... Handles to add to the body. Should be `id = c(mastodon = "handle",
+#'   bluesky = "handle", linkedin = "handle")` where id is used in the body as
+#'   `{id}` and the names (mastodon, bluesky, linkedin) must match the channels.
 #'
 #' @inheritParams common_docs
 #'
@@ -22,6 +25,23 @@
 #' buffer_posts_remove(p$id)
 #' p <- buffer_posts_write("testing Api again...", when = "2027-01-01 10:00") # Create schedueld draft
 #' buffer_posts_remove(p$id)
+#'
+#' # Create draft using appropriate handles
+#' p <- buffer_posts_write(
+#'   "testing Api again... {steffi} and {yani}",
+#'   when = "now",
+#'   steffi = c(
+#'     "mastodon" = "@steffilazerte@fosstodon.org",
+#'     "bluesky" = "@steffilazerte.bsky.social",
+#'     "linkedin" = "Steffi LaZerte"
+#'   ),
+#'   yani = c(
+#'     "mastodon" = "@yabellini@rstats.me",
+#'     "bluesky" = "@yabellini.bsky.social",
+#'     "linkedin" = "Yanina Bellini Saibene"
+#'   )
+#' )
+#'
 
 buffer_posts_write <- function(
   body,
@@ -30,10 +50,14 @@ buffer_posts_write <- function(
   channels = c("mastodon", "linkedin", "bluesky"),
   draft = TRUE,
   dry_run = FALSE,
-  open_browser = interactive()
+  open_browser = interactive(),
+  ...
 ) {
   # Define 'when'
   when <- check_buff_when(when, tz)
+
+  # Add to post
+  handles <- list(...)
 
   # Recurse if multiple channels
   if (!length(body) %in% c(1, length(channels))) {
@@ -46,7 +70,15 @@ buffer_posts_write <- function(
   }
 
   resp <- purrr::map2(body, channels, \(b, c) {
-    .buffer_posts_write(body = b, when, channel = c, draft, dry_run)
+    h <- purrr::map(handles, c)
+    b <- glue::glue_data(h, b)
+    .buffer_posts_write(
+      body = b,
+      when,
+      channel = c,
+      draft,
+      dry_run
+    )
   })
 
   if (dry_run) {
