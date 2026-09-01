@@ -208,7 +208,7 @@ buffer_posts_list <- function(
     "dueAt",
     "status"
   ),
-  dry_run = FALSE
+  org = buff_org
 ) {
   template <- "query GetPosts { 
   posts(
@@ -224,7 +224,7 @@ buffer_posts_list <- function(
     fields = fields,
     sort = list("dueAt" = "asc", "createdAt" = "desc"),
     filter = list("status" = status),
-    org = ro_org
+    org = org
   ) |>
     buffer_request(dry_run = dry_run, paginate = TRUE) |>
     buffer_df()
