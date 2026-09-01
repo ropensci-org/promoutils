@@ -496,3 +496,88 @@ post_time <- function(day, hour) {
 url_from_api <- function(url) {
   stringr::str_remove_all(url, "(api\\.)|(repos/)")
 }
+
+#' Split posts to make threaded posts
+#'
+#' @param body Character. Body of the post to be split
+#' @param n_max Numeric. Maximum number of characters permitted.
+#'
+#' @returns
+#'
+#' @noRd
+#' @examples
+#' b <- c("testing, this is very cool stuff.")
+#' b <- paste(b, b, b, b)
+#' b <- paste(b, b, b, b, sep = "\n\n")
+#' split_body(b, n_max = buff_nchars["bluesky"]) |> cat(sep = "\n\n---\n\n")
+#'
+#' b <- c("testing, this is very cool stuff.")
+#' b <- paste(b, b, b, b, b, b, b, b, b)
+#' b <- paste(b, b, b, b, sep = "\n\n")
+#' split_body(b, n_max = buff_nchars["bluesky"]) |> cat(sep = "\n\n---\n\n")
+#'
+#' b <- c("testing, this is very cool stuff. ")
+#' b <- paste(rep(b, 10), collapse = " ")
+#' b <- paste(b, b, b, sep = " ")
+#' split_body(b, n_max = buff_nchars["bluesky"]) |> cat(sep = "\n\n---\n\n")
+
+split_body <- function(body, n_max) {
+  n_max <- n_max - 4 # To account for adding the 1/2 etc.
+
+  # First split by big paragraphs
+  b <- .split_body(body, by = "\n\n", n_max = n_max)
+  n <- nchar(b)
+
+  # Keep making smaller if necessary - by line break
+  if (any(n > n_max)) {
+    b <- .split_body(b, by = "\n", n_max = n_max)
+    n <- nchar(b)
+  }
+
+  # Keep making smaller if necessary - by sentence
+  if (any(n > n_max)) {
+    b <- .split_body(
+      b,
+      by = stringr::boundary("sentence"),
+      join = " ",
+      n_max = n_max
+    )
+    n <- nchar(b)
+  }
+
+  # Keep making smaller if necessary - by period
+  if (any(n > n_max)) {
+    b <- .split_body(b, by = "\\.", join = ".", n_max = n_max)
+    n <- nchar(b)
+  }
+
+  paste0(seq_along(b), "/", length(b), " ", b)
+}
+
+.split_body <- function(b, by, join = by, n_max = n_max) {
+  b1 <- purrr::map(b, \(bb) stringr::str_split_1(bb, pattern = by)) |> unlist()
+
+  b1 <- b1[b1 != ""]
+  b1[-length(b1)] <- paste0(b1[-length(b1)], join)
+  n <- nchar(b1)
+  nn <- add_nearby(n)
+
+  # Combine small parts back together in order
+  while (any(nn <= n_max)) {
+    i <- which(nn <= n_max)[1]
+    b1[i] <- paste0(b1[i], b1[i + 1])
+    b1 <- b1[-(i + 1)]
+    n <- nchar(b1)
+    nn <- add_nearby(n)
+  }
+
+  b1
+}
+
+add_nearby <- function(n) {
+  nn <- c()
+  for (i in seq_along(n)[-length(n)]) {
+    nn[i] <- n[i] + n[i + 1]
+  }
+  nn
+}

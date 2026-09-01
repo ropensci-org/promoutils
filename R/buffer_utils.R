@@ -251,14 +251,24 @@ check_buff_time <- function(time, tz) {
 #' check_buff_body("Hello", "mastodon")
 #' check_buff_body(paste(rep("Hello", 300), collapse = " "), "bluesky")
 
-check_buff_body <- function(body, channel) {
+check_buff_body <- function(body, channel, thread = TRUE) {
+  body <- replace_emoji(body)
+
   n <- nchar(body, type = "width") # Approximate
   if (n > buff_nchars[channel]) {
-    cli::cli_abort(
-      "Message too long ({n}) for this channel ({channel} max: {buff_nchars[channel]})",
-      call = NULL
-    )
+    if (!thread) {
+      cli::cli_abort(
+        "Message too long ({n}) for this channel ({channel} max: {buff_nchars[channel]})",
+        call = NULL
+      )
+    } else {
+      body <- split_body(body, n_max = buff_nchars[channel])
+    }
   }
+  # Escape new lines
+  body <- stringr::str_replace_all(body, "\n", "\\\\n")
+
+  body
 }
 
 

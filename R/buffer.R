@@ -42,6 +42,12 @@
 #'   )
 #' )
 #'
+#' buffer_posts_remove(p$id)
+#'
+#' p <- buffer_posts_write(
+#'   paste0(rep("testing Api again...\n\n", 20), collapse = ""),
+#'   when = "now"
+#' )
 
 buffer_posts_write <- function(
   body,
@@ -57,9 +63,11 @@ buffer_posts_write <- function(
   when <- check_buff_time(when, tz)
 
   # Recurse if multiple channels
-  if (!length(body) %in% c(1, length(channels))) {
+  if (
+    !length(body) %in% c(1, length(channels)) || !all(names(body) %in% channels)
+  ) {
     cli::cli_abort(
-      "Body must be either 1 (repeated) or the same length as channels (one per channel)",
+      "Body must be either 1 (repeated) or a named list/vector same length as channels (one per channel)",
       call = NULL
     )
   } else if (length(body) == 1) {
@@ -95,23 +103,39 @@ buffer_posts_write <- function(
   body,
   when,
   channel,
+  thread = channel == "bluesky",
   draft = TRUE,
   dry_run = FALSE
 ) {
-  check_buff_body(body, channel)
+  body <- check_buff_body(body, channel, thread) # Check length, thread if bluesky
+  body <- paste("text: \"", body, "\"")
 
   channel_id <- get(paste0("buff_", channel))
   mode <- if (when == "now") "shareNow" else "customScheduled"
 
+  if (length(body) > 1) {
+    metadata <- paste0(
+      "metadata: { ",
+      channel,
+      ": { ",
+      "thread: [ ",
+      paste0(paste0("{ ", body, "} "), collapse = "\n"),
+      "]}}"
+    )
+  } else {
+    metadata <- ""
+  }
+
   template <- paste(
     "mutation CreatePost { ",
     "createPost(input: { ",
-    "text: \"{{body}}\",",
-    "channelId: \"{{channel_id}}\",",
-    "schedulingType: automatic,",
-    "mode: {{mode}},",
+    body[1],
+    "channelId: \"{{channel_id}}\"",
+    "schedulingType: automatic",
+    "mode: {{mode}}",
     if (when != "now") "dueAt: \"{{when}}\"" else "",
     "saveToDraft: {{tolower(draft)}}",
+    metadata,
     "}) {
       ... on PostActionSuccess {
         post {
