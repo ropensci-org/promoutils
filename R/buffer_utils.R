@@ -46,7 +46,12 @@ buffer_query <- function(
 
   if (!is.null(filter)) {
     filter <- purrr::imap(filter, \(x, i) {
-      glue::glue("{i}: [{glue::glue_collapse(x, sep = ', ')}]")
+      if (i == "dueAt") {
+        x <- glue::glue("{i}: {{ {x} }}")
+      } else {
+        x <- glue::glue("{i}: [{glue::glue_collapse(x, sep = ', ')}]")
+      }
+      x
     })
     if (length(filter) > 1) {
       filter <- paste0(filter, collapse = ", ")

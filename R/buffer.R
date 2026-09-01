@@ -182,7 +182,8 @@ buffer_posts_remove <- function(id, dry_run = FALSE) {
 #'   "scheduled" and "draft", set to "sent" to return all posted messages.
 #'   Options are "draft", "error", "needs_approal","scheduled", "sending",
 #'   "sent".
-#' @param filds Character vector. Information to return. Become the columns in
+#' @param fields Character vector. Information to return. Become the columns in
+#' @param since Character. Only return posts scheduled/sent after this date.
 #' the data frame.
 #'
 #' @references
@@ -208,6 +209,8 @@ buffer_posts_list <- function(
     "dueAt",
     "status"
   ),
+  since = NULL,
+  dry_run = FALSE,
   org = buff_org
 ) {
   template <- "query GetPosts { 
@@ -219,11 +222,18 @@ buffer_posts_list <- function(
     pageInfo { hasNextPage endCursor }
 } }"
 
+  f <- list("status" = status)
+
+  if (!is.null(since)) {
+    since <- check_buff_time(since, "UTC")
+    f <- append(f, list("dueAt" = paste0("start: \"", since, "\"")))
+  }
+
   buffer_query(
     template,
     fields = fields,
     sort = list("dueAt" = "asc", "createdAt" = "desc"),
-    filter = list("status" = status),
+    filter = f,
     org = org
   ) |>
     buffer_request(dry_run = dry_run, paginate = TRUE) |>
