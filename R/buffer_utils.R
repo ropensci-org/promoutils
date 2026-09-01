@@ -63,14 +63,14 @@ buffer_request <- function(query, dry_run, paginate = FALSE) {
   r <- httr2::request("https://api.buffer.com") |>
     httr2::req_auth_bearer_token(token = key("buffer")) |>
     httr2::req_body_json(list(query = query)) |>
-    httr2::req_error(r, body = buffer_error)
+    httr2::req_error(body = buffer_error)
 
   if (dry_run) {
     resp <- httr2::req_dry_run(r)
     attr(resp, "dry_run") <- TRUE
     return(resp)
   } else {
-    resp <- httr2::req_perform(resp)
+    resp <- httr2::req_perform(r)
   }
 
   if (paginate) {
