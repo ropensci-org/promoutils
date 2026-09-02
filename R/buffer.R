@@ -110,8 +110,13 @@ buffer_posts_write <- function(
   dry_run = FALSE
 ) {
   body <- check_buff_body(body, channel, thread) # Check length, thread if bluesky
-  body <- paste("text: \"", body, "\"")
 
+  # Skip if likely a duplicate
+  if (check_buff_dups(body, when, channel)) {
+    return(NULL)
+  }
+
+  body <- paste("text: \"", body, "\"")
   channel_id <- get(paste0("buff_", channel))
   mode <- if (when == "now") "shareNow" else "customScheduled"
 

@@ -272,6 +272,28 @@ check_buff_body <- function(body, channel, thread = TRUE) {
 }
 
 
+check_buff_dups <- function(body, when, channel) {
+  body <- paste0(body, collapse = "|")
+  s <- buffer_posts_list() |>
+    dplyr::mutate(
+      dueAt = stringr::str_remove(.data$dueAt, "\\.000"),
+      body = stringr::str_extract(.data$text, "^.+\\n") |> stringr::str_trim()
+    ) |>
+    dplyr::filter(
+      stringr::str_detect(.env$body, .data$body),
+      .data$dueAt == .env$when,
+      .data$channelService == .env$channel
+    )
+
+  if (nrow(s) > 0) {
+    cli::cli_inform(
+      "Skipping... There is/are similar post(s) scheduled or draft for the same time on the same platform"
+    )
+    return(TRUE)
+  }
+  FALSE
+}
+
 #' Clean up draft/scheduled testing messages
 #'
 #' Removes all testing draft and/or scheduled messages matching "^testing(
