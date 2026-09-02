@@ -2,10 +2,10 @@ Join us for Social Coworking and office hours next week!
 
 :grey_exclamation: Theme: {theme}
 :hourglass_flowing_sand: When: {time}
-:cookie: Hosted by: {host} and co-host {cohost}
+:cookie: Hosted by: <@{host}> and co-host <@{cohost}>
 :mag: Details: {event_url}
 
 You can use this time for...
 - General coworking
 {action1}
-- Chat with {cohost} and other attendees about our theme!
+- Chat and discuss our theme!

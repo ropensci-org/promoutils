@@ -4,10 +4,10 @@ Theme: {theme}
 
 {time}
 
-Join {cohost} and {host}
+Join {{cohost}} and {{host}}
 
 - General coworking
 {action1}
-- Chat with {cohost} and other attendees and discuss our theme!
+- Chat and discuss our theme!
 
 {event_url}

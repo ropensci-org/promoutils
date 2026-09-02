@@ -581,3 +581,19 @@ add_nearby <- function(n) {
   }
   nn
 }
+
+socials_df_to_list <- function(df) {
+  if (is.data.frame(df)) {
+    df <- dplyr::filter(
+      df,
+      type %in% c("name", "mastodon", "bluesky", "slack")
+    ) |>
+      dplyr::select("type", "value") |>
+      tidyr::complete(type = c("mastodon", "linkedin", "bluesky", "slack")) |>
+      dplyr::mutate(value = tidyr::replace_na(value, value[type == "name"])) |>
+      dplyr::filter(type != "name")
+
+    df <- as.list(df$value) |> rlang::set_names(df$type)
+  }
+  df
+}
