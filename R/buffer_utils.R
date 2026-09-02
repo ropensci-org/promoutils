@@ -6,7 +6,7 @@
 #' @param fields Character vector. Fields to return
 #' @param type Character. Query recipe 'org', 'schedule', 'remove', 'write'.
 #'
-#' @returns
+#' @returns Character string of query
 #'
 #' @export
 #' @examples
@@ -244,7 +244,7 @@ check_buff_time <- function(time, tz) {
 #' @param body Character. Body of the post to check length of
 #' @param channel Character. Channel to check against.
 #'
-#' @returns
+#' @returns `body`, possibly split into threads
 #'
 #' @noRd
 #' @examples
@@ -267,6 +267,9 @@ check_buff_body <- function(body, channel, thread = TRUE) {
   }
   # Escape new lines
   body <- stringr::str_replace_all(body, "\n", "\\\\n")
+
+  # Remove whitespace
+  body <- stringr::str_trim(body)
 
   body
 }

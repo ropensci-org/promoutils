@@ -23,6 +23,9 @@ Options are "draft", "error", "needs_approal","scheduled", "sending",
 \item{since}{Character. Only return posts scheduled/sent after this date.
 the data frame.}
 }
+\value{
+Data frame of posts
+}
 \description{
 Fetches a list of posts on all channels on Buffer.
 }

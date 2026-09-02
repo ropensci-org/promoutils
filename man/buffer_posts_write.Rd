@@ -35,6 +35,12 @@ character string (if \code{when} is a date/time \code{tz} is ignored). Default
 \item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 
 \item{open_browser}{Logical. Whether to open the issue in the browser.}
+
+\item{...}{Handles to add to the body. Should be \code{id = c(mastodon = "handle", bluesky = "handle", linkedin = "handle")} where id is used in the body as
+\code{{id}} and the names (mastodon, bluesky, linkedin) must match the channels.}
+}
+\value{
+Data frame of post ids
 }
 \description{
 Create a social media post on Buffer

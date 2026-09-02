@@ -11,13 +11,13 @@
 #' @param channels Character vector. Where to post? Options are "mastodon",
 #'   "bluesky", and/or "linkedin".
 #' @param draft Logical. Whether this post should be a draft.
-#' @parm ... Handles to add to the body. Should be `id = c(mastodon = "handle",
+#' @param ... Handles to add to the body. Should be `id = c(mastodon = "handle",
 #'   bluesky = "handle", linkedin = "handle")` where id is used in the body as
 #'   `{id}` and the names (mastodon, bluesky, linkedin) must match the channels.
 #'
 #' @inheritParams common_docs
 #'
-#' @returns
+#' @returns Data frame of post ids
 #'
 #' @export
 #' @examplesIf interactive()
@@ -177,7 +177,7 @@ buffer_posts_write <- function(
 #'
 #' @param id Character vector. Id(s) of the post(s) to be removed.
 #'
-#' @returns
+#' @returns Data frame of removed posts
 #'
 #' @export
 #' @examplesIf interactive()
@@ -219,7 +219,7 @@ buffer_posts_remove <- function(id, dry_run = FALSE) {
 #'   Posts: https://developers.buffer.com/reference.html#field-posts
 #'   Fields: https://developers.buffer.com/reference.html#type/Post
 #'
-#' @returns
+#' @returns Data frame of posts
 #'
 #' @export
 #' @examplesIf interactive()

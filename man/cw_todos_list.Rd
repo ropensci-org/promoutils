@@ -13,6 +13,9 @@ for the next year.}
 \item{end}{End date for coworking tasks. \code{NULL} by default to do Jan-Dec for
 the next year.}
 }
+\value{
+Text TO-DO list
+}
 \description{
 This list can be copy/pasted into todo software to keep track of dated
 reminders for arranging coworking events.

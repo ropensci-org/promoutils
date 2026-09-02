@@ -256,6 +256,7 @@ escape_linkedin_chars <- function(x) {
 
 template <- function(name) {
   # Templates stored: inst/extdata/templates
+
   name <- stringr::str_remove(name, "\\.txt$")
   system.file(
     "extdata",
@@ -502,7 +503,7 @@ url_from_api <- function(url) {
 #' @param body Character. Body of the post to be split
 #' @param n_max Numeric. Maximum number of characters permitted.
 #'
-#' @returns
+#' @returns Split `body`
 #'
 #' @noRd
 #' @examples

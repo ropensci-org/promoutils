@@ -13,6 +13,9 @@ buffer_query(template, fields = NULL, sort = NULL, filter = NULL, ...)
 
 \item{type}{Character. Query recipe 'org', 'schedule', 'remove', 'write'.}
 }
+\value{
+Character string of query
+}
 \description{
 Note that the GraphQL requires " (' won't work).
 }

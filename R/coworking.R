@@ -812,7 +812,7 @@ cw_slides_link <- function(open_site = TRUE) {
 #' @param end End date for coworking tasks. `NULL` by default to do Jan-Dec for
 #' the next year.
 #'
-#' @returns
+#' @returns Text TO-DO list
 #'
 #' @export
 #' @examples

@@ -9,6 +9,9 @@ buffer_posts_remove(id, dry_run = FALSE)
 \arguments{
 \item{id}{Character vector. Id(s) of the post(s) to be removed.}
 }
+\value{
+Data frame of removed posts
+}
 \description{
 Remove posts on Buffer
 }
