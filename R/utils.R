@@ -268,15 +268,15 @@ template <- function(name) {
     glue::glue_collapse(sep = "\n")
 }
 
-copy <- function(body, what, print = FALSE) {
+copy <- function(body, what, copy = TRUE, print = FALSE) {
   if (print) {
     cli::cat_print(body)
-    return(invisible(body))
-  } else {
+  }
+  if (copy) {
     clipr::write_clip(body)
     cli::cli_alert_success("Copied {what} to clipboard")
-    return(invisible(body))
   }
+  return(invisible(body))
 }
 
 #' Create url from content date and slug
