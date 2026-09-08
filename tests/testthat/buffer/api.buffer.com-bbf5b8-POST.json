@@ -2,10 +2,10 @@
     "data": {
         "createPost": {
             "post": {
-                "id": "6a91f232d6a13fc64285fe28",
+                "id": "6aa07302942cacf56dca4405",
                 "channelService": "linkedin",
-                "text": "testing Api again...",
-                "dueAt": null,
+                "text": "testing scheduled Api again...",
+                "dueAt": "2027-09-08T20:41:37.000Z",
                 "status": "draft"
             }
         }

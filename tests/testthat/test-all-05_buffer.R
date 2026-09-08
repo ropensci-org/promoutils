@@ -7,7 +7,7 @@ test_that("buffer_org()", {
 test_that("buffer_channels()", {
   expect_silent(c <- buffer_channels()) |>
     expect_s3_class("data.frame")
-  expect_equal(c$service, c("linkedin", "mastodon", "bluesky"))
+  expect_equal(sort(c$service), c("bluesky", "linkedin", "mastodon"))
 })
 
 test_that("buffer_posts_list()", {

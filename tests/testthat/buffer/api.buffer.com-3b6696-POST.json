@@ -2,10 +2,10 @@
     "data": {
         "createPost": {
             "post": {
-                "id": "6a91f2341abdeaabf9ac89ba",
+                "id": "6aa073012706956923203c89",
                 "channelService": "mastodon",
                 "text": "testing scheduled Api again...",
-                "dueAt": "2027-08-28T20:40:19.000Z",
+                "dueAt": "2027-09-08T20:41:37.000Z",
                 "status": "draft"
             }
         }

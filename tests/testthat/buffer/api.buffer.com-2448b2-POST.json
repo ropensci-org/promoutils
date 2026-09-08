@@ -2,16 +2,16 @@
     "data": {
         "channels": [
             {
-                "id": "69f8af615c4c051afa0c185c",
-                "service": "linkedin"
+                "id": "6a37e4e85ab6d2f106573f2c",
+                "service": "bluesky"
             },
             {
                 "id": "69f8afed5c4c051afa0c1a3c",
                 "service": "mastodon"
             },
             {
-                "id": "6a37e4e85ab6d2f106573f2c",
-                "service": "bluesky"
+                "id": "69f8af615c4c051afa0c185c",
+                "service": "linkedin"
             }
         ]
     }

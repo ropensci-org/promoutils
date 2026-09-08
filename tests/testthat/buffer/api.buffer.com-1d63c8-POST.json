@@ -2,10 +2,10 @@
     "data": {
         "createPost": {
             "post": {
-                "id": "6a91f232d6a13fc64285fe40",
+                "id": "6aa073021c9aa6d4521a025b",
                 "channelService": "bluesky",
-                "text": "testing Api again...",
-                "dueAt": null,
+                "text": "testing scheduled Api again...",
+                "dueAt": "2027-09-08T20:41:37.000Z",
                 "status": "draft"
             }
         }
