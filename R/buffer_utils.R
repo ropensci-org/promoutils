@@ -368,8 +368,8 @@ check_buff_dups <- function(body, when, channel) {
 buffer_cleanup <- function() {
   l <- buffer_posts_list() |>
     dplyr::filter(stringr::str_detect(
-      text,
-      "^testing( scheduled)? Api again...$"
+      .data$text,
+      "^(t|T)esting( scheduled)? Api again...$"
     ))
   buffer_posts_remove(l$id)
 }

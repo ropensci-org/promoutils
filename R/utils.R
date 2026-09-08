@@ -269,6 +269,11 @@ template <- function(name) {
 }
 
 copy <- function(body, what, copy = TRUE, print = FALSE) {
+  if (!interactive()) {
+    copy <- FALSE
+    print <- TRUE
+  }
+
   if (print) {
     cli::cat_print(body)
   }
@@ -587,12 +592,17 @@ socials_df_to_list <- function(df) {
   if (is.data.frame(df)) {
     df <- dplyr::filter(
       df,
-      type %in% c("name", "mastodon", "bluesky", "slack")
+      .data$type %in% c("name", "mastodon", "bluesky", "slack")
     ) |>
       dplyr::select("type", "value") |>
       tidyr::complete(type = c("mastodon", "linkedin", "bluesky", "slack")) |>
-      dplyr::mutate(value = tidyr::replace_na(value, value[type == "name"])) |>
-      dplyr::filter(type != "name")
+      dplyr::mutate(
+        value = tidyr::replace_na(
+          .data$value,
+          .data$value[.data$type == "name"]
+        )
+      ) |>
+      dplyr::filter(.data$type != "name")
 
     df <- as.list(df$value) |> rlang::set_names(df$type)
   }

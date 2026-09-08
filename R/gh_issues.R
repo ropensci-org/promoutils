@@ -173,6 +173,7 @@ gh_issue_fetch <- function(
     direction = "desc",
     owner = owner,
     repo = repo,
+    .progress = FALSE,
     .limit = Inf
   )
 }

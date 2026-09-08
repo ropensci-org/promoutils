@@ -95,7 +95,7 @@ buffer_posts_write <- function(
   resp <- purrr::list_rbind(resp)
 
   if (draft && open_browser) {
-    browseURL("https://publish.buffer.com/schedule?tab=drafts")
+    utils::browseURL("https://publish.buffer.com/schedule?tab=drafts")
   }
 
   resp
@@ -112,11 +112,11 @@ buffer_posts_write <- function(
   body <- check_buff_body(body, channel, thread) # Check length, thread if bluesky
 
   # Skip if likely a duplicate
-  if (check_buff_dups(body, when, channel)) {
+  if (!dry_run && check_buff_dups(body, when, channel)) {
     return(NULL)
   }
 
-  body <- paste("text: \"", body, "\"")
+  body <- paste0("text: \"", body, "\"")
   channel_id <- get(paste0("buff_", channel))
   mode <- if (when == "now") "shareNow" else "customScheduled"
 
