@@ -40,23 +40,35 @@ If you set `draft = FALSE`, posts scheduled for `now` will be posted *immediatel
 buffer_posts_write("Testing a draft post!", when = "now")
 ```
 
+
+### Listing messages
+
 We can get a list of posts:
 ```{r}
 buffer_posts_list()
 ```
 
 By default this only returns posts with the status of "scheduled" or "draft". 
-To return posts which have been sent, change `status = "sent"`. 
+To return posts which have been sent, change `status = "sent"`, and use `since`
+to specify a date range of posts to return.
 
 ```{r}
-buffer_posts_list(status = "sent")
+buffer_posts_list(status = "sent", since = Sys.Date() - lubridate::weeks(1))
 ```
 
-And we can clean up our test posts with:
+
+### Removing messages
+
+To delete drafts or scheduled messages you need to know the post `id`. 
+We can get these from `buffer_posts_list()`.
+
+Let's clean up our test posts with:
 
 ```{r}
 m <- buffer_posts_list() |>
   dplyr::filter(text == "Testing a draft post!")
+
+m
 
 buffer_posts_remove(m$id)
 ```
@@ -73,44 +85,40 @@ buffer_posts_list() |>
 Let's schedule a message for tomorrow. 
 
 ```{r}
-slack_posts_write(
+buffer_posts_write(
   "Testing scheduled messages in the Vignette!",
   when = Sys.Date() + lubridate::days(1)
 )
 ```
 
-- If `when = "now"`, `slack_posts_write()` will post immediately (default)
-- If scheduled, `slack_posts_write()` will also post a copy of the message and 
-it's date to scheduled in the private channel, `#admin-scheduled`, 
-for quick checking of currently scheduled messages when you're in the Slack app.
+- If `when = "now"`, `buffer_posts_write()` will create a draft post (default), or if `draft = FALSE` will post immediately
+- If scheduled (`when = "DATE/TIME"`), `buffer_posts_write()` will schedule a draft post (default), or if `draft = FALSE` will add the post to the Queue to be posted when the time is met.
 
-![Screenshot of a Slack message in the #admin-scheduled channel giving the details of the scheduled message](slack_admin_scheduled.png)
+Draft posts need to be scheduled in the Buffer web app to actually be posted or added to the Queue.
 
-See the currently scheduled messages according to the Slack API
+Note that you aren't able to post duplicate messages with the same(ish) body, 
+scheduled time, and channel:
+
 ```{r}
-slack_scheduled_list()
+buffer_posts_write(
+  "Testing scheduled messages in the Vignette!",
+  when = Sys.Date() + lubridate::days(1)
+)
 ```
 
-
-To delete currently scheduled messages you need to know the `channel_id` and the message `id`. 
-We can get these from `slack_list_scheduled()` or we can supply the data frame directly as we did above.
+As above, let's clean up our test posts with:
 
 ```{r}
-m <- slack_scheduled_list()
-slack_scheduled_rm(m)
+m <- buffer_posts_list() |>
+  dplyr::filter(text == "Testing scheduled messages in the Vignette!")
+
+m
+
+buffer_posts_remove(m$id)
 ```
 
-Note that `slack_scheduled_rm()` also removes the message posted to the `#admin-scheduled`
-channel, so that channel *should* be a faithful representation of messages currently 
-scheduled via the API.
-
+Check that they're gone
 ```{r}
-slack_scheduled_list()
-```
-
-However, after posts have been sent, you'll need to clean up `#admin-scheduled`
-with a call to `slack_cleanup()` which will remove any message in `#admin-scheduled` that isn't also in Slack's internal scheduled messages list.
-
-```{r}
-slack_cleanup()
+buffer_posts_list() |>
+  dplyr::filter(text == "Testing scheduled messages in the Vignette!")
 ```
