@@ -8,6 +8,8 @@ buffer_posts_remove(id, dry_run = FALSE)
 }
 \arguments{
 \item{id}{Character vector. Id(s) of the post(s) to be removed.}
+
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 }
 \value{
 Data frame of removed posts

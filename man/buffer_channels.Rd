@@ -9,6 +9,8 @@ buffer_channels(org = buff_org, dry_run = FALSE)
 \arguments{
 \item{org}{Character. Organizational ID to return channels for (see
 \code{\link[=buffer_org]{buffer_org()}}). Uses rOpenSci's by default \code{buff_org}.}
+
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 }
 \value{
 Data frame with \code{id} and \code{service} (linkedin, mastodon, bluesky,

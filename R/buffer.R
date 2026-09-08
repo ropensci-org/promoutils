@@ -177,6 +177,8 @@ buffer_posts_write <- function(
 #'
 #' @param id Character vector. Id(s) of the post(s) to be removed.
 #'
+#' @inheritParams common_docs
+#'
 #' @returns Data frame of removed posts
 #'
 #' @export
@@ -212,7 +214,11 @@ buffer_posts_remove <- function(id, dry_run = FALSE) {
 #'   "sent".
 #' @param fields Character vector. Information to return. Become the columns in
 #' @param since Character. Only return posts scheduled/sent after this date.
-#' the data frame.
+#'   the data frame.
+#' @param org Character. Buffer ID of the organization to return channels from.
+#'   Defaults to rOpenSci's ID.
+#'
+#' @inheritParams common_docs
 #'
 #' @references
 #'   Post status: https://developers.buffer.com/reference.html#type/PostStatus
@@ -275,6 +281,8 @@ buffer_posts_list <- function(
 #'
 #' @returns Data frame with `id` and `service` (linkedin, mastodon, bluesky,
 #'  etc.)
+#'
+#' @inheritParams common_docs
 #'
 #' @export
 #' @examplesIf interactive()

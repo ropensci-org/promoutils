@@ -22,6 +22,11 @@ Options are "draft", "error", "needs_approal","scheduled", "sending",
 
 \item{since}{Character. Only return posts scheduled/sent after this date.
 the data frame.}
+
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
+
+\item{org}{Character. Buffer ID of the organization to return channels from.
+Defaults to rOpenSci's ID.}
 }
 \value{
 Data frame of posts

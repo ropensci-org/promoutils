@@ -1,23 +1,23 @@
 #' Great GraphQL Query for Buffer
 #'
-#' Note that the GraphQL requires " (' won't work).
+#' Note that the GraphQL requires double quotes (single quotes won't work).
 #'
-#' @param ... Character or lists. Query Parameters
+#' @param template Character. Template for the query, uses {} to insert
+#'   arguments from the `...`.
 #' @param fields Character vector. Fields to return
-#' @param type Character. Query recipe 'org', 'schedule', 'remove', 'write'.
+#' @param sort List. Fields to sort by (see [buffer_posts_list()] for an
+#'   example).
+#' @param filter List. Fields to filter by (see [buffer_posts_list()] for an
+#'   example).
+#' @param ... Character or lists. Query Parameters
 #'
 #' @returns Character string of query
 #'
-#' @export
+#' @noRd
 #' @examples
-#' buffer_query(type = "org", fields = c("id", "name"))
-#'
 #' buffer_query(
-#'   type = "scheduled",
-#'   fields = c("id", "text", "createdAt"),
-#'   sort = list("dueAt" = "asc", "createdAt" = "desc"),
-#'   filter = list("status" = "scheduled"),
-#'   org = buff_org
+#'   "query GetOrganizations { account { organizations { {{fields}} } } }",
+#'   fields = c("id", "name")
 #' )
 
 buffer_query <- function(
@@ -63,6 +63,26 @@ buffer_query <- function(
   buff_glue(template)
 }
 
+buff_glue <- function(..., env = rlang::caller_env()) {
+  glue::glue(
+    ...,
+    .sep = "\n",
+    .open = "{{",
+    .close = "}}",
+    .envir = env
+  )
+}
+
+
+#' Create httr2 request for Buffer API
+#'
+#' @param query Character. Query to send.
+#' @param dry_run Logical. Whether or not should be a dry run.
+#' @param paginate Whether to use pagination.
+#'
+#' @returns List of responses
+#'
+#' @noRd
 
 buffer_request <- function(query, dry_run, paginate = FALSE) {
   r <- httr2::request("https://api.buffer.com") |>
@@ -99,6 +119,16 @@ buffer_request <- function(query, dry_run, paginate = FALSE) {
   resp
 }
 
+#' Catch and parse errors from Buffer API
+#'
+#' Used by [httr2::req_error()] in `buffer_request()`.
+#'
+#' @param resp httr2 response
+#'
+#' @returns Nothing
+#'
+#' @noRd
+
 buffer_error <- function(resp) {
   e <- httr2::resp_body_json(resp)$error
   r <- httr2::resp_header(resp, "Retry-After") |> as.numeric()
@@ -125,6 +155,14 @@ buffer_error <- function(resp) {
   }) |>
     unlist()
 }
+
+#' Create data frame of responses from Buffer API
+#'
+#' @param resp list of httr2 responses or httr2 response
+#'
+#' @returns data frame
+#'
+#' @noRd
 
 buffer_df <- function(resp) {
   if (isTRUE(attr(resp, "dry_run"))) {
@@ -155,6 +193,13 @@ buffer_df <- function(resp) {
     purrr::list_rbind()
 }
 
+#' Create data frame of single response from Buffer API
+#'
+#' @param x httr2 response
+#'
+#' @returns data frame
+#'
+#' @noRd
 .buffer_df <- function(x) {
   if (!rlang::is_named(x) || is.list(x[[1]])) {
     x <- purrr::map(x, .buffer_df)
@@ -208,16 +253,15 @@ fetch <- function(list, id, drop_names = TRUE) {
   }
 }
 
-buff_glue <- function(..., env = rlang::caller_env()) {
-  glue::glue(
-    ...,
-    .sep = "\n",
-    .open = "{{",
-    .close = "}}",
-    .envir = env
-  )
-}
 
+#' Check that time is correct and format for Buffer
+#'
+#' @param time Character/Date time
+#' @param tz Timezone if `time` is character, ignored otherwise.
+#'
+#' @returns formatted time
+#'
+#' @noRd
 
 check_buff_time <- function(time, tz) {
   if (is.character(time) && time == "now") {
@@ -274,6 +318,16 @@ check_buff_body <- function(body, channel, thread = TRUE) {
   body
 }
 
+
+#' Check for duplicates before posting
+#'
+#' @param body Character. Body text to compare
+#' @param when Character. Post date/time to compare
+#' @param channel Character. Channel to compare
+#'
+#' @returns `TRUE` if duplicate matched `FALSE` if not.
+#'
+#' @noRd
 
 check_buff_dups <- function(body, when, channel) {
   body <- paste0(body, collapse = "|")
