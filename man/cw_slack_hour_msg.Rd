@@ -34,7 +34,7 @@ and the start of the coworking.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-cw_slack_hour(test_run = TRUE)
-cw_slack_hour(dry_run = TRUE)
+cw_slack_hour_msg(test_run = TRUE)
+cw_slack_hour_msg(dry_run = TRUE)
 \dontshow{\}) # examplesIf}
 }

@@ -412,8 +412,8 @@ cw_slack <- function(
 #' @export
 #'
 #' @examplesIf interactive()
-#' cw_slack_hour(test_run = TRUE)
-#' cw_slack_hour(dry_run = TRUE)
+#' cw_slack_hour_msg(test_run = TRUE)
+#' cw_slack_hour_msg(dry_run = TRUE)
 
 cw_slack_hour_msg <- function(
   user = "UNRAUCMTK",
@@ -422,6 +422,8 @@ cw_slack_hour_msg <- function(
   print = FALSE,
   call = rlang::caller_env()
 ) {
+  # CONSIDER REMOVING ---------------------------------------
+
   # Get date of upcoming coworking session
   dt <- cw_details() |>
     cw_times() |>
@@ -481,6 +483,8 @@ cw_slack_hour_msg <- function(
 }
 
 cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
+  # CONSIDER REMOVING ---------------------------------------
+
   prev_msgs <- slack_messages(channel_id = channel_id) |>
     dplyr::mutate(
       hour = stringr::str_detect(.data$text, "See you in an hour :wink:"),
