@@ -18,7 +18,7 @@ Slack is one of the apps where online communities communicate.  Interactions are
 
 Finding out which channels are available and joining the ones that are useful to you is one way to make the most of these workspaces. 
 
-The list of channels changes over time, and by default when you join, you’ll only be part of a set of standard ones, such as the #general channel.  Also, if you’re not a member of a channel, by default, you won’t see it in the main list.
+The list of channels changes over time, and by default when you join, you’ll only be part of a set of standard ones, such as the `#general` channel.  Also, if you’re not a member of a channel, by default, you won’t see it in the main list.
 
 For this reason, we thought it would be helpful to remind our Slack members once a week about the channels that exist and what they can be used for, while also inviting them to join the channels and participate in the conversations.  
 
@@ -44,10 +44,8 @@ library(dplyr)
 
 `promoutils` access the Slack API to access information, like the list of channels in a workspace.  You need to check you are authorized to work with the Slack API:
 
-```{r chek_access} 
-
+```{r check_access} 
 keys_check()
-
 ```
 
 If not, follow the steps on the [Setting Up Slack](slack_app) article.
@@ -58,7 +56,6 @@ After you have your permissions ready, we can use get the list of active (non-ar
 channels <- slack_channels(types = "public_channel")
 
 head(channels)
-
 ```
 
 The `channels` object has a data frame with the information we need from the public channels in our Slack.
@@ -70,7 +67,6 @@ Now that we have all the channels we want to advertise in our Slack, we can gene
 We clean the data to remove the `general` channel, because this is where we will post all the messages, and exclude the channels without descriptions, because we will use that information to explain what is the channel about. Finally we will clean the descriptions of contents that can break our message format (like internal Slack references and long URLs) and sort the channels alphabetically to post in a consistent order.
 
 ```{r final_channels} 
-
 final_channels <- channels |>
   filter(channel != "general") |>
   filter(!is.na(description) & description != "") |>
@@ -112,7 +108,6 @@ The dataset `messages` now has the intro text for each channel we want to share 
 
 ```{r messages_examples} 
 head(messages)
-
 ```
 
 ### Step 3: schedule one message per week
@@ -130,7 +125,6 @@ scheduled_messages <- messages |>
   )
 
 glimpse(scheduled_messages)
-
 ```
 
 Now we can schedule the messages using the `slack_posts_write` function from `promoutils`. The `dry_run = TRUE` arguments simulate the scheduling of the message without a real publication.  It is a good idea to check that everything works before doing the real scheduling. 
@@ -138,7 +132,6 @@ Now we can schedule the messages using the `slack_posts_write` function from `pr
 We use the `promoutils` function with the `pwalk` function from the `purrr` package to iterate over all the messages:  
 
 ```{r loop} 
-
 purrr::pwalk(
   list(
     body = scheduled_messages$message,
@@ -146,14 +139,13 @@ purrr::pwalk(
   ),
   function(body, when) {
     slack_posts_write(
-      body     = body,
-      when     = when,
-      channel  = "#general",
-      dry_run  = TRUE  # Make FALSE to actually schedule
+      body = body,
+      when = when,
+      channel = "#general",
+      dry_run = TRUE # Make FALSE to actually schedule
     )
   }
 )
-
 ```
 
 > The Slack API has a limit on how many days in the future you can schedule messages, so you can reach a limit in the number of messages that can be scheduled. 
