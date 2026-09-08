@@ -38,13 +38,8 @@ help_fetch <- function(
 
   help |>
     dplyr::filter(
-      .data$label_created >= .env$min_date,
-      .data$label_created < Sys.Date()
-    ) |>
-    dplyr::rename(
-      "labeller_name" = "author",
-      "labeller_github" = "username",
-      "maintainer_name" = "pkg_author"
+      .data$updated >= .env$min_date,
+      .data$updated < Sys.Date()
     ) |>
     dplyr::left_join(pkgs, by = c("package", "maintainer_name"))
 }
