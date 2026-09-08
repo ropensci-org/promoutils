@@ -1,0 +1,10 @@
+[format]
+wrap = "reflow"
+line-width = 80
+
+[linters]
+r = "jarl"
+
+[formatters]
+r = "air"   # May need to install Air to path https://posit-dev.github.io/air/cli.html
+

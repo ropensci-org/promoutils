@@ -15,3 +15,4 @@
 ^RELEASE.R$
 ^README.Rmd$
 ^covr$
+^\.panache.toml$
