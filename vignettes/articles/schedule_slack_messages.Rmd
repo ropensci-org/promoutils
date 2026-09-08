@@ -13,7 +13,7 @@ Slack is one of the apps where online communities communicate.  Interactions are
 
 Finding out which channels are available and joining the ones that are useful to you is one way to make the most of these workspaces. 
 
-The list of channels changes over time, and by default when you join, you’ll only be part of a set of standard ones, such as the #general channel.  Also, if you’re not a member of a channel, by default, you won’t see it in the main list.
+The list of channels changes over time, and by default when you join, you’ll only be part of a set of standard ones, such as the `#general` channel.  Also, if you’re not a member of a channel, by default, you won’t see it in the main list.
 
 For this reason, we thought it would be helpful to remind our Slack members once a week about the channels that exist and what they can be used for, while also inviting them to join the channels and participate in the conversations.  
 
@@ -42,15 +42,14 @@ library(dplyr)
 
 
 ``` r
-
 keys_check()
 #> Key status
 #> ✔ slack: TRUE
-#> ✖ matomo: FALSE
-#> ✖ linkedin: FALSE
-#> ✖ linkedin_org: FALSE
+#> ✔ matomo: TRUE
+#> ✔ linkedin: TRUE
+#> ✔ linkedin_org: TRUE
 #> ✔ github: TRUE
-#> ✖ Some keys to setup
+#> → Good to go!
 ```
 
 If not, follow the steps on the [Setting Up Slack](slack_app) article.
@@ -63,14 +62,14 @@ channels <- slack_channels(types = "public_channel")
 
 head(channels)
 #> # A tibble: 6 × 5
-#>   channel             channel_id type   description              topic
-#>   <chr>               <chr>      <chr>  <chr>                    <chr>
-#> 1 package-development C026GALFB  public Automated notifications… Auto…
-#> 2 general             C026GCWKA  public The <#C026GCWKA> channe… Gene…
-#> 3 random              C026GCWKC  public A place for non-work ba… A pl…
-#> 4 docs                C027G1V0W  public Channel for the ropensc… Docs…
-#> 5 builds              C02K0FKPW  public Automated messages from… Auto…
-#> 6 fishbaseapi         C03MSDW8W  public Discussions and notific… Disc…
+#>   channel             channel_id type   description                                       topic
+#>   <chr>               <chr>      <chr>  <chr>                                             <chr>
+#> 1 package-development C026GALFB  public Automated notifications from GitHub commits, iss… Auto…
+#> 2 general             C026GCWKA  public The <#C026GCWKA> channel is for community-wide c… Gene…
+#> 3 random              C026GCWKC  public A place for non-work banter, links, articles of … A pl…
+#> 4 docs                C027G1V0W  public Channel for the ropensci/docs repo                Docs…
+#> 5 builds              C02K0FKPW  public Automated messages from Travis-CI and Appveyor, … Auto…
+#> 6 fishbaseapi         C03MSDW8W  public Discussions and notifications on the Fishbase API Disc…
 ```
 
 The `channels` object has a data frame with the information we need from the public channels in our Slack.
@@ -83,31 +82,32 @@ We clean the data to remove the `general` channel, because this is where we will
 
 
 ``` r
-
 final_channels <- channels |>
   filter(channel != "general") |>
   filter(!is.na(description) & description != "") |>
   mutate(
     description = str_remove_all(description, "<#[^>]+\\|?[^>]*>"),
     description = str_remove_all(description, "<https?://[^>]+>"),
-    description = str_squish (description)
-    ) |>
-      select(channel, description) |>
-      arrange(channel)
-      
-head(final_channels)    
-#> # A tibble: 6 × 2
-#>   channel   description                                               
-#>   <chr>     <chr>                                                     
-#> 1 allcaps   ONLY ALL CAPS IN THIS ROOM. NO LOWER CASE                 
-#> 2 antarctic The channel is for friendly discussions about using R in …
-#> 3 arrow     Discussion and support for Apache Arrow and the Arrow R p…
-#> 4 books     What you’re reading right now (or want to read next!)     
-#> 5 builds    Automated messages from Travis-CI and Appveyor, for daily…
-#> 6 ci        CI related discussions
+    description = str_squish(description)
+  ) |>
+  select(channel, channel_id, description) |>
+  arrange(channel)
+
+head(final_channels)
+#> # A tibble: 6 × 3
+#>   channel   channel_id  description                                                            
+#>   <chr>     <chr>       <chr>                                                                  
+#> 1 allcaps   C6BLFARM0   ONLY ALL CAPS IN THIS ROOM. NO LOWER CASE                              
+#> 2 antarctic C7UBC64Q4   The channel is for friendly discussions about using R in Antarctic and…
+#> 3 arrow     C021YAQQJTC Discussion and support for Apache Arrow and the Arrow R package. Share…
+#> 4 books     C0BA2J4EWQ5 What you’re reading right now (or want to read next!)                  
+#> 5 builds    C02K0FKPW   Automated messages from Travis-CI and Appveyor, for daily builds and f…
+#> 6 ci        CE4T3Q0DB   CI related discussions
 ```
 
 Now, we need various opening phrases to avoid repetitive messages and then iterate through the list of channels: 
+
+
 
 
 ``` r
@@ -123,7 +123,7 @@ messages <- final_channels |>
   mutate(
     opening = sample(openings, n(), replace = TRUE),
     message = str_glue(
-      "{opening} *#{channel}* ! :slack:\n\n",
+      "{opening} *<#{channel_id}>* ! :slack:\n\n",
       "_{description}_\n\n",
       "Join the conversation and feel free to participate. "
     )
@@ -132,27 +132,34 @@ messages <- final_channels |>
 ```
 
 The dataset `messages` now has the intro text for each channel we want to share in the Slack. 
+Note that we use `<#CHANNEL_ID>` to create the interal channel links in the Slack post.
 
 
 ``` r
 head(messages)
 #> # A tibble: 6 × 2
-#>   channel   message                                                   
-#>   <chr>     <glue>                                                    
-#> 1 allcaps   A reminder that we have a channel for *#allcaps* ! :slack…
-#> 2 antarctic Did you know we have a channel for *#antarctic* ! :slack:…
-#> 3 arrow     Did you know we have a channel for *#arrow* ! :slack:
+#>   channel   message                                                                          
+#>   <chr>     <glue>                                                                           
+#> 1 allcaps   A reminder that we have a channel for *<#C6BLFARM0>* ! :slack:
 #> 
-#> _D…  
-#> 4 books     Have you checked out *#books* ! :slack:
+#> _ONLY ALL CAPS IN …
+#> 2 antarctic Have you checked out *<#C7UBC64Q4>* ! :slack:
 #> 
-#> _What you’re rea…  
-#> 5 builds    Did you know we have a channel for *#builds* ! :slack:
+#> _The channel is for friendly discus…
+#> 3 arrow     A reminder that we have a channel for *<#C021YAQQJTC>* ! :slack:
 #> 
-#> _…  
-#> 6 ci        Did you know we have a channel for *#ci* ! :slack:
+#> _Discussion and …
+#> 4 books     Did you know we have a channel for *<#C0BA2J4EWQ5>* ! :slack:
 #> 
-#> _CI r…
+#> _What you’re readin…
+#> 5 builds    A reminder that we have a channel for *<#C02K0FKPW>* ! :slack:
+#> 
+#> _Automated message…
+#> 6 ci        Spotlight of the week: *<#CE4T3Q0DB>* ! :slack:
+#> 
+#> _CI related discussions_
+#> 
+#> Join th…
 ```
 
 ### Step 3: schedule one message per week
@@ -173,10 +180,10 @@ scheduled_messages <- messages |>
 glimpse(scheduled_messages)
 #> Rows: 39
 #> Columns: 4
-#> $ channel   <chr> "allcaps", "antarctic", "arrow", "books", "builds"…
-#> $ message   <glue> "A reminder that we have a channel for *#allcaps*…
-#> $ week      <dbl> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, …
-#> $ sent_date <date> 2026-09-05, 2026-09-12, 2026-09-19, 2026-09-26, 2…
+#> $ channel   <chr> "allcaps", "antarctic", "arrow", "books", "builds", "ci", "co-working", "de…
+#> $ message   <glue> "A reminder that we have a channel for *<#C6BLFARM0>* ! :slack:\n\n_ONLY A…
+#> $ week      <dbl> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 2…
+#> $ sent_date <date> 2026-09-15, 2026-09-22, 2026-09-29, 2026-10-06, 2026-10-13, 2026-10-20, 20…
 ```
 
 Now we can schedule the messages using the `slack_posts_write` function from `promoutils`. The `dry_run = TRUE` arguments simulate the scheduling of the message without a real publication.  It is a good idea to check that everything works before doing the real scheduling. 
@@ -185,7 +192,6 @@ We use the `promoutils` function with the `pwalk` function from the `purrr` pack
 
 
 ``` r
-
 purrr::pwalk(
   list(
     body = scheduled_messages$message,
@@ -193,352 +199,315 @@ purrr::pwalk(
   ),
   function(body, when) {
     slack_posts_write(
-      body     = body,
-      when     = when,
-      channel  = "#general",
-      dry_run  = TRUE  # Make FALSE to actually schedule
+      body = body,
+      when = when,
+      channel = "#general",
+      dry_run = TRUE # Make FALSE to actually schedule
     )
   }
 )
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-09-05 America/Winnipeg
+#> • When: 2026-09-15 America/Winnipeg
 #> • Where: #general
-#> • What: A reminder that we have a channel for *#allcaps* ! :slack:
-#> _ONLY ALL CAPS IN THIS ROOM. NO LOWER CASE_ Join the conversation and
-#> feel free to participate.
+#> • What: A reminder that we have a channel for *<#C6BLFARM0>* ! :slack: _ONLY ALL CAPS IN THIS
+#> ROOM. NO LOWER CASE_ Join the conversation and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-09-12 America/Winnipeg
+#> • When: 2026-09-22 America/Winnipeg
 #> • Where: #general
-#> • What: Did you know we have a channel for *#antarctic* ! :slack:
-#> _The channel is for friendly discussions about using R in Antarctic
-#> and Southern Ocean science. We welcome participation and civil
-#> conversations that adhere to our code of conduct_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-09-19 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#arrow* ! :slack:
-#> _Discussion and support for Apache Arrow and the Arrow R package.
-#> Share tips, troubleshoot issues, and discuss best practices._ Join
-#> the conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-09-26 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#books* ! :slack: _What you’re reading
-#> right now (or want to read next!)_ Join the conversation and feel
-#> free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-10-03 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#builds* ! :slack:
-#> _Automated messages from Travis-CI and Appveyor, for daily builds and
-#> for each commit/PR/etc_ Join the conversation and feel free to
+#> • What: Have you checked out *<#C7UBC64Q4>* ! :slack: _The channel is for friendly discussions
+#> about using R in Antarctic and Southern Ocean science. We welcome participation and civil
+#> conversations that adhere to our code of conduct_ Join the conversation and feel free to
 #> participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-10-10 America/Winnipeg
+#> • When: 2026-09-29 America/Winnipeg
 #> • Where: #general
-#> • What: Did you know we have a channel for *#ci* ! :slack: _CI
-#> related discussions_ Join the conversation and feel free to
-#> participate.
+#> • What: A reminder that we have a channel for *<#C021YAQQJTC>* ! :slack: _Discussion and
+#> support for Apache Arrow and the Arrow R package. Share tips, troubleshoot issues, and discuss
+#> best practices._ Join the conversation and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-10-17 America/Winnipeg
+#> • When: 2026-10-06 America/Winnipeg
 #> • Where: #general
-#> • What: A reminder that we have a channel for *#co-working* ! :slack:
-#> _Remote co-working. Meet face-to-face online, at agreed times, to do
-#> work – your own work, but together in time. About:_ Join the
+#> • What: Did you know we have a channel for *<#C0BA2J4EWQ5>* ! :slack: _What you’re reading
+#> right now (or want to read next!)_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-10-13 America/Winnipeg
+#> • Where: #general
+#> • What: A reminder that we have a channel for *<#C02K0FKPW>* ! :slack: _Automated messages
+#> from Travis-CI and Appveyor, for daily builds and for each commit/PR/etc_ Join the
 #> conversation and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-10-24 America/Winnipeg
+#> • When: 2026-10-20 America/Winnipeg
 #> • Where: #general
-#> • What: Did you know we have a channel for *#deployments* ! :slack:
-#> _Automated deployment notifications from r-universe. Monitors build
-#> status and deployment activity across R-universe packages._ Join the
+#> • What: Spotlight of the week: *<#CE4T3Q0DB>* ! :slack: _CI related discussions_ Join the
 #> conversation and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-10-31 America/Winnipeg
+#> • When: 2026-10-27 America/Winnipeg
 #> • Where: #general
-#> • What: This week we'd like to highlight *#devel-tools* ! :slack:
-#> _Share tips and discuss developer tools: IDEs, debuggers, profilers,
-#> linters, extensions, and anything that makes our dev experience
-#> better._ Join the conversation and feel free to participate.
+#> • What: A reminder that we have a channel for *<#C0152F1SKAP>* ! :slack: _Remote co-working.
+#> Meet face-to-face online, at agreed times, to do work – your own work, but together in time.
+#> About:_ Join the conversation and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2026-11-07 America/Winnipeg
+#> • When: 2026-11-03 America/Winnipeg
 #> • Where: #general
-#> • What: A reminder that we have a channel for *#docs* ! :slack:
-#> _Channel for the ropensci/docs repo_ Join the conversation and feel
-#> free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-11-14 America/Winnipeg
-#> • Where: #general
-#> • What: A reminder that we have a channel for *#events* ! :slack: _A
-#> place to post events you endorse_ Join the conversation and feel free
-#> to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-11-21 America/Winnipeg
-#> • Where: #general
-#> • What: This week we'd like to highlight *#fishbaseapi* ! :slack:
-#> _Discussions and notifications on the Fishbase API_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-11-28 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#gen-ai* ! :slack: _GenAI
-#> in general, LLMs in particular, both the good and the bad._ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-12-05 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#jobs-and-funding* !
-#> :slack: _Job postings, career advice, funding opportunities, and a
-#> place to post your info if you are searching for a new job._ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-12-12 America/Winnipeg
-#> • Where: #general
-#> • What: This week we'd like to highlight *#multilingual* ! :slack:
-#> _Discussion around internationalization, localization and human
-#> languages translation for packages, data, and documentation_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-12-19 America/Winnipeg
-#> • Where: #general
-#> • What: This week we'd like to highlight *#netcdf* ! :slack: _The
-#> NetCDF file format and the NetCDF library, related R tools, web
-#> servers, and data source quirks_ Join the conversation and feel free
-#> to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2026-12-26 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#package-development* !
-#> :slack: _Automated notifications from GitHub commits, issues, &amp;
-#> pull requests from the rOpenSci Package Suite_ Join the conversation
-#> and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-01-02 America/Winnipeg
-#> • Where: #general
-#> • What: A reminder that we have a channel for *#package-maintenance*
-#> ! :slack: _Q&amp;A and knowledge sharing about maintaining or taking
-#> over maintenance of an R package. We welcome participation and civil
-#> conversations that adhere to our code of conduct_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-01-09 America/Winnipeg
-#> • Where: #general
-#> • What: Spotlight of the week: *#pkgcheck* ! :slack: _Channel for
-#> rOpenSci's {pkgcheck} package and automated checking system. Purpose
-#> of this channel is to help community members help us to maintain and
-#> improve our automated checking system. See tabs at top for channel
-#> details._ Join the conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-01-16 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#r-universe* ! :slack: _Discussion and
-#> questions about the R-universe project. Public forum:_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-01-23 America/Winnipeg
-#> • Where: #general
-#> • What: Spotlight of the week: *#random* ! :slack: _A place for
-#> non-work banter, links, articles of interest, humor or anything else
-#> which you'd like concentrated in some place other than work-related
-#> channels. Our Code of Conduct_ Join the conversation and feel free to
-#> participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-01-30 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#rcatpeople* ! :slack: _Post your cats,
-#> share feline stories, and celebrate our furry overlords. Because
-#> there's no such thing as too many cats in your feed. :smile_cat:
-#> :black_cat: :cat2:_ Join the conversation and feel free to
-#> participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-02-06 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#rchickenpeople* ! :slack: _A place to
-#> share chicken pictures, videos, and fowl humor. Why did the chicken
-#> cross the road? To get posted in this channel.
-#> :chicken::rooster::unicorn_face:_ Join the conversation and feel free
-#> to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-02-13 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#rcplusplus* ! :slack: _Questions and
-#> links relevant to c, c++ and R_ Join the conversation and feel free
-#> to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-02-20 America/Winnipeg
-#> • Where: #general
-#> • What: This week we'd like to highlight *#rdogpeople* ! :slack:
-#> _Post your pups, share dog stories, and celebrate the best coworkers
-#> we have. Because everyone needs more dogs in their feed. :dog:_ Join
-#> the conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-02-27 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#recon-maintainers* ! :slack: _Channel
-#> for RECON Maintainers_ Join the conversation and feel free to
-#> participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-03-06 America/Winnipeg
-#> • Where: #general
-#> • What: This week we'd like to highlight *#ro-hackathon-2025* !
-#> :slack: _To chat, share, and communicate before, during and after our
-#> Mini Hackathon First-Time Contributors to R Packages_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-03-13 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#ropensci-blog* ! :slack:
-#> _RSS feed for rOpenSci blog ()_ Join the conversation and feel free
-#> to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-03-20 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#skimr* ! :slack: _All
-#> things skimr_ Join the conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-03-27 America/Winnipeg
-#> • Where: #general
-#> • What: Spotlight of the week: *#software-peer-review-feed* ! :slack:
-#> _A feed of activity on the software-peer-review repository_ Join the
-#> conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-04-03 America/Winnipeg
-#> • Where: #general
-#> • What: Have you checked out *#software-review* ! :slack:
-#> _Discussions about onboarding packages_ Join the conversation and
-#> feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-04-10 America/Winnipeg
-#> • Where: #general
-#> • What: A reminder that we have a channel for *#spatial* ! :slack:
-#> _Future directions for modular, flexible spatial processing,
-#> analysis, viz_ Join the conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-04-17 America/Winnipeg
-#> • Where: #general
-#> • What: A reminder that we have a channel for *#stats-peer-review* !
-#> :slack: _Discussion of project for peer review of statistical
-#> software, and for collecting community feedback and guidance. We
-#> welcome all forms of participation and civil conversation that adhere
-#> to our code of conduct ._ Join the conversation and feel free to
-#> participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-04-24 America/Winnipeg
-#> • Where: #general
-#> • What: This week we'd like to highlight *#sysreqs* ! :slack:
-#> _development_ Join the conversation and feel free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-05-01 America/Winnipeg
-#> • Where: #general
-#> • What: Did you know we have a channel for *#targets* ! :slack:
-#> _Discussion of use and development of `{targets}`, reproducible
-#> pipelines, build systems, and HPC._ Join the conversation and feel
-#> free to participate.
-#> 
-#> ── Slack Dry Run ──
-#> 
-#> • When: 2027-05-08 America/Winnipeg
-#> • Where: #general
-#> • What: A reminder that we have a channel for *#taxonomy* ! :slack:
-#> _Discussions about biological #taxonomy and packages relating to it_
+#> • What: Have you checked out *<#C0326FK7B3N>* ! :slack: _Automated deployment notifications
+#> from r-universe. Monitors build status and deployment activity across R-universe packages._
 #> Join the conversation and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2027-05-15 America/Winnipeg
+#> • When: 2026-11-10 America/Winnipeg
 #> • Where: #general
-#> • What: Spotlight of the week: *#undergradstats* ! :slack: _Teaching
-#> undergraduate statistics: pedagogy, resources, curriculum discussion,
-#> and support for stats instructors_ Join the conversation and feel
+#> • What: This week we'd like to highlight *<#C05C3GP1CSU>* ! :slack: _Share tips and discuss
+#> developer tools: IDEs, debuggers, profilers, linters, extensions, and anything that makes our
+#> dev experience better._ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-11-17 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C027G1V0W>* ! :slack: _Channel for the
+#> ropensci/docs repo_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-11-24 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#C021SEFAQ6S>* ! :slack: _A place to post events you endorse_
+#> Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-12-01 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#C03MSDW8W>* ! :slack: _Discussions and notifications on the
+#> Fishbase API_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-12-08 America/Winnipeg
+#> • Where: #general
+#> • What: This week we'd like to highlight *<#C096JNEEZ51>* ! :slack: _GenAI in general, LLMs in
+#> particular, both the good and the bad._ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-12-15 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C6PM9L35J>* ! :slack: _Job postings, career advice, funding
+#> opportunities, and a place to post your info if you are searching for a new job._ Join the
+#> conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-12-22 America/Winnipeg
+#> • Where: #general
+#> • What: This week we'd like to highlight *<#C04AK6GA57Z>* ! :slack: _Discussion around
+#> internationalization, localization and human languages translation for packages, data, and
+#> documentation_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2026-12-29 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C5VDB6MBR>* ! :slack: _The NetCDF file format
+#> and the NetCDF library, related R tools, web servers, and data source quirks_ Join the
+#> conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-01-05 America/Winnipeg
+#> • Where: #general
+#> • What: A reminder that we have a channel for *<#C026GALFB>* ! :slack: _Automated
+#> notifications from GitHub commits, issues, &amp; pull requests from the rOpenSci Package
+#> Suite_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-01-12 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#CMB8875DG>* ! :slack: _Q&amp;A and knowledge
+#> sharing about maintaining or taking over maintenance of an R package. We welcome participation
+#> and civil conversations that adhere to our code of conduct_ Join the conversation and feel
 #> free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2027-05-22 America/Winnipeg
+#> • When: 2027-01-19 America/Winnipeg
 #> • Where: #general
-#> • What: A reminder that we have a channel for *#webchem* ! :slack:
-#> _Discussions about webchem package development_ Join the conversation
+#> • What: A reminder that we have a channel for *<#C08R0SC60HJ>* ! :slack: _Channel for
+#> rOpenSci's {pkgcheck} package and automated checking system. Purpose of this channel is to
+#> help community members help us to maintain and improve our automated checking system. See tabs
+#> at top for channel details._ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-01-26 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#C023E2K5YAV>* ! :slack: _Discussion and questions about the
+#> R-universe project. Public forum:_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-02-02 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C026GCWKC>* ! :slack: _A place for non-work
+#> banter, links, articles of interest, humor or anything else which you'd like concentrated in
+#> some place other than work-related channels. Our Code of Conduct_ Join the conversation and
+#> feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-02-09 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C5LQW91S5>* ! :slack: _Post your cats, share
+#> feline stories, and celebrate our furry overlords. Because there's no such thing as too many
+#> cats in your feed. :smile_cat: :black_cat: :cat2:_ Join the conversation and feel free to
+#> participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-02-16 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C5LQYRKA5>* ! :slack: _A place to share chicken
+#> pictures, videos, and fowl humor. Why did the chicken cross the road? To get posted in this
+#> channel. :chicken::rooster::unicorn_face:_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-02-23 America/Winnipeg
+#> • Where: #general
+#> • What: A reminder that we have a channel for *<#C03A7BT6VB9>* ! :slack: _Questions and links
+#> relevant to c, c++ and R_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-03-02 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C5MC244DQ>* ! :slack: _Post your pups, share dog stories, and
+#> celebrate the best coworkers we have. Because everyone needs more dogs in their feed. :dog:_
+#> Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-03-09 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C08RZ0MEYSU>* ! :slack: _Channel for RECON Maintainers_ Join
+#> the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-03-16 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C08B5V9D080>* ! :slack: _To chat, share, and communicate
+#> before, during and after our Mini Hackathon First-Time Contributors to R Packages_ Join the
+#> conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-03-23 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C03DJNW4UQ0>* ! :slack: _RSS feed for rOpenSci
+#> blog ()_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-03-30 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#C5JSVNBBQ>* ! :slack: _All things skimr_ Join the
+#> conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-04-06 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C01QPTMD2BZ>* ! :slack: _A feed of activity on the
+#> software-peer-review repository_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-04-13 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C0LRE6R9N>* ! :slack: _Discussions about onboarding packages_
+#> Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-04-20 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#C6YKVL9LP>* ! :slack: _Future directions for modular,
+#> flexible spatial processing, analysis, viz_ Join the conversation and feel free to
+#> participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-04-27 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#C013F82AG48>* ! :slack: _Discussion of project for peer
+#> review of statistical software, and for collecting community feedback and guidance. We welcome
+#> all forms of participation and civil conversation that adhere to our code of conduct ._ Join
+#> the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-05-04 America/Winnipeg
+#> • Where: #general
+#> • What: Spotlight of the week: *<#CSRUDAYGJ>* ! :slack: _development_ Join the conversation
 #> and feel free to participate.
 #> 
 #> ── Slack Dry Run ──
 #> 
-#> • When: 2027-05-29 America/Winnipeg
+#> • When: 2027-05-11 America/Winnipeg
 #> • Where: #general
-#> • What: A reminder that we have a channel for *#welcome* ! :slack: _A
-#> place to welcome new people and for new people to introduce
-#> themselves. We welcome participation and civil conversations that
-#> adhere to our code of conduct_ Join the conversation and feel free to
+#> • What: Have you checked out *<#CGPPLNS3X>* ! :slack: _Discussion of use and development of
+#> `{targets}`, reproducible pipelines, build systems, and HPC._ Join the conversation and feel
+#> free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-05-18 America/Winnipeg
+#> • Where: #general
+#> • What: Did you know we have a channel for *<#C03CVD8JNF9>* ! :slack: _Discussions about
+#> biological #taxonomy and packages relating to it_ Join the conversation and feel free to
+#> participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-05-25 America/Winnipeg
+#> • Where: #general
+#> • What: Have you checked out *<#C01J8SM985T>* ! :slack: _Teaching undergraduate statistics:
+#> pedagogy, resources, curriculum discussion, and support for stats instructors_ Join the
+#> conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-06-01 America/Winnipeg
+#> • Where: #general
+#> • What: This week we'd like to highlight *<#CK35ACWF4>* ! :slack: _Discussions about webchem
+#> package development_ Join the conversation and feel free to participate.
+#> 
+#> ── Slack Dry Run ──
+#> 
+#> • When: 2027-06-08 America/Winnipeg
+#> • Where: #general
+#> • What: This week we'd like to highlight *<#C5X4M85SS>* ! :slack: _A place to welcome new
+#> people and for new people to introduce themselves. We welcome participation and civil
+#> conversations that adhere to our code of conduct_ Join the conversation and feel free to
 #> participate.
 ```
 
