@@ -1,3 +1,8 @@
+# 0.6.2
+
+- `slack_channels()` returns channel details
+- New article "Case Study: Automating Slack Communications"
+
 # 0.6.1
 
 - Export `gh_issue_fetch()`, `gh_issue_fmt()` and `gh_issue_post()`

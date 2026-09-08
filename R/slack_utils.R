@@ -73,12 +73,17 @@ slack_next_req <- function(resp, req) {
 }
 
 
-slack_df <- function(resp, element, cols) {
+slack_df <- function(resp, element, cols, sub_element) {
   purrr::pluck(resp, element) |>
     purrr::map(\(x) {
       x[cols] |>
         stats::setNames(cols) |>
-        purrr::map(\(y) if (is.null(y)) NA else y)
+        purrr::imap(\(y, i) {
+          if (i %in% names(sub_element)) {
+            y <- y[[sub_element[i]]]
+          }
+          val <- if (is.null(y)) NA else y
+        })
     }) |>
     purrr::map(dplyr::as_tibble) |>
     purrr::list_rbind()
