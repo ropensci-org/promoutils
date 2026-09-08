@@ -333,18 +333,21 @@ check_buff_dups <- function(body, when, channel) {
   body <- paste0(body, collapse = "|")
   s <- buffer_posts_list() |>
     dplyr::mutate(
+      dueAt = tidyr::replace_na(.data$dueAt, ""),
       dueAt = stringr::str_remove(.data$dueAt, "\\.000"),
-      body = stringr::str_extract(.data$text, "^.+\\n") |> stringr::str_trim()
+      body = purrr::map_chr(.data$text, \(t) {
+        stringr::str_split_1(t, "\\n")[1] |> stringr::str_trim()
+      })
     ) |>
     dplyr::filter(
       stringr::str_detect(.env$body, .data$body),
-      .data$dueAt == .env$when,
+      .data$dueAt == .env$when | (.data$dueAt == "" & .env$when == "now"),
       .data$channelService == .env$channel
     )
 
   if (nrow(s) > 0) {
     cli::cli_inform(
-      "Skipping... There is/are similar post(s) scheduled or draft for the same time on the same platform"
+      "Skip... Similar post(s) for the same time on the same platform ({channel})."
     )
     return(TRUE)
   }
