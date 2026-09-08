@@ -83,6 +83,11 @@ head(final_channels)
 
 Now, we need various opening phrases to avoid repetitive messages and then iterate through the list of channels: 
 
+```{r}
+#| include: false
+set.seed(111)
+```
+
 ```{r messages} 
 openings <- c(
   "Did you know we have a channel for",
