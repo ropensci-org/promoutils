@@ -29,7 +29,6 @@ reference:
   - starts_with("gh_")
 - title: Utility functions
   contents:
-  - ro_urn
   - by_platform
   - .gh_cache
   - next_date

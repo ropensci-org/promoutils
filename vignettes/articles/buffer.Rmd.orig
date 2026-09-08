@@ -1,0 +1,124 @@
+---
+title: "Working with Buffer"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(promoutils)
+library(dplyr)
+```
+
+Using the Buffer API to schedule messages.
+First make sure you are authorized to work with the Buffer API:
+
+```{r}
+keys_check()
+```
+
+If not, see the [Setting Up Buffer](article/buffer_app) article.
+
+Once you have set up your Buffer access, you can use the Buffer API to access
+the rOpenSci social media accounts on Buffer using httr2 directly or via the promoutils helper functions.
+
+
+### Posting messages
+
+With Buffer you can post messages immediately (`when = "now"`) or in schedule
+them for a future posting (`when = DATE TIME`). By default, new posts are set
+as drafts (`draft = TRUE`) and the Buffer web app will open in your browser so
+you can preview the posts if you like.
+
+If you set `draft = FALSE`, posts scheduled for `now` will be posted *immediately*, so use caution! Scheduled posts will still be scheduled, but will be posted if you make no changes.
+
+```{r}
+buffer_posts_write("Testing a draft post!", when = "now")
+```
+
+
+### Listing messages
+
+We can get a list of posts:
+```{r}
+buffer_posts_list()
+```
+
+By default this only returns posts with the status of "scheduled" or "draft". 
+To return posts which have been sent, change `status = "sent"`, and use `since`
+to specify a date range of posts to return.
+
+```{r}
+buffer_posts_list(status = "sent", since = Sys.Date() - lubridate::weeks(1))
+```
+
+
+### Removing messages
+
+To delete drafts or scheduled messages you need to know the post `id`. 
+We can get these from `buffer_posts_list()`.
+
+Let's clean up our test posts with:
+
+```{r}
+m <- buffer_posts_list() |>
+  dplyr::filter(text == "Testing a draft post!")
+
+m
+
+buffer_posts_remove(m$id)
+```
+
+Check that they're gone
+```{r}
+buffer_posts_list() |>
+  dplyr::filter(text == "Testing a draft post!")
+```
+
+
+### Scheduling messages
+
+Let's schedule a message for tomorrow. 
+
+```{r}
+buffer_posts_write(
+  "Testing scheduled messages in the Vignette!",
+  when = Sys.Date() + lubridate::days(1)
+)
+```
+
+- If `when = "now"`, `buffer_posts_write()` will create a draft post (default), or if `draft = FALSE` will post immediately
+- If scheduled (`when = "DATE/TIME"`), `buffer_posts_write()` will schedule a draft post (default), or if `draft = FALSE` will add the post to the Queue to be posted when the time is met.
+
+Draft posts need to be scheduled in the Buffer web app to actually be posted or added to the Queue.
+
+Note that you aren't able to post duplicate messages with the same(ish) body, 
+scheduled time, and channel:
+
+```{r}
+buffer_posts_write(
+  "Testing scheduled messages in the Vignette!",
+  when = Sys.Date() + lubridate::days(1)
+)
+```
+
+As above, let's clean up our test posts with:
+
+```{r}
+m <- buffer_posts_list() |>
+  dplyr::filter(text == "Testing scheduled messages in the Vignette!")
+
+m
+
+buffer_posts_remove(m$id)
+```
+
+Check that they're gone
+```{r}
+buffer_posts_list() |>
+  dplyr::filter(text == "Testing scheduled messages in the Vignette!")
+```

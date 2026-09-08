@@ -163,9 +163,8 @@ cw_times <- function(details) {
 
 #' Create a draft post for coworking
 #'
-#' Creates draft posts for Mastodon and LinkedIn (by opening issues on
-#' rosadmin/scheduled_socials) and Slack (by printing the post text and
-#' schedule).
+#' Creates draft posts for Bluesky, Mastodon, and LinkedIn (through Buffer) and
+#' Slack (through Slack API, and text for copy/paste to other Slack spaces).
 #'
 #' @param date Character/Date. Date of the coworking event (local)
 #' @param who_masto Character. The full mastodon handle for the cohost (i.e. `XXXX@XXXX.com`)
@@ -185,25 +184,39 @@ cw_times <- function(details) {
 #' @export
 #'
 #' @examples
-#' cw_socials("2023-07-04",
-#'            who_masto = "@cohost@mastodon.org",
-#'            who_linkedin = "Cohost the Best",
-#'            who_slack = "<UXXXXXXX>",
-#'            dry_run = TRUE)
+#' cw_socials(
+#'   "2023-07-04",
+#'   cohost = list(
+#'     "mastodon" = "@cohost@mastodon.org",
+#'     "bluesky" = "@cohost@bsky.social",
+#'     "linkedin" = "Cohost",
+#'     slack = "UXXXXXXX"
+#'   ),
+#'   dry_run = TRUE
+#' )
 #'
 #' \dontrun{
-#' cw_socials("2023-07-04", who_masto = "@cohost@mastodon.org", who_slack = "<UXXXXXXX>")
+#'   cw_socials(
+#'     "2023-07-04",
+#'      cohost = list(
+#'       "mastodon" = "@cohost@mastodon.org",
+#'       "bluesky" = "@cohost@bsky.social",
+#'       "linkedin" = "Cohost",
+#'       slack = "UXXXXXXX"
+#'     )
+#'   )
 #' }
 
-cw_socials <- function(
+cw_posts <- function(
   date,
-  who_masto,
-  who_slack,
-  who_linkedin,
-  who_main_masto = "@steffilazerte@fosstodon.org",
-  who_main_slack = "<@UNRAUCMTK>",
-  who_main_linkedin = "Steffi LaZerte",
-  posters_tz = "America/Winnipeg",
+  host = list(
+    "mastodon" = "@steffilazerte@fosstodon.org",
+    "slack" = "UNRAUCMTK",
+    "linkedin" = "Steffi LaZerte",
+    "bluesky" = "@steffilazerte.bsky.social"
+  ),
+  cohost,
+  posters_tz = Sys.timezone(),
   test_run = FALSE,
   dry_run = FALSE,
   print = TRUE,
@@ -212,6 +225,9 @@ cw_socials <- function(
   if (test_run) {
     dry_run <- TRUE
   }
+
+  host <- socials_df_to_list(host)
+  cohost <- socials_df_to_list(cohost)
 
   i <- gh_cache(
     "/repos/{owner}/{repo}/contents/content/events",
@@ -272,25 +288,11 @@ cw_socials <- function(
 
   cli::cli_h1("Coworking - Timezone: {tz}")
 
-  slug <- stringr::str_subset(event$content[[1]], "slug") |>
-    stringr::str_extract("coworking-\\d*-\\d*(-\\d*)?")
-
   deets <- yaml::read_yaml(text = event$yaml[[1]]) |>
-    purrr::keep_at(c("title", "dateStart", "date", "title", "author")) |>
+    purrr::keep_at(c("title", "dateStart", "title")) |>
     dplyr::as_tibble() |>
-    dplyr::summarize(
-      author = paste0(.data$author, collapse = ", "),
-      .by = c("title", "dateStart", "date")
-    ) |>
     dplyr::rename("date_UTC" = "dateStart", "theme" = "title") |>
     dplyr::mutate(
-      who_masto = .env$who_masto,
-      who_slack = .env$who_slack,
-      who_linkedin = .env$who_linkedin,
-      who_main_masto = .env$who_main_masto,
-      who_main_linkedin = .env$who_main_linkedin,
-      who_main_slack = .env$who_main_slack,
-      author = stringr::str_extract(.data$author, "^[^ ]+"),
       action1 = purrr::map(
         event$content,
         ~ .x[stringr::str_which(.x, "### Cowork") + 1:2]
@@ -299,21 +301,17 @@ cw_socials <- function(
         .data$action1,
         ~ glue::glue_collapse(.x, sep = "\n")
       ),
-      tz = .env$tz,
-      tz_txt = cw_tz(.data$tz), # Convert to nice tz
+      tz_txt = cw_tz(.env$tz), # Convert to nice tz
       date_UTC = lubridate::as_datetime(.data$date_UTC),
       date_local = lubridate::with_tz(.data$date_UTC, tz = .env$tz),
-      month = lubridate::month(.data$date_local, label = TRUE, abbr = TRUE),
-      year = lubridate::year(.data$date_local),
       theme = stringr::str_remove(
         .data$theme,
         "Social Coworking and Office Hours - "
       ),
-      nth = nth_day(lubridate::day(.data$date)),
       time = paste0(
         stringr::str_trim(format(.data$date_local, "%A %B")),
         " ",
-        .data$nth,
+        nth_day(lubridate::day(.data$date_local)),
         " ",
         format(.data$date_local, "%H:00"),
         " ",
@@ -322,120 +320,79 @@ cw_socials <- function(
         format(.data$date_UTC, "%H:00"),
         " UTC)"
       ),
-      event_url = glue::glue("https://ropensci.org/events/{slug}")
+      event_url = glue::glue(
+        "https://ropensci.org/events/coworking-{substr(date, 1,7)}/"
+      )
     )
 
   # Open event for comparison
-  utils::browseURL(deets$event_url)
+  utils::browseURL(deets$event_url[1])
 
   Sys.sleep(1) # Give time for event to open first
 
-  # Create draft issues for the mastodon posts
-  cw_social_week(deets, where = "mastodon", dry_run = dry_run)
-  cw_social_hour(deets, where = "mastodon", dry_run = dry_run)
-  cw_social_week(deets, where = "linkedin", dry_run = dry_run)
-  cw_social_hour(deets, where = "linkedin", dry_run = dry_run)
-
-  # Post slack week before message
-  cw_slack_week(deets, posters_tz, test_run, dry_run, print)
+  cw_socials(deets, host, cohost, dry_run)
+  cw_slack(deets, posters_tz, host, cohost, test_run, dry_run, print)
 
   invisible()
 }
 
+cw_socials <- function(deets, host, cohost, dry_run) {
+  purrr::walk(c("week", "hour"), \(t) {
+    template <- if (t == "week") "cw_social_week" else "cw_social_hour"
+    before <- if (t == "week") lubridate::weeks(1) else lubridate::hours(1)
 
-cw_social_week <- function(x, where, dry_run) {
-  p <- x |>
-    dplyr::mutate(
-      time_post = .data$date_local - lubridate::weeks(1),
-      title = glue::glue("Coworking {month} {year} - week before"),
-      who = dplyr::if_else(
-        where == "mastodon",
-        .data$who_masto,
-        .data$who_linkedin
-      ),
-      who_main = dplyr::if_else(
-        where == "mastodon",
-        .data$who_main_masto,
-        .data$who_main_linkedin
-      ),
-      body = glue::glue(template("cw_social_week"), .sep = "\n")
+    body <- glue::glue_data(deets, template(template), .sep = "\n")
+    time <- deets$date_local[1] - before
+
+    buffer_posts_write(
+      body = body,
+      when = time,
+      dry_run = dry_run,
+      host = host,
+      cohost = cohost
     )
-
-  socials_post_issue(
-    time = p$time_post,
-    tz = p$tz,
-    where = where,
-    title = p$title,
-    body = p$body,
-    dry_run = dry_run,
-    over_char_limit = cli::cli_warn
-  )
+  })
 }
 
-cw_social_hour <- function(x, where, dry_run) {
-  p <- x |>
-    dplyr::mutate(
-      time_post = .data$date_local - lubridate::hours(1),
-      title = glue::glue("Coworking {month} {year} - 1-hr before"),
-      who = dplyr::if_else(
-        where == "mastodon",
-        .data$who_masto,
-        .data$who_linkedin
-      ),
-      body = glue::glue(template("cw_social_hour"), .sep = "\n")
-    )
-
-  socials_post_issue(
-    time = p$time_post,
-    tz = p$tz,
-    where = where,
-    title = p$title,
-    body = p$body,
-    dry_run = dry_run,
-    over_char_limit = cli::cli_warn
-  )
-}
-
-cw_slack_week <- function(
-  x,
+cw_slack <- function(
+  deets,
   posters_tz,
+  host,
+  cohost,
   test_run = FALSE,
   dry_run = FALSE,
   print = FALSE
 ) {
-  time_post <- x |>
-    dplyr::mutate(
-      time_post = .data$date_local - lubridate::weeks(1),
-      time_post = lubridate::with_tz(.data$time_post, .env$posters_tz),
-    ) |>
-    dplyr::pull(time_post)
-
-  body <- glue::glue_data(x, template("cw_slack"), .sep = "\n")
-
-  # Use linkedin handle for Sister Slacks (i.e. Full names)
-  body_sister <- glue::glue_data(x, template("cw_slack_sister"), .sep = "\n")
-
-  if (test_run) {
-    slack_posts_write(body, when = time_post, tz = posters_tz)
-  } else {
-    slack_posts_write(
-      body,
-      when = time_post,
-      tz = posters_tz,
-      channel = "#general",
-      dry_run = dry_run
-    )
-    slack_posts_write(
-      body,
-      when = time_post,
-      tz = posters_tz,
-      channel = "#co-working",
-      dry_run = dry_run
-    )
+  if (length(host) > 1) {
+    host_sister <- host$linkedin
+    host <- toupper(host$slack)
+    cohost_sister <- cohost$linkedin
+    cohost <- toupper(cohost$slack)
   }
 
+  channels <- if (test_run) "#testing-api" else c("#general", "#co-working")
+
+  purrr::walk(c("week", "hour"), \(t) {
+    template <- if (t == "week") "cw_slack_week" else "cw_slack_hour"
+    before <- if (t == "week") lubridate::weeks(1) else lubridate::hours(1)
+
+    body <- glue::glue_data(deets, template(template), .sep = "\n")
+    time <- deets$date_local[1] - before
+    time <- lubridate::with_tz(time, posters_tz)
+
+    for (c in channels) {
+      slack_posts_write(body, time, posters_tz, channel = c, dry_run)
+    }
+  })
+
+  # Use linkedin handle for Sister Slacks (i.e. Full names)
+  body_sister <- glue::glue_data(
+    deets,
+    template("cw_slack_sister"),
+    .sep = "\n"
+  )
   copy(body_sister, "Sister-Slack messages", print = print)
-  cli::cli_alert_info("Post on {time_post - lubridate::weeks(1)}")
+  cli::cli_alert_info("Post on {deets$date_local[1] - lubridate::weeks(2)}")
 }
 
 #' Schedule 1-hour before messages on rOpenSci Slack
@@ -455,16 +412,18 @@ cw_slack_week <- function(
 #' @export
 #'
 #' @examplesIf interactive()
-#' cw_slack_hour(test_run = TRUE)
-#' cw_slack_hour(dry_run = TRUE)
+#' cw_slack_hour_msg(test_run = TRUE)
+#' cw_slack_hour_msg(dry_run = TRUE)
 
-cw_slack_hour <- function(
+cw_slack_hour_msg <- function(
   user = "UNRAUCMTK",
   test_run = FALSE,
   dry_run = FALSE,
   print = FALSE,
   call = rlang::caller_env()
 ) {
+  # CONSIDER REMOVING ---------------------------------------
+
   # Get date of upcoming coworking session
   dt <- cw_details() |>
     cw_times() |>
@@ -524,6 +483,8 @@ cw_slack_hour <- function(
 }
 
 cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
+  # CONSIDER REMOVING ---------------------------------------
+
   prev_msgs <- slack_messages(channel_id = channel_id) |>
     dplyr::mutate(
       hour = stringr::str_detect(.data$text, "See you in an hour :wink:"),
@@ -842,4 +803,52 @@ cw_slides_link <- function(open_site = TRUE) {
   slides_link <- "https://docs.google.com/presentation/d/1e53SC_nrBHKBbqegzL3q-89TUJp2SV0T8c2x4q8eQjk/edit?usp=sharing"
   utils::browseURL(slides_link)
   invisible(slides_link)
+}
+
+
+#' Create a text based todo list for Coworking tasks
+#'
+#' This list can be copy/pasted into todo software to keep track of dated
+#' reminders for arranging coworking events.
+#'
+#' @param start Start date for coworking tasks. `NULL` by default to do Jan-Dec
+#' for the next year.
+#' @param end End date for coworking tasks. `NULL` by default to do Jan-Dec for
+#' the next year.
+#'
+#' @returns Text TO-DO list
+#'
+#' @export
+#' @examples
+#' cw_todos_list()
+cw_todos_list <- function(start = NULL, end = NULL) {
+  start <- start %||% lubridate::ceiling_date(Sys.Date(), unit = "year")
+  end <- end %||%
+    lubridate::ceiling_date(start, unit = "year") -
+    lubridate::days(1)
+  dts <- seq(start, end, by = "1 month") - lubridate::days(1)
+
+  m <- month.name
+
+  todos <- purrr::map(dts, \(x) {
+    m <- format(x + lubridate::days(1), "%b")
+
+    d <- next_date(x - lubridate::weeks(14), which = "Mon", n = 1)
+    t1 <- glue::glue("- Next Host - ({m}) -{d}")
+
+    d <- next_date(x) - lubridate::weeks(2) - lubridate::days(1)
+    t2 <- glue::glue("- Social posts & Sister Slack msgs - ({m}) -{d}")
+
+    d <- next_date(x) - lubridate::weeks(1) - lubridate::days(1)
+    t3 <- glue::glue("- Check In - ({m}) -{d}")
+
+    d <- next_date(x) - lubridate::days(1)
+    t4 <- glue::glue("- Final Checks and Run - ({m}) -{d}")
+    t5 <- glue::glue("- Wrap Up - ({m}) -{d}")
+
+    c(t1, t2, t3, t4, t5)
+  }) |>
+    unlist() |>
+    glue::glue_collapse(sep = "\n") |>
+    cat()
 }

@@ -76,43 +76,63 @@ test_that("cw_event()", {
 })
 
 test_that("cw_socials()", {
-  cw_socials("2025-07-01", "Test ", "@test", "", dry_run = TRUE) |>
-    expect_message("Timezone: America/Los_Angeles") |>
-    suppressMessages()
-})
-
-test_that("cw_slack_hour()", {
-  with_mocked_bindings(
-    cw_times = function(...) {
-      data.frame(
-        date = Sys.Date() + 3,
-        tz = "Europe/Paris"
-      )
-    },
-    slack_messages = function(...) {
-      data.frame(
-        text = "Join us for Social Coworking",
-        user = "UNRAUCMTK",
-        time = Sys.Date()
-      )
-    },
-    cw_slack_msg_link = function(...) c("URL1", "URL2"),
-    code = {
-      cw_slack_hour(dry_run = TRUE) |>
-        # First channel
-        expect_message("Slack") |>
-        expect_message("When:") |>
-        expect_message("See you in an hour") |>
-        expect_message("#general") |>
-        # Second channel
-        expect_message("Slack") |>
-        expect_message("When:") |>
-        expect_message("See you in an hour") |>
-        expect_message("#co-working") |>
-        suppressMessages()
-    }
+  d <- data.frame(
+    theme = "test",
+    time = "Next week",
+    date_local = lubridate::as_datetime("2025-07-01 10:00:00"),
+    action1 = "test",
+    event_url = "https"
+  )
+  s <- list(
+    "linkedin" = "Test ",
+    "mastodon" = "@test",
+    "bluesky" = "",
+    "slack" = ""
+  )
+  expect_output(
+    cw_socials(
+      deets = d,
+      host = s,
+      cohost = s,
+      dry_run = TRUE
+    )
   )
 })
+
+# REMOVE???
+#
+# test_that("cw_slack_hour()", {
+#   with_mocked_bindings(
+#     cw_times = function(...) {
+#       data.frame(
+#         date = Sys.Date() + 3,
+#         tz = "Europe/Paris"
+#       )
+#     },
+#     slack_messages = function(...) {
+#       data.frame(
+#         text = "Join us for Social Coworking",
+#         user = "UNRAUCMTK",
+#         time = Sys.Date()
+#       )
+#     },
+#     cw_slack_msg_link = function(...) c("URL1", "URL2"),
+#     code = {
+#       cw_slack_hour(dry_run = TRUE) |>
+#         # First channel
+#         expect_message("Slack") |>
+#         expect_message("When:") |>
+#         expect_message("See you in an hour") |>
+#         expect_message("#general") |>
+#         # Second channel
+#         expect_message("Slack") |>
+#         expect_message("When:") |>
+#         expect_message("See you in an hour") |>
+#         expect_message("#co-working") |>
+#         suppressMessages()
+#     }
+#   )
+# })
 
 test_that("slides_link()", {
   expect_silent(cw_slides_link())

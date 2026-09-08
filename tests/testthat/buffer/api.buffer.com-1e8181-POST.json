@@ -1,0 +1,13 @@
+{
+    "data": {
+        "createPost": {
+            "post": {
+                "id": "6aa07300282cab51380516de",
+                "channelService": "linkedin",
+                "text": "testing Api again...",
+                "dueAt": null,
+                "status": "draft"
+            }
+        }
+    }
+}

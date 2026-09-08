@@ -1,0 +1,13 @@
+{
+    "data": {
+        "createPost": {
+            "post": {
+                "id": "6aa072ff2706956923203c34",
+                "channelService": "mastodon",
+                "text": "testing Api again...",
+                "dueAt": null,
+                "status": "draft"
+            }
+        }
+    }
+}

@@ -13,7 +13,7 @@ gh_issue_close(n, owner, repo, dry_run = FALSE)
 
 \item{repo}{Character. Repository in which to create issue.}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 }
 \description{
 Closes a GH issue by number, repository and owner.

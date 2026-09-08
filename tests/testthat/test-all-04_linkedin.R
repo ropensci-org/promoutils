@@ -8,7 +8,7 @@ test_that("li_urn_me()", {
 test_that("li_posts_read()", {
   skip_if_not_all()
 
-  expect_silent(p <- li_posts_read(ro_urn))
+  expect_silent(p <- li_posts_read(li_org))
   expect_type(p, "list")
   expect_named(p, c("paging", "elements"))
 })

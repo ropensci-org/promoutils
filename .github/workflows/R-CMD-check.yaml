@@ -36,6 +36,7 @@ jobs:
       PU_LINKEDIN_ORG_KEY: ${{ secrets.LINKEDIN_ORG }}
       PU_MATOMO_KEY: ${{ secrets.MATOMO_TOKEN }}
       PU_LINKEDIN_KEY: ${{ secrets.LINKEDIN }}
+      PU_BUFFER_KEY: ${{ secrets.BUFFER }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:

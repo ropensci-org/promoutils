@@ -1,0 +1,13 @@
+{
+    "data": {
+        "createPost": {
+            "post": {
+                "id": "6aa07301942cacf56dca43c3",
+                "channelService": "bluesky",
+                "text": "testing Api again...",
+                "dueAt": null,
+                "status": "draft"
+            }
+        }
+    }
+}

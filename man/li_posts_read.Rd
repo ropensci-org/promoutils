@@ -17,7 +17,7 @@ Get a list of recent posts by rOpenSci
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-li_posts_read(ro_urn)$elements[[1]]$commentary |> cat()
+li_posts_read(li_org)$elements[[1]]$commentary |> cat()
 \dontshow{\}) # examplesIf}
 }
 \references{
