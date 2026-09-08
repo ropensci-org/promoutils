@@ -73,12 +73,12 @@ final_channels <- channels |>
   mutate(
     description = str_remove_all(description, "<#[^>]+\\|?[^>]*>"),
     description = str_remove_all(description, "<https?://[^>]+>"),
-    description = str_squish (description)
-    ) |>
-      select(channel, description) |>
-      arrange(channel)
-      
-head(final_channels)    
+    description = str_squish(description)
+  ) |>
+  select(channel, channel_id, description) |>
+  arrange(channel)
+
+head(final_channels)
 ```
 
 Now, we need various opening phrases to avoid repetitive messages and then iterate through the list of channels: 
@@ -96,7 +96,7 @@ messages <- final_channels |>
   mutate(
     opening = sample(openings, n(), replace = TRUE),
     message = str_glue(
-      "{opening} *#{channel}* ! :slack:\n\n",
+      "{opening} *<#{channel_id}>* ! :slack:\n\n",
       "_{description}_\n\n",
       "Join the conversation and feel free to participate. "
     )
@@ -105,6 +105,7 @@ messages <- final_channels |>
 ```
 
 The dataset `messages` now has the intro text for each channel we want to share in the Slack. 
+Note that we use `<#CHANNEL_ID>` to create the internal channel links in the Slack post.
 
 ```{r messages_examples} 
 head(messages)
