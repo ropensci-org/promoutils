@@ -63,7 +63,7 @@ tt_review <- function(which_month = NULL) {
 #' # Double throwback
 #' tt_post(
 #'   c("2017-08-22", "2017-08-22"),
-#'   c("So you (don’t) think you can review a package",
+#'   c("So you (don't) think you can review a package",
 #'     "Onboarding visdat, a tool for preliminary visualisation of whole dataframes"
 #'   ),
 #'   url = c(
@@ -120,16 +120,13 @@ tt_post <- function(
     body <- glue::glue_collapse(glue::glue(b1, body, .sep = "\n\n"), sep = "\n")
   }
 
-  where <- c("mastodon", "linkedin")
-
   cmd <- glue::glue(
     "
-promoutils::socials_post_issue(
-  time = \"{time_post}\", tz = \"America/Vancouver\",
-  where = \"{where}\", dry_run = {dry_run},
-  over_char_limit = cli::cli_warn,
-  title = \"TT\",
-  body = \"{body}\n\")\n",
+  promoutils::buffer_posts_write(
+    when = \"{time_post}\", 
+    tz = \"America/Vancouver\",
+    dry_run = {dry_run},
+    body = \"{body}\")\n",
     .trim = FALSE
   )
 
