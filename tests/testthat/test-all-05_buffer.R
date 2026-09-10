@@ -1,21 +1,25 @@
 test_that("buffer_org()", {
+  skip_if_not_all()
   expect_silent(o <- buffer_org()) |>
     expect_type("character")
   expect_equal(o, buff_org)
 })
 
 test_that("buffer_channels()", {
+  skip_if_not_all()
   expect_silent(c <- buffer_channels()) |>
     expect_s3_class("data.frame")
   expect_equal(sort(c$service), c("bluesky", "linkedin", "mastodon"))
 })
 
 test_that("buffer_posts_list()", {
+  skip_if_not_all()
   expect_silent(p <- buffer_posts_list()) |>
     expect_s3_class("data.frame")
 })
 
 test_that("now - buffer_posts_write() / buffer_posts_remove()", {
+  skip_if_not_all()
   expect_silent(
     p <- buffer_posts_write("testing Api again...", when = "now")
   ) |>
@@ -35,6 +39,7 @@ test_that("now - buffer_posts_write() / buffer_posts_remove()", {
 })
 
 test_that("scheduled - buffer_posts_write() / buffer_posts_remove()", {
+  skip_if_not_all()
   expect_silent(
     p <- buffer_posts_write(
       "testing scheduled Api again...",
