@@ -1,6 +1,6 @@
 rOpenSci Coworking and Office Hours coming up in an hour!
 
-Today's Theme: {theme} with cohost {who}
+Today's Theme: {theme} with co-host {{cohost}}
 
 {time}
 

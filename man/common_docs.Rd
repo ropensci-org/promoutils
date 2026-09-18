@@ -6,7 +6,7 @@
 \arguments{
 \item{test_run}{Logical. Whether to do a test run (i.e. post to a test area).}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 
 \item{open_browser}{Logical. Whether to open the issue in the browser.}
 

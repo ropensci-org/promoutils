@@ -103,37 +103,9 @@ matomo_fetch <- function(date_range, host = "https://ropensci.matomo.cloud") {
   views
 }
 
-#' Cache folder to store matomo views
-#'
-#' @returns Character file path
-#'
-#' @export
-#' @examples
-#' matomo_dir()
-matomo_dir <- function() {
-  tools::R_user_dir("promoutils") |>
-    file.path("views")
-}
-
 matomo_write <- function(views) {
-  if (!dir.exists(matomo_dir())) {
-    cli::cli_inform(
-      c("Creating 'views' folder to save Matomo views info: ", matomo_dir())
-    )
-    dir.create(matomo_dir(), recursive = TRUE)
-  }
-  if (nrow(views) > 0) {
-    cli::cli_inform(c("Writing new Matomo views to: ", matomo_dir()))
-    y <- lubridate::year(views$date)[1]
-    readr::write_csv(
-      views,
-      file.path(matomo_dir(), paste0("views_", y, ".csv"))
-    )
-  } else {
-    cli::cli_inform("No new views to add")
-  }
-
-  invisible()
+  y <- lubridate::year(views$date)[1]
+  cache_write(views, "matomo", paste0("views_", y, ".csv"))
 }
 
 #' Read Matomo views saved to disk
@@ -144,12 +116,11 @@ matomo_write <- function(views) {
 #'
 #' @export
 #'
-#' @examplesIf dir.exists(matomo_dir())
+#' @examples
 #' matomo_read()
 
 matomo_read <- function() {
-  views <- list.files(matomo_dir(), pattern = "views", full.names = TRUE) |>
-    readr::read_csv(show_col_types = FALSE, progress = FALSE) |>
+  views <- cache_read("matomo") |>
     dplyr::filter(stringr::str_detect(
       .data$label,
       "^(/\\?)|(/aepstk)",
@@ -233,7 +204,7 @@ matomo_check_cats <- function() {
 #' @returns Data frame of blog post views
 #'
 #' @export
-#' @examplesIf dir.exists(matomo_dir())
+#' @examplesIf dir.exists(cache_dir("matomo"))
 #' matomo_read() |>
 #'   matomo_blogposts()
 

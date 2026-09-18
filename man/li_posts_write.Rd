@@ -24,14 +24,14 @@ Post to LinkedIn
 \examples{
 # Dry-run
 id <- li_posts_write(
-  author = ro_urn, # Post on behalf of rOpenSci
+  author = li_org, # Post on behalf of rOpenSci
   body = "Testing out the LinkedIn API via R and httr2!",
   dry_run = TRUE)
 
 \dontrun{
 # Real post
 id <- li_posts_write(
-  author = ro_urn, # Post on behalf of rOpenSci
+  author = li_org, # Post on behalf of rOpenSci
   body = "Testing out the LinkedIn API via R and httr2!")
 }
 }

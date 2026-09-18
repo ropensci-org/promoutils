@@ -19,7 +19,7 @@ Use \code{\link[=matomo_update]{matomo_update()}} and friends to download and up
 specific month.
 }
 \examples{
-\dontshow{if (dir.exists(matomo_dir())) withAutoprint(\{ # examplesIf}
+\dontshow{if (dir.exists(cache_dir("matomo"))) withAutoprint(\{ # examplesIf}
 tt_review(11)
 \dontshow{\}) # examplesIf}
 }

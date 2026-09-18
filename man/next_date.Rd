@@ -34,6 +34,8 @@ next_date("2023-11-30")
 # Get the next 3rd Tuesday
 next_date("2023-11-01", n = 3)
 
+next_date("2027-01-31", which = "Mon", n = 1)
+
 # Oops
 \dontrun{
 next_date("2023-11-01", n = 5)

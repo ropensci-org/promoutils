@@ -19,6 +19,14 @@ test_that("slack_posts_write() immediate", {
     slack_message_rm(channel = "#testing-api", ts = m$ts[1]),
     "successfully removed"
   )
+  # Remove any left over messages
+  m <- slack_messages(channel = "#testing-api") |>
+    dplyr::filter(
+      stringr::str_detect(text, "^Test message for immediate posting$")
+    )
+  for (i in seq_len(nrow(m))) {
+    suppressMessages(slack_message_rm(m))
+  }
 
   m <- slack_messages(channel = "#testing-api")
   expect_true(m$text[1] != "Test message for immediate posting")
@@ -53,7 +61,7 @@ test_that("slack_posts_write() future", {
 
   m <- slack_scheduled_list()
   expect_true(
-    is.null(m$text[1]) || m$text[1] != "Test message for immediate posting"
+    nrow(m) == 0 || m$text[1] != "Test message for immediate posting"
   )
 })
 

@@ -4,7 +4,7 @@ test_that("li_client()", {
   expect_equal(li_client()$name, "rOpenSci_linkedIn")
 })
 
-with_mock_dir("li", {
+with_mock_dir("mock/li", {
   test_that("li_urn_me()", {
     skip_on_runiverse()
     expect_silent(li_urn_me()) |>
@@ -19,10 +19,10 @@ test_that("li_req_posts()", {
   expect_equal(p$url, "https://api.linkedin.com/rest/posts")
 })
 
-with_mock_dir("li", {
+with_mock_dir("mock/li", {
   skip_on_runiverse()
   test_that("li_posts_read()", {
-    expect_silent(p <- li_posts_read(ro_urn))
+    expect_silent(p <- li_posts_read(li_org))
     expect_type(p, "list")
     expect_named(p, c("paging", "elements"))
   })
@@ -32,7 +32,7 @@ with_mock_dir("li", {
 test_that("li_posts_write()", {
   expect_output(
     details <- li_posts_write(
-      author = ro_urn, # Post on behalf of rOpenSci
+      author = li_org, # Post on behalf of rOpenSci
       body = "Testing out the LinkedIn API via R and httr2!",
       dry_run = TRUE
     ),
