@@ -57,6 +57,7 @@ buffer_posts_write <- function(
   draft = TRUE,
   dry_run = FALSE,
   open_browser = interactive(),
+  handles = NULL,
   ...
 ) {
   # Define 'when'
@@ -74,7 +75,8 @@ buffer_posts_write <- function(
     body <- rep(body, length(channels))
   }
 
-  handles <- list(...)
+  handles <- handles %||% rlang::list2(...)
+
   resp <- purrr::map2(body, channels, \(b, c) {
     h <- purrr::map(handles, c)
     b <- glue::glue_data(h, b)
