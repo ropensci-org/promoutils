@@ -1,6 +1,6 @@
-test_that("matomo_dir()", {
-  expect_silent(matomo_dir())
-  expect_match(matomo_dir(), "promoutils/views")
+test_that("cache_dir('matomo')", {
+  expect_silent(cache_dir("matomo"))
+  expect_match(cache_dir("matomo"), "promoutils/matomo")
 })
 
 test_that("matomo_fetch()", {

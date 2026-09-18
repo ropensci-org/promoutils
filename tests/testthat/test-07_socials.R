@@ -1,4 +1,5 @@
 test_that("socials_post_issue", {
+  skip("Deprecated")
   expect_message(
     socials_post_issue(
       time = "2023-01-01 10:00:00",
