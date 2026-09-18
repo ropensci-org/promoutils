@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-#' @examplesIf dir.exists(matomo_dir())
+#' @examplesIf dir.exists(cache_dir("matomo"))
 #' tt_review(11)
 
 tt_review <- function(which_month = NULL) {
