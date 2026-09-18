@@ -31,8 +31,8 @@ test_that("now - buffer_posts_write() / buffer_posts_remove()", {
   expect_true(all(p$id %in% l$id))
 
   expect_silent(p0 <- buffer_posts_remove(p$id))
-  expect_named(p0, "removed_post_ids")
-  expect_equal(p0$removed_post_ids, p$id)
+  expect_named(p0, "id")
+  expect_equal(p0$id, p$id)
 
   l <- buffer_posts_list(status = "draft")
   expect_false(any(p$id %in% l$id))
@@ -54,8 +54,8 @@ test_that("scheduled - buffer_posts_write() / buffer_posts_remove()", {
   expect_true(all(p$id %in% l$id))
 
   expect_silent(p0 <- buffer_posts_remove(p$id))
-  expect_named(p0, "removed_post_ids")
-  expect_equal(p0$removed_post_ids, p$id)
+  expect_named(p0, "id")
+  expect_equal(p0$id, p$id)
 
   l <- buffer_posts_list(status = "draft")
   expect_false(any(p$id %in% l$id))

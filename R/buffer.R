@@ -185,8 +185,8 @@ buffer_posts_write <- function(
 #'
 #' @export
 #' @examplesIf interactive()
-#' id <- buffer_posts_write("testing Api again...", channels = "mastodon")
-#' buffer_posts_remove("6a9099df479d79c4495fc168")
+#' p <- buffer_posts_write("testing Api again...", "now", channels = "mastodon")
+#' buffer_posts_remove(p$id)
 
 buffer_posts_remove <- function(id, dry_run = FALSE) {
   template <- "mutation removePosts { deletePost(input: { id: \"{{id}}\" }) {
@@ -200,8 +200,7 @@ buffer_posts_remove <- function(id, dry_run = FALSE) {
       buffer_request(dry_run = dry_run) |>
       buffer_df()
   }) |>
-    purrr::list_rbind() |>
-    dplyr::rename("removed_post_ids" = 1)
+    purrr::list_rbind()
 
   if (is.null(resp)) return(invisible(resp)) else return(resp)
 }
