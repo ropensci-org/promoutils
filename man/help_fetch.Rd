@@ -4,7 +4,10 @@
 \alias{help_fetch}
 \title{Fetch help wanted issues}
 \usage{
-help_fetch(min_date, json = "/repos/rosadmin/help-wanted/contents/issues.json")
+help_fetch(
+  min_date = NULL,
+  json = "/repos/rosadmin/help-wanted/contents/issues.json"
+)
 }
 \arguments{
 \item{min_date}{Character/Date. Earliest date a help-wanted label was added to an issue to be included.}
@@ -19,6 +22,6 @@ Fetch help wanted issues
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-h <- help_fetch("2025-01-01")
+h <- help_fetch()
 \dontshow{\}) # examplesIf}
 }

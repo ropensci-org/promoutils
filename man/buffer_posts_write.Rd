@@ -12,6 +12,7 @@ buffer_posts_write(
   draft = TRUE,
   dry_run = FALSE,
   open_browser = interactive(),
+  handles = NULL,
   ...
 )
 }

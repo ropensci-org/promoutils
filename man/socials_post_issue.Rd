@@ -2,7 +2,7 @@
 % Please edit documentation in R/socials.R
 \name{socials_post_issue}
 \alias{socials_post_issue}
-\title{Create a draft issue to post to Mastodon and LinkedIn}
+\title{DEPRECATED - Create a draft issue to post to Mastodon and LinkedIn}
 \usage{
 socials_post_issue(
   time,
