@@ -37,7 +37,7 @@ tt_review <- function(which_month = NULL) {
 }
 
 
-#' Create Throwback Thursday `socials_post_issue()` command
+#' Create Throwback Thursday post
 #'
 #' @param date YMD Character. Date of the original post.
 #' @param title Character. Title of the original post.
@@ -121,8 +121,7 @@ tt_post <- function(
   }
 
   cmd <- glue::glue(
-    "
-  promoutils::buffer_posts_write(
+    "promoutils::buffer_posts_write(
     when = \"{time_post}\", 
     tz = \"America/Vancouver\",
     dry_run = {dry_run},

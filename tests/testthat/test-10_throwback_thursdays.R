@@ -6,7 +6,7 @@ test_that("tt_review()", {
   expect_named(tt, c("post_date", "nb_visits", "url"))
 })
 
-test_that("tt_posts()", {
+test_that("tt_post()", {
   t <- tt_post(
     "2017-08-22",
     "So you (don't) think you can review a package",
@@ -14,12 +14,10 @@ test_that("tt_posts()", {
     blurb = "test",
     print = TRUE
   ) |>
+    expect_no_error() |>
     expect_output()
 
-  expect_match(t, "promoutils::socials_post_issue")
-  expect_match(t, "mastodon|linkedin")
-  expect_true(all(stringr::str_detect(t, "mastodon|linkedin")))
-  expect_equal(stringr::str_count(t, "\\:calendar\\:") |> sum(), 2)
+  expect_match(t, "promoutils::buffer_posts_write")
 })
 
 test_that("tt_post() multiple posts", {
@@ -66,7 +64,6 @@ test_that("tt_post() allows multiple links", {
   ) |>
     expect_output()
 
-  expect_match(t, "promoutils::socials_post_issue")
-  expect_equal(stringr::str_count(t, "mastodon|linkedin") |> sum(), 2)
-  expect_equal(stringr::str_count(t, "\\:calendar\\:") |> sum(), 4)
+  expect_match(t, "promoutils::buffer_posts_write")
+  expect_equal(stringr::str_count(t, "\\:calendar\\:") |> sum(), 2)
 })
