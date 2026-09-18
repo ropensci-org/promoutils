@@ -13,8 +13,8 @@ slack_channels(channel = NULL, types = c("public_channel", "private_channel"))
 "private_channel"}
 }
 \value{
-Data frame of channel names and ids, or if \code{channel} provided, a
-single channel id.
+Data frame of channel names, ids, types, descriptions, and topics.
+Or if \code{channel} provided, a single channel id.
 }
 \description{
 List channels and their ids
