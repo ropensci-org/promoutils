@@ -34,6 +34,7 @@ The idea is to:
 Let's load all the package we will use in this process
 
 ```{r setup}
+#| message: false
 library(promoutils)
 library(lubridate)
 library(stringr)
