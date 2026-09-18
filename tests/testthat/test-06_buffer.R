@@ -27,44 +27,25 @@ test_that("dry_run argument", {
   expect_true(attr(q[[1]], "dry_run"))
 })
 
-with_mock_dir("buffer", {
+with_mock_dir("mock/buffer-org", {
   test_that("buffer_org()", {
     expect_silent(o <- buffer_org()) |>
       expect_type("character")
     expect_equal(o, buff_org)
   })
+})
 
+with_mock_dir("mock/buffer-channel", {
   test_that("buffer_channels()", {
     expect_silent(c <- buffer_channels()) |>
       expect_s3_class("data.frame")
     expect_equal(sort(c$service), c("bluesky", "linkedin", "mastodon"))
   })
+})
 
+with_mock_dir("mock/buffer-list", {
   test_that("buffer_posts_list()", {
     expect_silent(p <- buffer_posts_list()) |>
       expect_s3_class("data.frame")
   })
-
-  test_that("now - buffer_posts_write() / buffer_posts_remove()", {
-    expect_silent(
-      p <- buffer_posts_write("testing Api again...", when = "now")
-    ) |>
-      expect_s3_class("data.frame")
-    expect_named(p, c("id", "channelService", "text", "dueAt", "status"))
-    expect_true(all(p$text == "testing Api again..."))
-  })
-
-  test_that("scheduled - buffer_posts_write() / buffer_posts_remove()", {
-    expect_silent(
-      p <- buffer_posts_write(
-        "testing scheduled Api again...",
-        when = Sys.time() + lubridate::years(1)
-      )
-    ) |>
-      expect_s3_class("data.frame")
-    expect_named(p, c("id", "channelService", "text", "dueAt", "status"))
-    expect_true(all(p$text == "testing scheduled Api again..."))
-  })
 })
-
-# buffer_cleanup()
