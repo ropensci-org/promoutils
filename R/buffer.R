@@ -107,7 +107,7 @@ buffer_posts_write <- function(
   body,
   when,
   channel,
-  thread = channel == "bluesky",
+  thread = TRUE,
   draft = TRUE,
   dry_run = FALSE
 ) {
