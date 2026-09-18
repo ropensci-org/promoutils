@@ -19,7 +19,7 @@ Remove posts on Buffer
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-id <- buffer_posts_write("testing Api again...", channels = "mastodon")
-buffer_posts_remove("6a9099df479d79c4495fc168")
+p <- buffer_posts_write("testing Api again...", "now", channels = "mastodon")
+buffer_posts_remove(p$id)
 \dontshow{\}) # examplesIf}
 }

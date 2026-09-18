@@ -84,7 +84,7 @@ buff_glue <- function(..., env = rlang::caller_env()) {
 #'
 #' @noRd
 
-buffer_request <- function(query, dry_run, paginate = FALSE) {
+buffer_request <- function(query, dry_run = FALSE, paginate = FALSE) {
   r <- httr2::request("https://api.buffer.com") |>
     httr2::req_auth_bearer_token(token = key("buffer")) |>
     httr2::req_body_json(list(query = query)) |>
