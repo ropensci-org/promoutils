@@ -1,3 +1,9 @@
+# 0.7.0
+
+- Add buffer API support (`buffer_xxx()` functions)
+- Move all post creations to `buffer_posts_write()`
+- Revamp help-wanted and throwback thrusday accordingly
+
 # 0.6.1
 
 - Export `gh_issue_fetch()`, `gh_issue_fmt()` and `gh_issue_post()`
