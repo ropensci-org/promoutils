@@ -73,14 +73,16 @@ slack_next_req <- function(resp, req) {
 }
 
 
-slack_df <- function(resp, element, cols, sub_element) {
+slack_df <- function(resp, element, cols, sub_element = NULL) {
   purrr::pluck(resp, element) |>
     purrr::map(\(x) {
       x[cols] |>
         stats::setNames(cols) |>
         purrr::imap(\(y, i) {
-          if (i %in% names(sub_element)) {
-            y <- y[[sub_element[i]]]
+          if (!is.null(sub_element)) {
+            if (i %in% names(sub_element)) {
+              y <- y[[sub_element[i]]]
+            }
           }
           val <- if (is.null(y)) NA else y
         })
