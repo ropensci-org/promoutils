@@ -25,7 +25,7 @@ test_that("slack_posts_write() immediate", {
       stringr::str_detect(text, "^Test message for immediate posting$")
     )
   for (i in seq_len(nrow(m))) {
-    suppressMessages(slack_message_rm(m))
+    suppressMessages(slack_message_rm(m[i, ]))
   }
 
   m <- slack_messages(channel = "#testing-api")
