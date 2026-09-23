@@ -184,7 +184,7 @@ cw_times <- function(details) {
 #' @export
 #'
 #' @examples
-#' cw_socials(
+#' cw_posts(
 #'   "2023-07-04",
 #'   cohost = list(
 #'     "mastodon" = "@cohost@mastodon.org",
@@ -196,7 +196,7 @@ cw_times <- function(details) {
 #' )
 #'
 #' \dontrun{
-#'   cw_socials(
+#'   cw_posts(
 #'     "2023-07-04",
 #'      cohost = list(
 #'       "mastodon" = "@cohost@mastodon.org",
