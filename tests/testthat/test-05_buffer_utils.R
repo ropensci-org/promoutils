@@ -5,7 +5,7 @@ test_that("buffer_query()", {
     expect_equal("query { account { organizations { id name } } }")
 })
 
-with_mock_dir("mock/buffer-utils", {
+with_mock_dir("../mock/buffer-utils", {
   test_that("buffer_request() & buffer_df()", {
     template <- "query { channels(input: { organizationId: \"{{org}}\" }) { {{fields}} } }"
 

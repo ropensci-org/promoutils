@@ -1,4 +1,4 @@
-with_mock_dir("mock/runiverse", {
+with_mock_dir("../mock/runiverse", {
   test_that("pkgs_ru() & pkg_authors()", {
     expect_silent(p <- pkgs_ru())
     expect_s3_class(p, "data.frame")
@@ -67,7 +67,7 @@ test_that("url_from_path()", {
 })
 
 
-with_mock_dir("mock/github_prs", {
+with_mock_dir("../mock/github_prs", {
   test_that("prs_list()", {
     expect_no_error(prs_list()) |> # Might have progress messages
       expect_s3_class("tbl") |>

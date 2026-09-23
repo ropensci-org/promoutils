@@ -27,7 +27,7 @@ test_that("dry_run argument", {
   expect_true(attr(q[[1]], "dry_run"))
 })
 
-with_mock_dir("mock/buffer-org", {
+with_mock_dir("../mock/buffer-org", {
   test_that("buffer_org()", {
     expect_silent(o <- buffer_org()) |>
       expect_type("character")
@@ -35,7 +35,7 @@ with_mock_dir("mock/buffer-org", {
   })
 })
 
-with_mock_dir("mock/buffer-channel", {
+with_mock_dir("../mock/buffer-channel", {
   test_that("buffer_channels()", {
     expect_silent(c <- buffer_channels()) |>
       expect_s3_class("data.frame")
@@ -43,7 +43,7 @@ with_mock_dir("mock/buffer-channel", {
   })
 })
 
-with_mock_dir("mock/buffer-list", {
+with_mock_dir("../mock/buffer-list", {
   test_that("buffer_posts_list()", {
     expect_silent(p <- buffer_posts_list()) |>
       expect_s3_class("data.frame")

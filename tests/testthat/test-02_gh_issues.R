@@ -16,7 +16,7 @@ test_that("gh_issue_post()", {
   )
 })
 
-with_mock_dir("mock/github_issues", {
+with_mock_dir("../mock/github_issues", {
   test_that("gh_issue_fetch(), gh_issue_fmt()", {
     expect_no_error(
       i1 <- gh_issue_fetch(owner = "ropensci", repo = "weathercan")

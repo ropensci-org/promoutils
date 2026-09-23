@@ -4,7 +4,7 @@ test_that("li_client()", {
   expect_equal(li_client()$name, "rOpenSci_linkedIn")
 })
 
-with_mock_dir("mock/li", {
+with_mock_dir("../mock/li", {
   test_that("li_urn_me()", {
     skip_on_runiverse()
     expect_silent(li_urn_me()) |>
@@ -19,7 +19,7 @@ test_that("li_req_posts()", {
   expect_equal(p$url, "https://api.linkedin.com/rest/posts")
 })
 
-with_mock_dir("mock/li", {
+with_mock_dir("../mock/li", {
   skip_on_runiverse()
   test_that("li_posts_read()", {
     expect_silent(p <- li_posts_read(li_org))
