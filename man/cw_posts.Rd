@@ -19,9 +19,17 @@ cw_posts(
 \arguments{
 \item{date}{Character/Date. Date of the coworking event (local)}
 
+\item{host}{List. Named list of social media handles for the host, must include
+"mastodon", "bluesky", "linkedin", and "slack". Where there is no handle,
+use the host's full name.}
+
+\item{cohost}{List. Named list of social media handles for the cohost. must include
+"mastodon", "bluesky", "linkedin", and "slack". Where there is no handle,
+use the cohost's full name.}
+
 \item{posters_tz}{Character. Timezone of poster. Required for getting the
 time at which to post Slack messages as these are posted in the local
-timezone}
+timezone.}
 
 \item{test_run}{Logical. Whether to do a test run (i.e. post to a test area).}
 
@@ -31,38 +39,25 @@ timezone}
 copying to the clipboard.}
 
 \item{branch}{Character. Branch name if not on main.}
-
-\item{who_masto}{Character. The full mastodon handle for the cohost (i.e. \code{XXXX@XXXX.com})}
-
-\item{who_slack}{Character. The full API Slack id for the cohost (i.e. \verb{<@UXXXXXXX>})}
-
-\item{who_linkedin}{Character. The full LinkedIn handle for the cohost (i.e. \verb{@XXXX})}
-
-\item{who_main_masto}{Character. The full mastodon handle for the rOpenSci staff organizer.}
-
-\item{who_main_slack}{Character. The Slack id for the rOpenSci staff
-organizer (i.e., \verb{<@UXXXXXXX>}. Defaults to Steffi's id.}
-
-\item{who_main_linkedin}{Character. The full LinkedIn handle for the rOpenSci staff organizer.}
 }
 \description{
 Creates draft posts for Bluesky, Mastodon, and LinkedIn (through Buffer) and
 Slack (through Slack API, and text for copy/paste to other Slack spaces).
 }
 \examples{
-cw_socials(
+cw_posts(
   "2023-07-04",
   cohost = list(
     "mastodon" = "@cohost@mastodon.org",
     "bluesky" = "@cohost@bsky.social",
     "linkedin" = "Cohost",
-    slack = "UXXXXXXX"
+    "slack" = "UXXXXXXX"
   ),
   dry_run = TRUE
 )
 
 \dontrun{
-  cw_socials(
+  cw_posts(
     "2023-07-04",
      cohost = list(
       "mastodon" = "@cohost@mastodon.org",

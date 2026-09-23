@@ -1,5 +1,10 @@
 #' Cache folder to store data
 #'
+#' Where the cache will be or is for specific types of data cached by
+#' promoutils.
+#'
+#' @param type Character. Data type to cache.
+#'
 #' @returns Character file path
 #'
 #' @export

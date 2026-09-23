@@ -37,8 +37,13 @@ character string (if \code{when} is a date/time \code{tz} is ignored). Default
 
 \item{open_browser}{Logical. Whether to open the issue in the browser.}
 
-\item{...}{Handles to add to the body. Should be \code{id = c(mastodon = "handle", bluesky = "handle", linkedin = "handle")} where id is used in the body as
-\code{{id}} and the names (mastodon, bluesky, linkedin) must match the channels.}
+\item{handles}{List. Provide a list of handles (alternative to \code{...}). Use
+the format of \code{list(id1 = c(mastodon = "handle", ...), id2 = c(mastodon = "handle"), ...)}, where \code{id1} is used in the body as \code{{id1}} and the names
+(mastodon, etc.) must match the channels.}
+
+\item{...}{Handles to add to the body (alternative to \code{handles} argument).
+Should be \code{id = c(mastodon = "handle", bluesky = "handle", linkedin = "handle")} where id is used in the body as \code{{id}} and the names (mastodon,
+bluesky, linkedin) must match the channels.}
 }
 \value{
 Data frame of post ids

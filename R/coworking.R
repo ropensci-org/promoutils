@@ -167,16 +167,15 @@ cw_times <- function(details) {
 #' Slack (through Slack API, and text for copy/paste to other Slack spaces).
 #'
 #' @param date Character/Date. Date of the coworking event (local)
-#' @param who_masto Character. The full mastodon handle for the cohost (i.e. `XXXX@XXXX.com`)
-#' @param who_slack Character. The full API Slack id for the cohost (i.e. `<@UXXXXXXX>`)
-#' @param who_linkedin Character. The full LinkedIn handle for the cohost (i.e. `@XXXX`)
-#' @param who_main_masto Character. The full mastodon handle for the rOpenSci staff organizer.
-#' @param who_main_slack Character. The Slack id for the rOpenSci staff
-#'   organizer (i.e., `<@UXXXXXXX>`. Defaults to Steffi's id.
-#' @param who_main_linkedin Character. The full LinkedIn handle for the rOpenSci staff organizer.
+#' @param host List. Named list of social media handles for the host, must include
+#'   "mastodon", "bluesky", "linkedin", and "slack". Where there is no handle,
+#'   use the host's full name.
+#' @param cohost List. Named list of social media handles for the cohost. must include
+#'   "mastodon", "bluesky", "linkedin", and "slack". Where there is no handle,
+#'   use the cohost's full name.
 #' @param posters_tz Character. Timezone of poster. Required for getting the
 #'   time at which to post Slack messages as these are posted in the local
-#'   timezone
+#'   timezone.
 #' @param branch Character. Branch name if not on main.
 #'
 #' @inheritParams common_docs
@@ -190,7 +189,7 @@ cw_times <- function(details) {
 #'     "mastodon" = "@cohost@mastodon.org",
 #'     "bluesky" = "@cohost@bsky.social",
 #'     "linkedin" = "Cohost",
-#'     slack = "UXXXXXXX"
+#'     "slack" = "UXXXXXXX"
 #'   ),
 #'   dry_run = TRUE
 #' )

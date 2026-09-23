@@ -4,7 +4,7 @@
 \alias{buffer_channels}
 \title{Return Buffer channel ids}
 \usage{
-buffer_channels(org = buff_org, dry_run = FALSE)
+buffer_channels(org = promoutils::buff_org, dry_run = FALSE)
 }
 \arguments{
 \item{org}{Character. Organizational ID to return channels for (see

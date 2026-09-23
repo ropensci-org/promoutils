@@ -6,11 +6,15 @@
 \usage{
 cache_dir(type)
 }
+\arguments{
+\item{type}{Character. Data type to cache.}
+}
 \value{
 Character file path
 }
 \description{
-Cache folder to store data
+Where the cache will be or is for specific types of data cached by
+promoutils.
 }
 \examples{
 cache_dir(type = "matomo")

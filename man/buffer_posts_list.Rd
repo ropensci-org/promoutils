@@ -9,7 +9,7 @@ buffer_posts_list(
   fields = c("id", "channelService", "text", "createdAt", "dueAt", "status"),
   since = NULL,
   dry_run = FALSE,
-  org = buff_org
+  org = promoutils::buff_org
 )
 }
 \arguments{

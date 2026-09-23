@@ -11,9 +11,14 @@
 #' @param channels Character vector. Where to post? Options are "mastodon",
 #'   "bluesky", and/or "linkedin".
 #' @param draft Logical. Whether this post should be a draft.
-#' @param ... Handles to add to the body. Should be `id = c(mastodon = "handle",
-#'   bluesky = "handle", linkedin = "handle")` where id is used in the body as
-#'   `{id}` and the names (mastodon, bluesky, linkedin) must match the channels.
+#' @param handles List. Provide a list of handles (alternative to `...`). Use
+#'   the format of `list(id1 = c(mastodon = "handle", ...), id2 = c(mastodon =
+#'   "handle"), ...)`, where `id1` is used in the body as `{id1}` and the names
+#'   (mastodon, etc.) must match the channels.
+#' @param ... Handles to add to the body (alternative to `handles` argument).
+#'   Should be `id = c(mastodon = "handle", bluesky = "handle", linkedin =
+#'   "handle")` where id is used in the body as `{id}` and the names (mastodon,
+#'   bluesky, linkedin) must match the channels.
 #'
 #' @inheritParams common_docs
 #'
@@ -305,6 +310,8 @@ buffer_channels <- function(org = promoutils::buff_org, dry_run = FALSE) {
 #' Return Buffer Organization account id
 #'
 #' @param fields Character. Information to return. Defaults to 'id'.
+#'
+#' @inheritParams common_docs
 #'
 #' @returns The organization account id on Buffer.
 #'

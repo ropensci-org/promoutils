@@ -10,6 +10,9 @@ help_post(help, skip = NULL, date_time = NULL, dry_run = FALSE)
 \item{help}{Data frame. Formatted help-wanted issues including social media
 handles.}
 
+\item{skip}{Numeric vector. The help wanted issues to skip creating a post
+for.}
+
 \item{date_time}{Character/Date. When to post. Defaults to next Thursday if
 \code{NULL}.}
 

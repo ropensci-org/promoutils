@@ -193,6 +193,8 @@ help_preview <- function(help) {
 #'
 #' @param help Data frame. Formatted help-wanted issues including social media
 #'   handles.
+#' @param skip Numeric vector. The help wanted issues to skip creating a post
+#' for.
 #' @param date_time Character/Date. When to post. Defaults to next Thursday if
 #'   `NULL`.
 #'
