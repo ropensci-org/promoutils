@@ -39,7 +39,11 @@ help_fetch <- function(
     readr::type_convert(col_types = readr::cols()) |>
     dplyr::as_tibble() |>
     dplyr::mutate(
-      updated = dplyr::if_else(is.na(updated), .data$opened, .data$updated)
+      updated = dplyr::if_else(
+        is.na(.data$updated),
+        .data$opened,
+        .data$updated
+      )
     )
 
   pkgs <- pkgs_ru() |>
@@ -166,11 +170,11 @@ help_handles <- function(help) {
 help_preview <- function(help) {
   #TODO: Use dictionary?
   h_posted <- help_read() |>
-    dplyr::filter(posted)
+    dplyr::filter(.data$posted)
 
   h <- help |>
     dplyr::anti_join(h_posted, by = "issue_url") |>
-    dplyr::select(package, issue_url, title)
+    dplyr::select("package", "issue_url", "title")
 
   if (nrow(h) == 0) {
     message("No new help-wanted issues to post")
@@ -215,7 +219,7 @@ help_post <- function(help, skip = NULL, date_time = NULL, dry_run = FALSE) {
   }
 
   h_posted <- help_read() |>
-    dplyr::filter(posted)
+    dplyr::filter(.data$posted)
 
   h <- help |>
     dplyr::anti_join(h_posted, by = "issue_url") |>
