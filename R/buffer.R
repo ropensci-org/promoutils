@@ -246,7 +246,7 @@ buffer_posts_list <- function(
   ),
   since = NULL,
   dry_run = FALSE,
-  org = buff_org
+  org = promoutils::buff_org
 ) {
   template <- "query GetPosts { 
   posts(
@@ -289,7 +289,7 @@ buffer_posts_list <- function(
 #' @examplesIf interactive()
 #' buffer_channels()
 
-buffer_channels <- function(org = buff_org, dry_run = FALSE) {
+buffer_channels <- function(org = promoutils::buff_org, dry_run = FALSE) {
   template <- "query GetChannels { channels(input: { organizationId: \"{{org}}\" }) { {{fields}} } }"
 
   q <- buffer_query(

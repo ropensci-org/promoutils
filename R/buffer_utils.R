@@ -299,14 +299,14 @@ check_buff_body <- function(body, channel, thread = TRUE) {
   body <- replace_emoji(body)
 
   n <- nchar(body, type = "width") # Approximate
-  if (n > buff_nchars[channel]) {
+  if (n > promoutils::buff_nchars[channel]) {
     if (!thread) {
       cli::cli_abort(
-        "Message too long ({n}) for this channel ({channel} max: {buff_nchars[channel]})",
+        "Message too long ({n}) for this channel ({channel} max: {promoutils::buff_nchars[channel]})",
         call = NULL
       )
     } else {
-      body <- split_body(body, n_max = buff_nchars[channel])
+      body <- split_body(body, n_max = promoutils::buff_nchars[channel])
     }
   }
   # Escape new lines
