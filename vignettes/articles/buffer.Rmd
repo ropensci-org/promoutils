@@ -1,0 +1,209 @@
+---
+title: "Working with Buffer"
+---
+
+
+
+
+``` r
+library(promoutils)
+library(dplyr)
+```
+
+Using the Buffer API to schedule messages.
+First make sure you are authorized to work with the Buffer API:
+
+
+``` r
+keys_check()
+#> Key status
+#> ✔ slack: TRUE
+#> ✔ matomo: TRUE
+#> ✔ linkedin: TRUE
+#> ✔ linkedin_org: TRUE
+#> ✔ github: TRUE
+#> ✔ buffer: TRUE
+#> → Good to go!
+```
+
+If not, see the [Setting Up Buffer](article/buffer_app) article.
+
+Once you have set up your Buffer access, you can use the Buffer API to access
+the rOpenSci social media accounts on Buffer using httr2 directly or via the promoutils helper functions.
+
+
+### Posting messages
+
+With Buffer you can post messages immediately (`when = "now"`) or in schedule
+them for a future posting (`when = DATE TIME`). By default, new posts are set
+as drafts (`draft = TRUE`) and the Buffer web app will open in your browser so
+you can preview the posts if you like.
+
+If you set `draft = FALSE`, posts scheduled for `now` will be posted *immediately*, so use caution! Scheduled posts will still be scheduled, but will be posted if you make no changes.
+
+
+``` r
+buffer_posts_write("Testing a draft post!", when = "now")
+#> # A tibble: 3 × 5
+#>   id                       channelService text                  dueAt status
+#>   <chr>                    <chr>          <chr>                 <lgl> <chr> 
+#> 1 6ab54ee074176010c5a63904 mastodon       Testing a draft post! NA    draft 
+#> 2 6ab54ee04a68d8afcc57025e linkedin       Testing a draft post! NA    draft 
+#> 3 6ab54ee174176010c5a63942 bluesky        Testing a draft post! NA    draft
+```
+
+
+### Listing messages
+
+We can get a list of posts:
+
+``` r
+buffer_posts_list()
+#> # A tibble: 9 × 6
+#>   id                       channelService text                       createdAt dueAt status
+#>   <chr>                    <chr>          <chr>                      <chr>     <chr> <chr> 
+#> 1 6ab54ee174176010c5a63942 bluesky        "Testing a draft post!"    2026-09-… <NA>  draft 
+#> 2 6ab54ee04a68d8afcc57025e linkedin       "Testing a draft post!"    2026-09-… <NA>  draft 
+#> 3 6ab54ee074176010c5a63904 mastodon       "Testing a draft post!"    2026-09-… <NA>  draft 
+#> 4 6a98893464609224401af010 bluesky        "Coworking and Office Hou… 2026-09-… 2026… sched…
+#> 5 6a9889340e977302efd5901b linkedin       "Coworking and Office Hou… 2026-09-… 2026… sched…
+#> 6 6a98893309ad463a8440c608 mastodon       "Coworking and Office Hou… 2026-09-… 2026… sched…
+#> 7 6a988935ac2847ee1e713694 bluesky        "rOpenSci Coworking and O… 2026-09-… 2026… sched…
+#> 8 6a9889350e977302efd59033 linkedin       "rOpenSci Coworking and O… 2026-09-… 2026… sched…
+#> 9 6a9889341266e4a8d66232f1 mastodon       "rOpenSci Coworking and O… 2026-09-… 2026… sched…
+```
+
+By default this only returns posts with the status of "scheduled" or "draft". 
+To return posts which have been sent, change `status = "sent"`, and use `since`
+to specify a date range of posts to return.
+
+
+``` r
+buffer_posts_list(status = "sent", since = Sys.Date() - lubridate::weeks(1))
+#> Ignoring `tz` as `time` is already a date/time object.
+#> # A tibble: 7 × 6
+#>   id                       channelService text                       createdAt dueAt status
+#>   <chr>                    <chr>          <chr>                      <chr>     <chr> <chr> 
+#> 1 6aad385dd2a1877597f325b5 linkedin       "It's the last day of Pee… 2026-09-… 2026… sent  
+#> 2 6aad385dd2a1877597f325b6 mastodon       "🧵 1/5\nIt's the last day… 2026-09-… 2026… sent  
+#> 3 6aad385dd2a1877597f325b7 bluesky        "🧵 1/5\nIt's the last day… 2026-09-… 2026… sent  
+#> 4 6aadee7fcba274f801337d05 mastodon       "2/5 So far, we've review… 2026-09-… 2026… sent  
+#> 5 6aadee7fcba274f801337d03 mastodon       "3/5 Our editorial team i… 2026-09-… 2026… sent  
+#> 6 6aadee7fcba274f801337cff mastodon       "4/5 None of this happens… 2026-09-… 2026… sent  
+#> 7 6aadee7fcba274f801337cfd mastodon       "5/5 Want to submit a pac… 2026-09-… 2026… sent
+```
+
+
+### Removing messages
+
+To delete drafts or scheduled messages you need to know the post `id`. 
+We can get these from `buffer_posts_list()`.
+
+Let's clean up our test posts with:
+
+
+``` r
+m <- buffer_posts_list() |>
+  dplyr::filter(text == "Testing a draft post!")
+
+m
+#> # A tibble: 3 × 6
+#>   id                       channelService text                  createdAt      dueAt status
+#>   <chr>                    <chr>          <chr>                 <chr>          <chr> <chr> 
+#> 1 6ab54ee174176010c5a63942 bluesky        Testing a draft post! 2026-09-24T16… <NA>  draft 
+#> 2 6ab54ee04a68d8afcc57025e linkedin       Testing a draft post! 2026-09-24T16… <NA>  draft 
+#> 3 6ab54ee074176010c5a63904 mastodon       Testing a draft post! 2026-09-24T16… <NA>  draft
+
+buffer_posts_remove(m$id)
+#> # A tibble: 3 × 1
+#>   id                      
+#>   <chr>                   
+#> 1 6ab54ee174176010c5a63942
+#> 2 6ab54ee04a68d8afcc57025e
+#> 3 6ab54ee074176010c5a63904
+```
+
+Check that they're gone
+
+``` r
+buffer_posts_list() |>
+  dplyr::filter(text == "Testing a draft post!")
+#> # A tibble: 0 × 6
+#> # ℹ 6 variables: id <chr>, channelService <chr>, text <chr>, createdAt <chr>, dueAt <chr>,
+#> #   status <chr>
+```
+
+
+### Scheduling messages
+
+Let's schedule a message for tomorrow. 
+
+
+``` r
+buffer_posts_write(
+  "Testing scheduled messages in the Vignette!",
+  when = Sys.Date() + lubridate::days(1)
+)
+#> # A tibble: 3 × 5
+#>   id                       channelService text                                 dueAt status
+#>   <chr>                    <chr>          <chr>                                <chr> <chr> 
+#> 1 6ab54ee4197a53bc51f1894a mastodon       Testing scheduled messages in the V… 2026… draft 
+#> 2 6ab54ee574176010c5a639fd linkedin       Testing scheduled messages in the V… 2026… draft 
+#> 3 6ab54ee6f2f8823592198bda bluesky        Testing scheduled messages in the V… 2026… draft
+```
+
+- If `when = "now"`, `buffer_posts_write()` will create a draft post (default), or if `draft = FALSE` will post immediately
+- If scheduled (`when = "DATE/TIME"`), `buffer_posts_write()` will schedule a draft post (default), or if `draft = FALSE` will add the post to the Queue to be posted when the time is met.
+
+Draft posts need to be scheduled in the Buffer web app to actually be posted or added to the Queue.
+
+Note that you aren't able to post duplicate messages with the same(ish) body, 
+scheduled time, and channel:
+
+
+``` r
+buffer_posts_write(
+  "Testing scheduled messages in the Vignette!",
+  when = Sys.Date() + lubridate::days(1)
+)
+#> Skip... Similar post(s) for the same time on the same platform (mastodon).
+#> Skip... Similar post(s) for the same time on the same platform (linkedin).
+#> Skip... Similar post(s) for the same time on the same platform (bluesky).
+#> data frame with 0 columns and 0 rows
+```
+
+As above, let's clean up our test posts with:
+
+
+``` r
+m <- buffer_posts_list() |>
+  dplyr::filter(text == "Testing scheduled messages in the Vignette!")
+
+m
+#> # A tibble: 3 × 6
+#>   id                       channelService text                       createdAt dueAt status
+#>   <chr>                    <chr>          <chr>                      <chr>     <chr> <chr> 
+#> 1 6ab54ee6f2f8823592198bda bluesky        Testing scheduled message… 2026-09-… 2026… draft 
+#> 2 6ab54ee574176010c5a639fd linkedin       Testing scheduled message… 2026-09-… 2026… draft 
+#> 3 6ab54ee4197a53bc51f1894a mastodon       Testing scheduled message… 2026-09-… 2026… draft
+
+buffer_posts_remove(m$id)
+#> # A tibble: 3 × 1
+#>   id                      
+#>   <chr>                   
+#> 1 6ab54ee6f2f8823592198bda
+#> 2 6ab54ee574176010c5a639fd
+#> 3 6ab54ee4197a53bc51f1894a
+```
+
+Check that they're gone
+
+``` r
+buffer_posts_list() |>
+  dplyr::filter(text == "Testing scheduled messages in the Vignette!")
+#> # A tibble: 0 × 6
+#> # ℹ 6 variables: id <chr>, channelService <chr>, text <chr>, createdAt <chr>, dueAt <chr>,
+#> #   status <chr>
+```
+
+And we're all done!

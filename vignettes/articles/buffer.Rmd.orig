@@ -123,3 +123,5 @@ Check that they're gone
 buffer_posts_list() |>
   dplyr::filter(text == "Testing scheduled messages in the Vignette!")
 ```
+
+And we're all done!

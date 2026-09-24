@@ -54,6 +54,7 @@ keys_check()
 #> ✔ linkedin: TRUE
 #> ✔ linkedin_org: TRUE
 #> ✔ github: TRUE
+#> ✔ buffer: TRUE
 #> → Good to go!
 ```
 
