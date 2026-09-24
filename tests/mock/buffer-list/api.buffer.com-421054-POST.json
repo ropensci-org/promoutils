@@ -1,0 +1,72 @@
+{
+    "data": {
+        "posts": {
+            "edges": [
+                {
+                    "node": {
+                        "id": "6a98893464609224401af010",
+                        "channelService": "bluesky",
+                        "text": "Coworking and Office Hours next week!\n\nTheme: Writing Tests & Testing in R\n\nTuesday October 6th 09:00 Americas Pacific (16:00 UTC)\n\nJoin Olivier Leroy and @yabellini.bsky.social\n\n- Coworking\n- Add some tests to your work or packages\n- Chat and discuss our theme!\n\nhttps://ropensci.org/events/coworking-2026-10/",
+                        "createdAt": "2026-09-02T20:38:12.537Z",
+                        "dueAt": "2026-09-29T16:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a9889340e977302efd5901b",
+                        "channelService": "linkedin",
+                        "text": "Coworking and Office Hours next week!\n\nTheme: Writing Tests & Testing in R\n\nTuesday October 6th 09:00 Americas Pacific (16:00 UTC)\n\nJoin Olivier Leroy and Yanina Bellini Saibene\n\n- General coworking\n- Explore how to write tests for R\n- Add some tests to your work or packages\n- Chat with Olivier Leroy and other attendees and discuss our theme!\n\nhttps://ropensci.org/events/coworking-2026-10/",
+                        "createdAt": "2026-09-02T20:38:12.237Z",
+                        "dueAt": "2026-09-29T16:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a98893309ad463a8440c608",
+                        "channelService": "mastodon",
+                        "text": "Coworking and Office Hours next week!\n\nTheme: Writing Tests & Testing in R\n\nTuesday October 6th 09:00 Americas Pacific (16:00 UTC)\n\nJoin @defuneste@fosstodon.org and @yabellini@rstats.me\n\n- General coworking\n- Explore how to write tests for R\n- Add some tests to your work or packages\n- Chat with @defuneste@fosstodon.org and other attendees and discuss our theme!\n\nhttps://ropensci.org/events/coworking-2026-10/",
+                        "createdAt": "2026-09-02T20:38:11.976Z",
+                        "dueAt": "2026-09-29T16:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a988935ac2847ee1e713694",
+                        "channelService": "bluesky",
+                        "text": "rOpenSci Coworking and Office Hours coming up in an hour!\n\nToday's Theme: Writing Tests & Testing in R with cohost Olivier Leroy\n\nTuesday October 6th 09:00 Americas Pacific (16:00 UTC)\n\nhttps://ropensci.org/events/coworking-2026-10/",
+                        "createdAt": "2026-09-02T20:38:13.463Z",
+                        "dueAt": "2026-10-06T15:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a9889350e977302efd59033",
+                        "channelService": "linkedin",
+                        "text": "rOpenSci Coworking and Office Hours coming up in an hour!\n\nToday's Theme: Writing Tests & Testing in R with cohost Olivier Leroy\n\nTuesday October 6th 09:00 Americas Pacific (16:00 UTC)\n\nhttps://ropensci.org/events/coworking-2026-10/",
+                        "createdAt": "2026-09-02T20:38:13.113Z",
+                        "dueAt": "2026-10-06T15:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                },
+                {
+                    "node": {
+                        "id": "6a9889341266e4a8d66232f1",
+                        "channelService": "mastodon",
+                        "text": "rOpenSci Coworking and Office Hours coming up in an hour!\n\nToday's Theme: Writing Tests & Testing in R with cohost @defuneste@fosstodon.org\n\nTuesday October 6th 09:00 Americas Pacific (16:00 UTC)\n\nhttps://ropensci.org/events/coworking-2026-10/",
+                        "createdAt": "2026-09-02T20:38:12.904Z",
+                        "dueAt": "2026-10-06T15:00:00.000Z",
+                        "status": "scheduled"
+                    }
+                }
+            ],
+            "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": "WkRFM09URXlPVGc0TURBd01EQT06WkRFM09EZ3pPREUwT1RJNU1EUT06YVRaaE9UZzRPVE0wTVRJMk5tVTBZVGhrTmpZeU16Sm1NUT09"
+            }
+        }
+    }
+}

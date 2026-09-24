@@ -13,7 +13,5 @@ Data frame of view data.
 Reads a saved set of views.
 }
 \examples{
-\dontshow{if (dir.exists(matomo_dir())) withAutoprint(\{ # examplesIf}
 matomo_read()
-\dontshow{\}) # examplesIf}
 }

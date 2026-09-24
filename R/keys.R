@@ -14,7 +14,7 @@ keys_check <- function() {
 }
 
 keys_check_internal <- function(msg = TRUE) {
-  keys <- c("slack", "matomo", "linkedin", "linkedin_org", "github")
+  keys <- c("slack", "matomo", "linkedin", "linkedin_org", "github", "buffer")
   status <- purrr::map_lgl(keys, \(k) key(k, check = TRUE))
   if (!msg) {
     return(rlang::set_names(status, keys))
@@ -46,13 +46,11 @@ keys_check_internal <- function(msg = TRUE) {
 
 keys_set <- function(type = NULL) {
   keys <- keys_check_internal(msg = FALSE)
-
-  #keys <- keys[!keys]
   keys <- !keys
 
   if (!all(keys)) {
     if (!is.null(type)) {
-      keys <- keys[keys %in% type]
+      keys <- keys[names(keys) %in% type]
     }
 
     for (k in names(keys)) {
@@ -108,6 +106,18 @@ keys_set <- function(type = NULL) {
           )
         )
         if (!r) return(invisible())
+      }
+      if (k == "buffer") {
+        r <- key_guide(
+          k,
+          "To add your Buffer API key...",
+          c(
+            "Go to <https://publish.buffer.com/settings/api>, ",
+            "'Get an API Key'",
+            "Generate a personal key",
+            "Paste the token into the 'keyring' popup (or Esc to do this later)"
+          )
+        )
       }
     }
   } else {

@@ -1,0 +1,49 @@
+test_that("cache_dir('matomo')", {
+  expect_silent(cache_dir("matomo"))
+  expect_match(cache_dir("matomo"), "promoutils/matomo")
+})
+
+test_that("matomo_fetch()", {
+  skip_on_runiverse()
+
+  expect_message(
+    v <- matomo_fetch(as.Date(c("2025-01-01", "2025-01-05"))),
+    "Fetching segments"
+  ) |>
+    expect_message("Fetching pages")
+  expect_s3_class(v, "data.frame")
+})
+
+test_that("matomo_update()", {
+  skip_on_runiverse()
+
+  expect_message(matomo_update(), "Fetching segments") |>
+    expect_message("Fetching pages") |>
+    expect_message("Writing")
+})
+
+
+test_that("matomo_read()", {
+  skip_on_runiverse()
+
+  expect_silent(v <- matomo_read())
+  expect_s3_class(v, "data.frame")
+  expect_true("type" %in% names(v))
+  expect_true(nrow(v) > 0)
+})
+
+test_that("matomo_blogposts()", {
+  skip_on_runiverse()
+
+  expect_silent(v <- matomo_read() |> matomo_blogposts())
+  expect_s3_class(v, "data.frame")
+  expect_false("type" %in% names(v))
+  expect_true(nrow(v) > 0)
+})
+
+
+test_that("no matomo cache", {
+  local_mocked_bindings(cache_dir = \(x) "non_existant_dir")
+  expect_message(m <- matomo_read(), "No cached matomo data")
+  expect_equal(m, data.frame())
+})

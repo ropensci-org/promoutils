@@ -28,7 +28,7 @@ gh_issue_post(
 
 \item{avoid_dups}{Logical. If TRUE (default), avoids posting duplicate issues.}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 
 \item{open_browser}{Logical. Whether to open the issue in the browser.}
 }

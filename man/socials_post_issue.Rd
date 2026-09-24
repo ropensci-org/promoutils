@@ -2,7 +2,7 @@
 % Please edit documentation in R/socials.R
 \name{socials_post_issue}
 \alias{socials_post_issue}
-\title{Create a draft issue to post to Mastodon and LinkedIn}
+\title{DEPRECATED - Create a draft issue to post to Mastodon and LinkedIn}
 \usage{
 socials_post_issue(
   time,
@@ -56,8 +56,9 @@ editing and confirmation. Note that issues will not be posted until the
 labels "draft" and "needs-review" have been removed.
 }
 \examples{
-socials_post_issue("2025-01-01 00:00:00",
-                   title = "test post",
-                   body = "Test body",
-                   dry_run = TRUE, verbose = TRUE)
+# DEPRECATED
+# socials_post_issue("2025-01-01 00:00:00",
+#                    title = "test post",
+#                    body = "Test body",
+#                    dry_run = TRUE, verbose = TRUE)
 }

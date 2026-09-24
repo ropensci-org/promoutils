@@ -2,7 +2,7 @@
 % Please edit documentation in R/throwback_thursdays.R
 \name{tt_post}
 \alias{tt_post}
-\title{Create Throwback Thursday \code{socials_post_issue()} command}
+\title{Create Throwback Thursday post}
 \usage{
 tt_post(
   date,
@@ -22,7 +22,7 @@ tt_post(
 
 \item{blurb}{Character. Interesting bit to describe post (optional).}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 
 \item{print}{Logical. Whether to simply print the text to console instead of
 copying to the clipboard.}
@@ -33,7 +33,7 @@ pasted into a POSTS_TT.R script file and tweaked as necessary before being
 executed).
 }
 \description{
-Create Throwback Thursday \code{socials_post_issue()} command
+Create Throwback Thursday post
 }
 \examples{
 # Standard
@@ -47,7 +47,7 @@ tt_post(
 # Double throwback
 tt_post(
   c("2017-08-22", "2017-08-22"),
-  c("So you (don’t) think you can review a package",
+  c("So you (don't) think you can review a package",
     "Onboarding visdat, a tool for preliminary visualisation of whole dataframes"
   ),
   url = c(

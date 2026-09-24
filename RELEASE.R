@@ -1,5 +1,8 @@
 # Steps to release a new version of the promoutils package
 
+# NOTE: To run tests using credentials, they need to be stred in .Renviron, because
+#  tests cannot access keyring
+
 # Bump version
 file.edit("DESCRIPTION")
 

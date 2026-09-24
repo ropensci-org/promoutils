@@ -1,0 +1,13 @@
+{
+    "data": {
+        "posts": {
+            "edges": [
+
+            ],
+            "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": null
+            }
+        }
+    }
+}

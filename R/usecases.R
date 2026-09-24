@@ -248,11 +248,9 @@ uc_post <- function(
   date_time <- date_time %||% post_time("Wednesday", 8)
 
   cmd <- glue::glue(
-    "promoutils::socials_post_issue(
+    "promoutils::buffer_posts_write(
     time = \"{date_time}\", tz = \"America/Vancouver\",
-    where = \"{drafts$platform}\", dry_run = {dry_run},
-    over_char_limit = cli::cli_warn,
-    title = \"usecases\",
+    dry_run = {dry_run},
     body = \"{drafts$draft}\n\")\n",
     .trim = FALSE
   )

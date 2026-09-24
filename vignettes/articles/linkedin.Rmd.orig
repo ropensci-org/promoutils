@@ -31,12 +31,12 @@ If not, see the [Setting Up LinkedIn](article/linkedin_app) article.
 Once you have set up your LinkedIn access, you can use the LinkedIn API to access
 the rOpenSci LinkedIn space using httr2 directly or via the promoutils helper functions.
 
-Most of the time we'll be using the `ro_urn` object to define the 'author' (i.e. rOpenSci) of our requests.
+Most of the time we'll be using the `li_org` object to define the 'author' (i.e. rOpenSci) of our requests.
 
 For example, to get a list of recent posts by rOpenSci we can use
 
 ```{r}
-p <- li_posts_read(ro_urn)
+p <- li_posts_read(li_org)
 ```
 
 We can print the most recent message with
@@ -50,7 +50,7 @@ Let's do a dry run (which won't actually post).
 
 ```{r}
 id <- li_posts_write(
-  author = ro_urn, # Post on behalf of rOpenSci
+  author = li_org, # Post on behalf of rOpenSci
   body = "Testing out the LinkedIn API via R and httr2!",
   dry_run = TRUE
 )

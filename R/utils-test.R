@@ -1,15 +1,17 @@
 test_help_data <- function(missing = NULL) {
   h <- data.frame(
     package = "weathercan",
+    owner = "ropensci",
+    issue_url = "https://test/#1",
+    title = "test",
+    opened = as.POSIXct("2025-01-01 00:00:00"),
+    updated = as.POSIXct("2025-01-02 00:00:00"),
+    labels = "help wanted",
     maintainer_name = "Steffi LaZerte",
     maintainer_github = "steffilazerte",
-    maintainer_mastodon = "steffilazerte@fosstodon.org",
-    labeller_name = "Yanina Bellini Saibene",
-    labeller_github = "yabellini",
-    labels = "help wanted",
+    labels_name = "Yanina Bellini Saibene",
+    labels_github = "yabellini",
     labels_first = TRUE,
-    label_created = as.POSIXct("2025-01-01 00:00:00"),
-    title = "test",
     url = "https://test"
   )
 
@@ -22,18 +24,20 @@ local_mocked_cocoon <- function(.env = rlang::caller_env()) {
   testthat::local_mocked_bindings(
     cocoon_open = \(x) {
       data.frame(
-        type = rep(c("github", "name", "mastodon", "linkedin"), 2),
+        type = rep(c("github", "name", "mastodon", "linkedin", "bluesky"), 2),
         value = c(
           "steffilazerte",
           "Steffi LaZerte",
           "steffilazerte@fosstodon.ca",
           "steffi-lazerte",
+          "@steffilazerte.bsky.social",
           "yabellini",
           "Yanina Bellini Saibene",
           "@yabellini@rstats.me",
-          "yabellini"
+          "yabellini",
+          "@yabellini.bsky.social"
         ),
-        github = c(rep("steffilazerte", 4), rep("yabellini", 4))
+        github = c(rep("steffilazerte", 5), rep("yabellini", 5))
       )
     },
     .env = .env,

@@ -1,4 +1,4 @@
-#' Create a draft issue to post to Mastodon and LinkedIn
+#' DEPRECATED - Create a draft issue to post to Mastodon and LinkedIn
 #'
 #' Formats the body and title of an issue and posts it on
 #' "rosadmin/scheduled_socials". The issue will bed opened in a browser for
@@ -27,10 +27,11 @@
 #' @export
 #'
 #' @examples
-#' socials_post_issue("2025-01-01 00:00:00",
-#'                    title = "test post",
-#'                    body = "Test body",
-#'                    dry_run = TRUE, verbose = TRUE)
+#' # DEPRECATED
+#' # socials_post_issue("2025-01-01 00:00:00",
+#' #                    title = "test post",
+#' #                    body = "Test body",
+#' #                    dry_run = TRUE, verbose = TRUE)
 
 socials_post_issue <- function(
   time,
@@ -45,6 +46,11 @@ socials_post_issue <- function(
   over_char_limit = cli::cli_abort,
   verbose = FALSE
 ) {
+  cli::cli_abort(
+    "`socials_post_issue()` is deprecated, use `buffer_write_posts()` instead",
+    call = NULL
+  )
+
   if (!all(where %in% c("mastodon", "linkedin"))) {
     cli::cli_abort("'where' must be one of 'mastodon' or 'linkedin'")
   }

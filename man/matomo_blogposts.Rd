@@ -16,7 +16,7 @@ Data frame of blog post views
 Formats and filter Matomo views to blogposts
 }
 \examples{
-\dontshow{if (dir.exists(matomo_dir())) withAutoprint(\{ # examplesIf}
+\dontshow{if (dir.exists(cache_dir("matomo"))) withAutoprint(\{ # examplesIf}
 matomo_read() |>
   matomo_blogposts()
 \dontshow{\}) # examplesIf}

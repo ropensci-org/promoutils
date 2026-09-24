@@ -1,6 +1,6 @@
 Package: promoutils
 Title: Utilities for Promoting rOpenSci
-Version: 0.6.2
+Version: 0.7.0
 Authors@R: c(
   person("Steffi", "LaZerte", role = c("aut", "cre"), email = "sel@steffilazerte.ca",
            comment = c(ORCID = "0000-0002-7690-8360")),

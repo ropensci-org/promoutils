@@ -23,10 +23,11 @@ keys_check()
 #> ✔ linkedin: TRUE
 #> ✔ linkedin_org: TRUE
 #> ✔ github: TRUE
+#> ✔ buffer: TRUE
 #> → Good to go!
 ```
 
-If not, see the [Setting Up Slack](article/slack_app) article.
+If not, see the [Setting Up Slack](slack_app) article.
 
 Once you have set up your Slack access, you can use the Slack API to access
 the rOpenSci Slack space using httr2 directly or via the promoutils helper functions.

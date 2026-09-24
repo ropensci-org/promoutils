@@ -27,7 +27,7 @@ hw_issues <- function(
 ) {
   # Ignore packages which use help-wanted labels in a different way
   pkgs_ignore <- c("plotly", "opentripplanner")
-  browser()
+
   # GH label search not case sensitive
   labels_help <- c("help", "help wanted", "help-wanted", "help_wanted")
   labels_first <- c(

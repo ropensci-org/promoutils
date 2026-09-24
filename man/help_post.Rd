@@ -2,34 +2,35 @@
 % Please edit documentation in R/help_wanted.R
 \name{help_post}
 \alias{help_post}
-\title{Create help-wanted \code{socials_post_issue()} command}
+\title{Create help-wanted post}
 \usage{
-help_post(help, date_time = NULL, dry_run = FALSE, print = FALSE)
+help_post(help, skip = NULL, date_time = NULL, dry_run = FALSE)
 }
 \arguments{
 \item{help}{Data frame. Formatted help-wanted issues including social media
-handles and arranged by platform upon which to post, output of
-\code{by_platform()}.}
+handles.}
 
-\item{date_time}{Character/Date. When to post. Defaults to next Thursday if \code{NULL}.}
+\item{skip}{Numeric vector. The help wanted issues to skip creating a post
+for.}
 
-\item{dry_run}{Logical. Whether to do a dry run (i.e. don't post).}
+\item{date_time}{Character/Date. When to post. Defaults to next Thursday if
+\code{NULL}.}
 
-\item{print}{Logical. Whether to simply print the text to console instead of
-copying to the clipboard.}
+\item{dry_run}{Logical. Whether to do a dry run (i.e. don't talk to the API).}
 }
 \value{
 Copies commands to clipboard, optionally prints if (\code{print = TRUE}).
 }
 \description{
-Create help-wanted \code{socials_post_issue()} command
+Create help-wanted post
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-h <- help_fetch("2025-05-23") |>
-  help_handles() |>
-  by_platform()
+h <- help_fetch()
 
-help_post(h, print = TRUE)  # For non-interactive examples
+help_preview(h)
+# Review and note issues to skip
+
+help_post(h, skip = c(1:6), dry_run = TRUE)  # For non-interactive examples
 \dontshow{\}) # examplesIf}
 }
