@@ -40,3 +40,10 @@ test_that("matomo_blogposts()", {
   expect_false("type" %in% names(v))
   expect_true(nrow(v) > 0)
 })
+
+
+test_that("no matomo cache", {
+  local_mocked_bindings(cache_dir = \(x) "non_existant_dir")
+  expect_message(m <- matomo_read(), "No cached matomo data")
+  expect_equal(m, data.frame())
+})

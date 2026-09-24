@@ -46,12 +46,14 @@ cache_write <- function(df, type, path = NULL) {
 
 cache_read <- function(type, paths = NULL) {
   if (!dir.exists(cache_dir(type))) {
+    cli::cli_inform("No cached {type} data")
     return(data.frame())
   }
 
   paths <- paths %||% list.files(cache_dir(type), full.names = TRUE)
 
   if (!length(paths)) {
+    cli::cli_inform("No cached {type} data")
     return(data.frame())
   }
 

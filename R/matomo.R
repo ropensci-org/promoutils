@@ -120,7 +120,12 @@ matomo_write <- function(views) {
 #' matomo_read()
 
 matomo_read <- function() {
-  views <- cache_read("matomo") |>
+  views <- cache_read("matomo")
+  if (!nrow(views)) {
+    return(invisible(views))
+  }
+
+  views <- views |>
     dplyr::filter(stringr::str_detect(
       .data$label,
       "^(/\\?)|(/aepstk)",
