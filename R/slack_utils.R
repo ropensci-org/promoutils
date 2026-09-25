@@ -25,10 +25,10 @@ slack_check <- function(
 
   r <- httr2::resp_body_json(resp)
   if (!r$ok) {
-    r$error |>
+    e <- r$error |>
       stringr::str_replace_all("_", " ") |>
-      tools::toTitleCase() |>
-      cli::cli_abort()
+      tools::toTitleCase()
+    cli::cli_abort("Slack API error: {e}", call = NULL)
   }
 
   if (!is.null(msg)) {
