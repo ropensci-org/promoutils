@@ -5,14 +5,15 @@ usethis::use_data(li_org, overwrite = TRUE)
 # Buffer constants
 buff_org <- buffer_org()
 channels <- buffer_channels()
-buff_mastodon <- channels$id[channels$service == "mastodon"]
-buff_linkedin <- channels$id[channels$service == "linkedin"]
-buff_bluesky <- channels$id[channels$service == "bluesky"]
+buff_channels <- list(
+  mastodon = channels$id[channels$service == "mastodon"],
+  linkedin = channels$id[channels$service == "linkedin"],
+  bluesky = channels$id[channels$service == "bluesky"]
+)
+
 usethis::use_data(
   buff_org,
-  buff_mastodon,
-  buff_linkedin,
-  buff_bluesky,
+  buff_channels,
   overwrite = TRUE
 )
 

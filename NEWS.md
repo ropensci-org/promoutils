@@ -1,3 +1,6 @@
+# 0.7.1
+
+- Tweak inner Buffer workings to function outside of development mode
 
 # 0.7.0
 
@@ -9,7 +12,6 @@
 
 - `slack_channels()` returns channel details
 - New article "Case Study: Automating Slack Communications"
-
 
 # 0.6.1
 

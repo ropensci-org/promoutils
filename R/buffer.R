@@ -124,7 +124,7 @@ buffer_posts_write <- function(
   }
 
   body <- paste0("text: \"", body, "\"")
-  channel_id <- get(paste0("buff_", channel))
+  channel_id <- promoutils::buff_channels[[channel]]
   mode <- if (when == "now") "shareNow" else "customScheduled"
 
   if (length(body) > 1) {
