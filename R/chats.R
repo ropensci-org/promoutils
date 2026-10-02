@@ -58,7 +58,11 @@ See this channel's pinned message for more details."
   )
 
   # Add preliminary reactions
-  slack_react(ts, c("bee", "hibiscus", "swan", "ant"), channel = channel)
+  if (!dry_run) {
+    slack_react(ts, c("bee", "hibiscus", "swan", "ant"), channel = channel)
+  }
+
+  invisible(ts)
 }
 
 #' Get chat sign ups
