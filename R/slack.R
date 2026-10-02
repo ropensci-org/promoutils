@@ -74,7 +74,7 @@ slack_posts_write <- function(
     cli::cli_li("When: {when} {tz}")
     cli::cli_li("Where: {channel}")
     cli::cli_li("What: {body}")
-    return(invisible())
+    return(invisible(999.999))
   } else {
     # Check if already scheduled
 
