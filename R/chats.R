@@ -408,3 +408,62 @@ chats_read <- function() {
   }
   dplyr::filter(h, .data$date != Sys.Date())
 }
+
+#' Announce chat pairings
+#'
+#' Posts a message to Slack announcing the chat pairs and the language(s) they
+#' have in common. People are mentioned so they are notified.
+#'
+#' @param pairings Data frame. Output of `chats_pairings()`.
+#' @param channel Character. Channel to post announcement in.
+#' @param dry_run Logical. Show the message without posting it?
+#'
+#' @returns Timestamp of the posted message.
+#'
+#' @export
+#' @examplesIf interactive()
+#' s <- chats_signups()
+#' p <- chats_pairings(s)
+#' chats_announce_pairs(p, dry_run = TRUE)
+#' chats_announce_pairs(p, channel = "testing-api")
+
+chats_announce_pairs <- function(
+  pairings,
+  channel = "coffee-chats",
+  dry_run = FALSE
+) {
+  if (nrow(pairings) == 0) {
+    cli::cli_abort("No pairings to announce", call = NULL)
+  }
+
+  perm <- chats_pinned()
+
+  trio <- dplyr::if_else(
+    is.na(pairings$id_3),
+    "",
+    paste0(" & ", pairings$id_3)
+  )
+
+  pairs <- glue::glue(
+    "• {pairings$id_1} & {pairings$id_2}{trio} ",
+    "({pairings$language})"
+  ) |>
+    glue::glue_collapse(sep = "\n")
+
+  body <- glue::glue(
+    "Hello everyone! Here are the pairings for this round of coffee chats :coffee:
+
+  {pairs}
+
+  Please reach out to your partner to find a time to chat in the language(s) you have in common.
+  See the [pinned message]({perm}) for more details."
+  )
+
+  slack_posts_write(
+    when = "now",
+    body = body,
+    channel = channel,
+    dry_run = dry_run
+  )
+}
+
