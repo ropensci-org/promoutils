@@ -20,6 +20,45 @@ test_help_data <- function(missing = NULL) {
   h
 }
 
+
+# Dummy sign ups imitating the output of `chats_signups()`
+test_signups_data <- function(ids = NULL, langs = NULL) {
+  if (is.null(ids) || is.null(langs)) {
+    s <- dplyr::tribble(
+      ~name , ~real_name      , ~id           , ~language    ,
+      "ann" , "Ann Smith"     , "<@U0000001>" , "English"    ,
+      "ann" , "Ann Smith"     , "<@U0000001>" , "French"     ,
+      "bob" , "Bob Jones"     , "<@U0000002>" , "English"    ,
+      "cat" , "Cat Martin"    , "<@U0000003>" , "French"     ,
+      "dan" , "Dan Garcia"    , "<@U0000004>" , "Spanish"    ,
+      "eve" , "Eve Rodriguez" , "<@U0000005>" , "English"    ,
+      "eve" , "Eve Rodriguez" , "<@U0000005>" , "Spanish"    ,
+      "fay" , "Fay Silva"     , "<@U0000006>" , "Portuguese" ,
+      "gus" , "Gus Costa"     , "<@U0000007>" , "Portuguese" ,
+      "han" , "Hank Reid"     , "<@U0000008>" , "Portuguese"
+    )
+  } else {
+    s <- dplyr::tibble(
+      name = tolower(ids),
+      real_name = paste("Person", ids),
+      id = ids,
+      language = langs
+    )
+  }
+  s
+}
+
+
+# Use a temporary cache
+test_cache <- function(env = parent.frame()) {
+  dir <- withr::local_tempdir(.local_envir = env)
+  testthat::local_mocked_bindings(
+    cache_dir = \(type) file.path(dir, type),
+    .env = env
+  )
+  dir
+}
+
 local_mocked_cocoon <- function(.env = rlang::caller_env()) {
   testthat::local_mocked_bindings(
     cocoon_open = \(x) {
@@ -64,4 +103,12 @@ on_runiverse <- function() {
 
 skip_on_runiverse <- function() {
   testthat::skip_if(on_runiverse(), "On R-Universe")
+}
+
+# Forces an Error on any HTTP request, so tests never reach an API through httr2
+local_no_api <- function(env = parent.frame()) {
+  httr2::local_mocked_responses(
+    \(req) cli::cli_abort("Unexpected API call to {req$url}"),
+    env = env
+  )
 }
