@@ -467,3 +467,17 @@ chats_announce_pairs <- function(
   )
 }
 
+chats_languages <- function() {
+  c(
+    "bee" = "English",
+    "hibiscus" = "Spanish",
+    "swan" = "French",
+    "ant" = "Portuguese"
+  )
+}
+
+
+chats_pinned <- function() {
+  # Pinned message permalink
+  "https://ropensci.slack.com/archives/C0C3TL8T4S3/p1790280924811209"
+}
