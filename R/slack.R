@@ -74,6 +74,7 @@ slack_posts_write <- function(
     cli::cli_li("When: {when} {tz}")
     cli::cli_li("Where: {channel}")
     cli::cli_li("What: {body}")
+    return(invisible())
   } else {
     # Check if already scheduled
 
@@ -139,6 +140,12 @@ slack_posts_write <- function(
           msg = "Scheduled message successfully added to #admin-scheduled"
         )
     }
+  }
+
+  if (type == "scheduled") {
+    return(invisible(r$scheduled_message_id))
+  } else {
+    return(invisible(r$ts))
   }
 }
 
@@ -566,4 +573,57 @@ slack_message_rm_bulk <- function(
     )
   }
   invisible(r)
+}
+
+#' Create a permalink for a Slack message
+#'
+#' @param ts Numeric. Timestamp to identify the messages
+#' @param channel Character vector. Channel(s) to post message to.
+#'
+#' @returns Character URL to Slack message
+#'
+#' @export
+#' @examplesIf interactive()
+#' m <- slack_messages("coffee-chats")
+#' slack_permalink(ts = m$ts[1], channel = m$channel[1])
+
+slack_permalink <- function(ts, channel = NULL) {
+  channel_id <- slack_channel_id(channel)
+
+  httr2::request("https://slack.com/api/chat.getPermalink") |>
+    httr2::req_url_query(channel = channel_id, message_ts = ts) |>
+    slack_auth() |>
+    httr2::req_perform() |>
+    slack_check() |>
+    purrr::pluck("permalink")
+}
+
+#' Add a reaction to a slack messages
+#'
+#' @param ts Numeric. Timestamp to identify the messages
+#' @param emoji Character vector. Name(s) of emoji's to add as reactions.
+#' @param channel Character vector. Channel where message can be found.
+#'
+#' @returns Success message
+#'
+#' @export
+#' @examplesIf interactive()
+#' m <- slack_messages("testing-api")
+#' slack_react(m$ts[1], c("bee", "hibiscus", "swan", "ant"), channel = "testing-api")
+
+slack_react <- function(ts, emoji, channel) {
+  channel_id <- slack_channel_id(channel)
+  emoji <- stringr::str_remove_all(emoji, ":")
+
+  purrr::walk(emoji, \(e) {
+    httr2::request("https://slack.com/api/reactions.add") |>
+      httr2::req_body_json(list(
+        channel = channel_id,
+        timestamp = ts,
+        name = e
+      )) |>
+      slack_auth() |>
+      httr2::req_perform() |>
+      slack_check()
+  })
 }
