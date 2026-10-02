@@ -60,3 +60,86 @@ See this channel's pinned message for more details."
   # Add preliminary reactions
   slack_react(ts, c("bee", "hibiscus", "swan", "ant"), channel = channel)
 }
+
+#' Get chat sign ups
+#'
+#' Returns the users who reacted to the most recent chat announcement (see
+#' `chats_announce()`) with a language emoji.
+#'
+#' @param channel Character. Channel Name. Defaults to "coffee-chats"
+#' @param author_lang Character vector. If the author of the announcement post
+#'   wishes to participate, these are the languages to include for them. Any of
+#'   `chats_languages()`.
+#'
+#' @returns Data frame of users and languages, with one row per user per
+#'   language.
+#'
+#' @export
+#' @references https://docs.slack.dev/reference/methods/reactions.get
+#'
+#' @examplesIf interactive()
+#' chats_signups(channel = "testing-api")
+
+chats_signups <- function(channel = "coffee-chats", author_lang = "English") {
+  langs <- chats_languages()
+  channel_id <- slack_channel(channel)
+
+  # Find the most recent announcement
+  ts <- slack_messages(channel_id = channel_id) |>
+    dplyr::filter(stringr::str_detect(
+      .data$text,
+      "next round of coffee chats"
+    )) |>
+    dplyr::arrange(dplyr::desc(.data$time)) |>
+    dplyr::pull(.data$ts)
+
+  if (length(ts) == 0) {
+    cli::cli_abort(
+      "No chat announcement found in the last 100 messages",
+      call = NULL
+    )
+  }
+
+  msg <- httr2::request("https://slack.com/api/reactions.get") |>
+    httr2::req_url_query(
+      channel = channel_id,
+      timestamp = ts[1],
+      full = TRUE
+    ) |>
+    slack_auth() |>
+    httr2::req_perform() |>
+    slack_check() |>
+    purrr::pluck("message")
+
+  # Get all Slack space users
+  # TODO: Should this be only get the relevant users? Or Cached?
+  users <- slack_users() |>
+    dplyr::select("id", "name", "real_name")
+
+  r <- msg$reactions |>
+    purrr::map(\(x) dplyr::tibble(emoji = x$name, id = unlist(x$users))) |>
+    purrr::list_rbind(
+      ptype = dplyr::tibble(emoji = character(), id = character())
+    ) |>
+    dplyr::mutate(
+      language = unname(langs[.data$emoji]),
+      id = paste0("<@", .data$id, ">")
+    ) |>
+    dplyr::filter(.data$emoji %in% names(.env$langs))
+
+  # Assign author language
+  author <- paste0("<@", msg$user, ">")
+  if (!is.null(author_lang)) {
+    r <- dplyr::filter(
+      r,
+      !(!.data$language %in% author_lang & .data$id == author)
+    )
+  } else {
+    r <- dplyr::filter(r, .data$id != author)
+  }
+
+  r |>
+    dplyr::left_join(users, by = "id") |>
+    dplyr::select("name", "real_name", "id", "language") |>
+    dplyr::arrange(.data$real_name, .data$language)
+}
