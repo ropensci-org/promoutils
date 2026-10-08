@@ -25,9 +25,12 @@ chats_announce <- function(
   }
 
   # Announce at the next available 1st Monday in the future (including today)
-  when <- when %||%
-    next_date(Sys.Date(), which = "Mon", n = 1) |>
-    paste("10:00:00")
+
+  if (is.null(when)) {
+    when <- when |>
+      next_date(Sys.Date(), which = "Mon", n = 1) |>
+      paste("10:00:00")
+  }
 
   # Due a week later
   due <- next_date(Sys.Date(), which = "Mon", n = 2) |>
@@ -39,7 +42,7 @@ chats_announce <- function(
     glue::glue_collapse(sep = "\n")
 
   body <- glue::glue(
-    "<!channel> Hello everyone! We're preparing for our next round of coffee chats :coffee: :tea: :mate-drink:
+    "<!channel> Hello everyone! We're preparing for our next round of coffee chats :coffee: :tea: :mate_drink:
   
 If you would like to participate, please respond with an appropriate emoji so we can set you up with a partner (you can use more than one emoji if you are open to chatting in multiple languages).
 
