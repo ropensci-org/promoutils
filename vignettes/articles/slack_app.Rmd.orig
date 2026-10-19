@@ -39,6 +39,8 @@ Following steps in Slack API Docs: https://docs.slack.dev/app-management/quickst
     - `groups:history`
     - `im:write`
     - `users:read`
+    - `reactions:read`
+    - `reactions:write`
   
 3. Install and authorize
    - Go to OAuth & Permissions > OAuth Tokens > "Install to rOpenSci" 
