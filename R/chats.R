@@ -438,10 +438,10 @@ chats_save <- function(pairs) {
 #'
 #' @param p Data frame of pairs with id_1 and id_2.
 #'
-#' @returns
+#' @returns Sorted data frame where pairs are always predictable and comparable.
 #'
 #' @noRd
-#' @examples
+
 sort_pairs <- function(p) {
   dplyr::mutate(
     p,
