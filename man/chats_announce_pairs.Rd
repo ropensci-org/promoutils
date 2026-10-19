@@ -27,5 +27,7 @@ p <- chats_pairings(s)
 chats_save(p) # Save to cache to record current pairings
 chats_announce_pairs(p, dry_run = TRUE)
 chats_announce_pairs(p, channel = "testing-api")
+
+chats_announce_pairs(p)
 \dontshow{\}) # examplesIf}
 }

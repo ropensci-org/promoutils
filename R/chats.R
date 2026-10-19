@@ -285,18 +285,34 @@ chats_match <- function(candidates) {
   pairs <- candidates[0, ]
 
   while (nrow(candidates) > 0) {
-    # Number of possible partners per person
-    n <- table(c(candidates$id_1, candidates$id_2))
+    deets <- tidyr::pivot_longer(
+      candidates,
+      cols = dplyr::contains("id"),
+      names_to = "pair",
+      values_to = "id"
+    )
+
+    # Number of *possible* partners per person
+    n <- table(deets$id)
+    # Number of *previous* partners per person
+    n_prev <- dplyr::filter(deets, !is.na(last_date))
+    n_prev <- table(n_prev$id)
 
     # Prefer new pairs, then people with the fewest options
     p <- candidates |>
       dplyr::mutate(
         repeated = !is.na(.data$last_date),
         n_min = pmin(n[.data$id_1], n[.data$id_2]),
-        n_max = pmax(n[.data$id_1], n[.data$id_2])
+        n_max = pmax(n[.data$id_1], n[.data$id_2]),
+        n_prev_min = pmin(n_prev[.data$id_1], n_prev[.data$id_2]),
+        n_prev_max = pmax(n_prev[.data$id_1], n_prev[.data$id_2]),
       ) |>
       dplyr::arrange(
         .data$repeated,
+        # Sort by number of previous matches to select these individuals first
+        # to avoid pairing them at the end, potentially with a previous match
+        .data$n_prev_max,
+        .data$n_prev_min,
         .data$n_min,
         .data$n_max,
         .data$last_date
@@ -305,7 +321,7 @@ chats_match <- function(candidates) {
 
     pairs <- dplyr::bind_rows(
       pairs,
-      dplyr::select(p, -"repeated", -"n_min", -"n_max")
+      dplyr::select(p, -"repeated", -dplyr::starts_with("n_"))
     )
 
     # Remove everyone who is now paired
@@ -467,6 +483,8 @@ chats_read <- function() {
 #' chats_save(p) # Save to cache to record current pairings
 #' chats_announce_pairs(p, dry_run = TRUE)
 #' chats_announce_pairs(p, channel = "testing-api")
+#'
+#' chats_announce_pairs(p)
 
 chats_announce_pairs <- function(
   pairings,
