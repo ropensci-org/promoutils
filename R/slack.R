@@ -76,7 +76,6 @@ slack_posts_write <- function(
     cli::cli_li("What: {body}")
   } else {
     # Check if already scheduled
-
     msgs <- slack_scheduled_list() |>
       dplyr::mutate(
         text = stringr::str_replace_all(
@@ -85,11 +84,15 @@ slack_posts_write <- function(
           "\\1"
         )
       )
+    if (nrow(msgs) > 0) {
+      msgs$text <- stringr::str_remove_all(msgs$text, "<|>")
+    }
+    b0 <- stringr::str_remove_all(body, "<|>")
     if (
       nrow(msgs) > 0 &&
         any(
           post_at == msgs$post_at &
-            stringr::str_detect(msgs$text, body) &
+            stringr::str_detect(msgs$text, stringr::coll(b0)) &
             msgs$channel == stringr::str_remove(channel, "#")
         )
     ) {

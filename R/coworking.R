@@ -367,6 +367,9 @@ cw_slack <- function(
     host <- toupper(host$slack)
     cohost_sister <- cohost$linkedin
     cohost <- toupper(cohost$slack)
+    if (!stringr::str_detect(cohost, "^U[0-9A-Z]+")) {
+      cli::cli_abort("Cohost Slack ID name not provided", call = NULL)
+    }
   }
 
   channels <- if (test_run) "#testing-api" else c("#general", "#co-working")
