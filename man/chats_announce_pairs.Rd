@@ -24,6 +24,7 @@ have in common. People are mentioned so they are notified.
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- chats_signups()
 p <- chats_pairings(s)
+chats_save(p) # Save to cache to record current pairings
 chats_announce_pairs(p, dry_run = TRUE)
 chats_announce_pairs(p, channel = "testing-api")
 \dontshow{\}) # examplesIf}

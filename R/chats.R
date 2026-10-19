@@ -227,15 +227,27 @@ chats_pairings <- function(signups, save = FALSE) {
     ) |>
     dplyr::left_join(last_paired, by = c("id_1", "id_2"))
 
+  # Check
+  names <- dplyr::distinct(signups, .data$id, .data$real_name)
+
+  # check <- candidates |>
+  #   dplyr::left_join(
+  #     dplyr::select(names, "id_1" = "id", "real_name_1" = "real_name") |>
+  #       dplyr::distinct(),
+  #     by = "id_1"
+  #   ) |>
+  #   dplyr::left_join(
+  #     dplyr::select(names, "id_2" = "id", "real_name2" = "real_name"),
+  #     by = "id_2"
+  #   )
+
   # Select pairs from all options
   pairs <- chats_match(candidates) |>
     dplyr::mutate(days_since_paired = as.numeric(Sys.Date() - .data$last_date))
 
   # Deal with odd-ones-out
   pairs <- chats_trios(pairs, candidates, s)
-  names <- dplyr::distinct(signups, .data$id, .data$real_name)
   names <- rlang::set_names(names$real_name, names$id)
-
   pairs <- pairs |>
     dplyr::mutate(
       person_1 = unname(names[.data$id_1]),
@@ -260,8 +272,6 @@ chats_pairings <- function(signups, save = FALSE) {
   if (length(unpaired) > 0) {
     cli::cli_inform("No partner for: {names[unpaired]}")
   }
-
-  chats_save(pairs, save)
 
   pairs
 }
@@ -374,29 +384,56 @@ chats_trios <- function(pairs, candidates, s) {
   pairs
 }
 
-chats_save <- function(pairs, save) {
-  if (save) {
-    # Store trios as three pairs
-    trios <- dplyr::filter(pairs, !is.na(.data$id_3))
-    dplyr::bind_rows(
-      dplyr::select(pairs, "id_1", "id_2", "language"),
-      dplyr::select(trios, "id_1", "id_2" = "id_3", "language"),
-      dplyr::select(
-        trios,
-        "id_1" = "id_2",
-        "id_2" = "id_3",
-        "language"
-      )
-    ) |>
-      dplyr::mutate(
-        date = Sys.Date(),
-        first = pmin(.data$id_1, .data$id_2),
-        id_2 = pmax(.data$id_1, .data$id_2),
-        id_1 = .data$first
-      ) |>
-      dplyr::select("date", "id_1", "id_2", "language") |>
-      cache_write("pairings", paste0("pairings_", Sys.Date(), ".csv"))
-  }
+#' Saves assigned pairs to cache
+#'
+#' Record assigned pairs to avoid repeat pairings. First turns trios into two
+#' pairs for ease of comparison in future.
+#'
+#' @param pairs Pairs data frame with at least `id_1`, `id_2`, `id_3` and
+#'   `language`.
+#'
+#' @returns Nothing
+#'
+#' @noRd
+#' @examples
+chats_save <- function(pairs) {
+  # Store trios as three pairs
+  trios <- dplyr::filter(pairs, !is.na(.data$id_3))
+  dplyr::bind_rows(
+    dplyr::select(pairs, "id_1", "id_2", "language"), # Pairs
+    dplyr::select(trios, "id_1", "id_2" = "id_3", "language"), # First trio pair
+    dplyr::select(
+      # Second trio pair
+      trios,
+      "id_1" = "id_2",
+      "id_2" = "id_3",
+      "language"
+    )
+  ) |>
+    sort_pairs() |>
+    dplyr::mutate(date = Sys.Date()) |>
+    cache_write("pairings", paste0("pairings_", Sys.Date(), ".csv"))
+}
+
+#' Sort pair columns
+#'
+#' Sorts pair columns so that the pairs are always comparable. Pairs of people
+#' named "B" and "A", are always id1 = "A" and id2 = "B".
+#'
+#' @param p Data frame of pairs with id_1 and id_2.
+#'
+#' @returns
+#'
+#' @noRd
+#' @examples
+sort_pairs <- function(p) {
+  dplyr::mutate(
+    p,
+    first = pmin(.data$id_1, .data$id_2),
+    id_2 = pmax(.data$id_1, .data$id_2),
+    id_1 = .data$first
+  ) |>
+    dplyr::select(-"first")
 }
 
 chats_read <- function() {
@@ -427,6 +464,7 @@ chats_read <- function() {
 #' @examplesIf interactive()
 #' s <- chats_signups()
 #' p <- chats_pairings(s)
+#' chats_save(p) # Save to cache to record current pairings
 #' chats_announce_pairs(p, dry_run = TRUE)
 #' chats_announce_pairs(p, channel = "testing-api")
 
