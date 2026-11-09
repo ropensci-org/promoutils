@@ -141,7 +141,7 @@ next_date <- function(
 ) {
   d <- .next_date(month, which, n)
 
-  if (d < month) {
+  if (d <= month) {
     month <- lubridate::add_with_rollback(
       lubridate::as_date(month),
       lubridate::period("1 month")
@@ -160,7 +160,7 @@ next_date <- function(
 }
 
 .next_date <- function(month, which, n) {
-  d <- month |>
+  d <- lubridate::as_date(month) |>
     lubridate::floor_date(unit = "months") |>
     lubridate::ceiling_date(
       unit = "weeks",

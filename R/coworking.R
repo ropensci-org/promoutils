@@ -666,7 +666,7 @@ cw_checkin_event <- function(which = "next", names = NULL, print = FALSE) {
 #' @examples
 #' cw_tz()
 #' cw_tz("Americas Pacific")
-#' cw_tz("America/Vancouver")
+#' cw_tz("America/Los_Angeles")
 #' cw_tz("Europe Central")
 #' cw_tz("European Central")
 
