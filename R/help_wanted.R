@@ -64,32 +64,27 @@ help_fetch <- function(
     ) |>
     dplyr::rename_with(tolower, .cols = dplyr::contains("github"))
 
-  if (nrow(dplyr::anti_join(h, h_df, by = "issue_url"))) {
-    h_df <- dplyr::rows_upsert(
-      h_df,
-      dplyr::select(h, "updated", "issue_url"),
-      by = "issue_url"
-    ) |>
-      dplyr::mutate(posted = tidyr::replace_na(.data$posted, FALSE))
-    cache_write(h_df, "help-wanted")
-  } else {
-    cli::cli_inform("No new help-wanted issues")
+  h_new <- dplyr::anti_join(h, h_df, by = "issue_url")
+
+  if (!nrow(h_new)) {
+    cli::cli_inform(
+      "No new help-wanted issues"
+    )
     return(invisible())
   }
 
-  h
+  h_new
 }
 
 
 help_read <- function() {
   h <- cache_read("help-wanted")
-  if (nrow(h)) {
-    if (!"posted" %in% names(h)) h$posted <- FALSE
-  } else {
+  if (!nrow(h)) {
     h <- dplyr::tibble(
       updated = lubridate::as_datetime(Sys.time()),
       issue_url = "",
-      posted = FALSE,
+      status = "",
+      date_added = lubridate::as_datetime(Sys.time()),
       .rows = 0
     )
   }
@@ -167,13 +162,12 @@ help_handles <- function(help) {
 #' h <- help_fetch()
 #' help_preview(h)
 
-help_preview <- function(help) {
+help_preview <- function(h) {
   #TODO: Use dictionary?
-  h_posted <- help_read() |>
-    dplyr::filter(.data$posted)
+  h_df <- help_read()
 
-  h <- help |>
-    dplyr::anti_join(h_posted, by = "issue_url") |>
+  h <- h |>
+    dplyr::anti_join(h_df, by = "issue_url") |>
     dplyr::select("package", "issue_url", "title")
 
   if (nrow(h) == 0) {
@@ -209,22 +203,28 @@ help_preview <- function(help) {
 #' help_preview(h)
 #' # Review and note issues to skip
 #'
-#' help_post(h, skip = c(1:6), dry_run = TRUE)  # For non-interactive examples
+#' help_post(h, skip = c(1), dry_run = TRUE)  # For non-interactive examples
+#' help_post(h, skip = c(1:6,8:9))  # To post and record postings to disk
 
 help_post <- function(help, skip = NULL, date_time = NULL, dry_run = FALSE) {
-  if (!dry_run) {
-    h_skip <- dplyr::select(help, "updated", "issue_url") |>
-      dplyr::slice(.env$skip) |>
-      dplyr::mutate(posted = TRUE)
-    dplyr::rows_upsert(help_read(), h_skip, by = "issue_url") |>
-      cache_write("help-wanted")
+  # Record changes
+  help <- dplyr::mutate(help, status = "posted", date_added = Sys.Date())
+  if (!is.null(skip)) {
+    help$status[skip] <- "skipped"
   }
 
-  h_posted <- help_read() |>
-    dplyr::filter(.data$posted)
+  h_prev <- help_read()
 
-  h <- help |>
-    dplyr::anti_join(h_posted, by = "issue_url") |>
+  h_post <- help |>
+    dplyr::anti_join(h_prev, by = "issue_url") |>
+    dplyr::slice(-.env$skip)
+
+  if (!nrow(h_post)) {
+    cli::cli_inform("No issues left to post")
+    return(invisible)
+  }
+
+  h <- h_post |>
     dplyr::mutate(
       labels_first = dplyr::if_else(
         .data$labels_first,
@@ -242,11 +242,6 @@ help_post <- function(help, skip = NULL, date_time = NULL, dry_run = FALSE) {
       not_maint = is.na(.data$maintainer_github) |
         any(.data$maintainer_github != .data$labels_github)
     )
-
-  if (!nrow(h)) {
-    cli::cli_inform("No issues left to post")
-    return(invisible)
-  }
 
   if (any(h$type == "maintainer")) {
     drafts_maintainer <- h |>
@@ -327,13 +322,12 @@ help_post <- function(help, skip = NULL, date_time = NULL, dry_run = FALSE) {
     drafts_regular <- NULL
   }
 
-  handles <- help_handles(help)
+  handles <- help_handles(h_post)
   handles <- purrr::pmap(handles, list) |>
     rlang::set_names(handles$github)
 
   # Next Thursday
   date_time <- date_time %||% post_time("Thursday", 8)
-
   if (!is.null(drafts_maintainer)) {
     promoutils::buffer_posts_write(
       when = date_time,
@@ -356,7 +350,7 @@ help_post <- function(help, skip = NULL, date_time = NULL, dry_run = FALSE) {
   if (!dry_run) {
     dplyr::rows_upsert(
       help_read(),
-      dplyr::select(h, "updated", "issue_url") |> dplyr::mutate(posted = TRUE),
+      dplyr::select(help, "updated", "issue_url", "status", "date_added"),
       by = "issue_url"
     ) |>
       cache_write("help-wanted")
