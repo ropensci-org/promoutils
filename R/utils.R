@@ -125,6 +125,7 @@ nth_day <- function(x) {
 #' # Get the next 3rd Tuesday
 #' next_date("2023-11-01", n = 3)
 #'
+#' # Get the next 1st Monday
 #' next_date("2027-01-31", which = "Mon", n = 1)
 #'
 #' # Oops
@@ -138,11 +139,27 @@ next_date <- function(
   n = 1,
   call = rlang::caller_env()
 ) {
-  month <- lubridate::add_with_rollback(
-    lubridate::as_date(month),
-    lubridate::period("1 month")
-  )
+  d <- .next_date(month, which, n)
 
+  if (d < month) {
+    month <- lubridate::add_with_rollback(
+      lubridate::as_date(month),
+      lubridate::period("1 month")
+    )
+    d <- .next_date(month, which, n)
+  }
+
+  if (lubridate::month(d) != lubridate::month(month)) {
+    cli::cli_abort(
+      "There are not {n} {format(d, '%A')}s in {format(month, '%B %Y')}",
+      call = call
+    )
+  }
+
+  d
+}
+
+.next_date <- function(month, which, n) {
   d <- month |>
     lubridate::floor_date(unit = "months") |>
     lubridate::ceiling_date(
@@ -151,17 +168,8 @@ next_date <- function(
       change_on_boundary = FALSE
     )
 
-  d <- d + lubridate::weeks(n - 1)
-
-  if (lubridate::month(d) != lubridate::month(month)) {
-    cli::cli_abort(
-      "There are not {n} {format(d, '%A')}s in {format(month, '%B %Y')}",
-      call = call
-    )
-  }
-  d
+  d + lubridate::weeks(n - 1)
 }
-
 
 #' Replace emoji codes with unicode
 #'

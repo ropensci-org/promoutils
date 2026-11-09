@@ -1,3 +1,7 @@
+# 0.8.0
+
+- Add functions to support Coffee Chats
+
 # 0.7.1
 
 - Tweak inner Buffer workings to function outside of development mode

@@ -485,8 +485,6 @@ cw_slack_hour_msg <- function(
 }
 
 cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
-  # CONSIDER REMOVING ---------------------------------------
-
   prev_msgs <- slack_messages(channel_id = channel_id) |>
     dplyr::mutate(
       hour = stringr::str_detect(.data$text, "See you in an hour :wink:"),
@@ -506,8 +504,7 @@ cw_slack_msg_link <- function(channel_id, user, call = rlang::caller_env()) {
   }
 
   # Create message link
-  ts <- stringr::str_remove(prev_msgs$ts[prev_msgs$week][1], "\\.")
-  glue::glue("https://ropensci.slack.com/archives/{channel_id}/{ts}")
+  slack_permalink(ts = prev_msgs$ts[1], channel = prev_msgs$channel[1])
 }
 
 #' Fetch details about coworking sessions
