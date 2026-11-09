@@ -11,6 +11,7 @@
 #' @seealso Slacks Special Mentions - <https://docs.slack.dev/messaging/formatting-message-text/#special-mentions>
 #'
 #' @examplesIf interactive()
+#' chats_announce(when = "now") # Dry-run
 #' chats_announce(when = "now", test_run = TRUE)
 
 chats_announce <- function(
@@ -62,7 +63,7 @@ See this channel's pinned message for more details."
 
   # Add preliminary reactions
   if (!dry_run) {
-    slack_react(ts, c("bee", "hibiscus", "swan", "ant"), channel = channel)
+    slack_react(ts, names(chats_languages()), channel = channel)
   }
 
   invisible(ts)
@@ -528,10 +529,10 @@ chats_announce_pairs <- function(
 
 chats_languages <- function() {
   c(
-    "bee" = "English",
-    "hibiscus" = "Spanish",
-    "swan" = "French",
-    "ant" = "Portuguese"
+    "english" = "English",
+    "español" = "Spanish",
+    "français" = "French",
+    "português" = "Portuguese"
   )
 }
 
