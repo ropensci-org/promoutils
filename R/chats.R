@@ -201,9 +201,7 @@ chats_signups <- function(channel = "coffee-chats", author_lang = "English") {
 #' @examplesIf interactive()
 #' s <- chats_signups()
 #' p <- chats_pairings(s)
-#'
-#' # Once happy with the pairings, save them
-#' p <- chats_pairings(s, save = TRUE)
+#' chats_save(p) # Save to cache to record current pairings
 
 chats_pairings <- function(signups, save = FALSE) {
   last_paired <- chats_read() |>
@@ -501,8 +499,14 @@ chats_announce_pairs <- function(
   trio <- dplyr::if_else(
     is.na(pairings$id_3),
     "",
-    paste0(" & ", pairings$id_3)
+    paste0(" & ", pairings$id_3, " *")
   )
+
+  if (any(trio != "")) {
+    trio_note <- "\n* Note that we have a trio this time, you can try to find a time that works for all three, or opt to have several different chats in pairs, it's up to you!\n"
+  } else {
+    trio_note <- ""
+  }
 
   pairs <- glue::glue(
     "• {pairings$id_1} & {pairings$id_2}{trio} ",
@@ -511,11 +515,11 @@ chats_announce_pairs <- function(
     glue::glue_collapse(sep = "\n")
 
   body <- glue::glue(
-    "Hello everyone! Here are the pairings for this round of coffee chats :coffee:
+    "Hello everyone! Here are the groups for this round of coffee chats :coffee:
 
   {pairs}
-
-  Please reach out to your partner to find a time to chat in the language(s) you have in common.
+  {trio_note}
+  Please reach out to your partner(s) to find a time to chat in the language(s) you have in common.
   See the [pinned message]({perm}) for more details."
   )
 
