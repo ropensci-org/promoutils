@@ -200,7 +200,8 @@ slack_scheduled_list <- function() {
         slack_channel_name(channel_id = x)
       })
     ) |>
-    dplyr::select(dplyr::all_of(cols))
+    dplyr::select(dplyr::all_of(cols)) |>
+    dplyr::arrange(.data$post_at, .data$date_created)
 }
 
 #' Delete a scheduled message
@@ -587,8 +588,8 @@ slack_message_rm_bulk <- function(
 #' m <- slack_messages("coffee-chats")
 #' slack_permalink(ts = m$ts[1], channel = m$channel[1])
 
-slack_permalink <- function(ts, channel = NULL) {
-  channel_id <- slack_channel_id(channel)
+slack_permalink <- function(ts, channel = NULL, channel_id = NULL) {
+  channel_id <- slack_channel_id(channel, channel_id)
 
   httr2::request("https://slack.com/api/chat.getPermalink") |>
     httr2::req_url_query(channel = channel_id, message_ts = ts) |>
